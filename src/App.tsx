@@ -1,8 +1,4 @@
-import {
-  createBrowserRouter,
-  Navigate,
-  RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import NotFound from "./components/shared/NotFound/NotFound";
 import UserMaster from "./components/shared/UserMasterLayout/UserMaster";
 import Home from "./components/UserModule/Home/Home";
@@ -20,37 +16,42 @@ import UserInfo from "./components/AdminModule/Users/UserInfo/UserInfo";
 import AddProduct from "./components/AdminModule/Products/Add/AddProduct";
 import ProductsList from "./components/AdminModule/Products/views/ProductsList";
 import Payment from "./components/UserModule/Payment/Payment";
+import ProtectedRoute from "./components/shared/ProtectedRoute/ProtectedRoute";
+
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import "./App.css";
+import AdminMaster from "./components/shared/AdminMasterLayout/AdminMaster";
+import { ToastContainer } from "react-toastify";
+import { AuthProvider } from "./context/Context";
 
 function App() {
-  // const navigate = useNavigate();
-  const LoginData = {
-    role: "admin",
-  };
   const routes = createBrowserRouter([
+    // 🌍 Public User Routes
     {
-      // Public Routes: Homepage, aboutus, store accessible to all, including guests
-      path: "",
+      path: "/dashboard",
       element: <UserMaster />,
       errorElement: <NotFound />,
       children: [
-        { path: "home-page", element: <Home /> },
+        { index: true, element: <Home /> }, // Home should be the default route
         { path: "about-us", element: <About /> },
         { path: "store", element: <Store /> },
         { path: "payment", element: <Payment /> },
-        // { path: "room-details/:roomId", element: <RoomDetail /> },
+      ],
+    },
 
-        //  admin routes
-        {
-          path: "home-dashboard",
-          element:
-            LoginData?.role === "admin" ? (
-              <Navigate to={"/dashboard"} replace />
-            ) : (
-              <Navigate to={"/home-page"} replace />
-              // <Home />
-            ),
-        },
-        { path: "dashboard", element: <Dashboard /> },
+    // 🔒 Admin Routes (Protected)
+    {
+      path: "/admin",
+      element: (
+        <ProtectedRoute allowedRoles={["admin"]}>
+          <AdminMaster />
+        </ProtectedRoute>
+      ),
+      errorElement: <NotFound />,
+      children: [
+        { index: true, element: <Dashboard /> }, // Default admin dashboard
         { path: "orders", element: <Orders /> },
         { path: "add-product", element: <AddProduct /> },
         { path: "product-list", element: <ProductsList /> },
@@ -59,25 +60,41 @@ function App() {
       ],
     },
 
-    // Auth Routes: login, register, forget password, reset password
+    // 🔑 Authentication Routes
     {
-      path: "login",
+      path: "/auth",
       element: <AuthLayout />,
       errorElement: <NotFound />,
       children: [
-        { index: true, element: <Login /> },
-        { path: "login", element: <Login /> },
+        { index: true, element: <Login /> }, // Default route for /auth is login
         { path: "register", element: <Register /> },
         { path: "forget-password", element: <ForgetPass /> },
         { path: "reset-password", element: <ResetPass /> },
       ],
     },
+
+    // 🔍 Catch-all for 404
+    { path: "*", element: <NotFound /> },
   ]);
-  return (
-    <>
-      <RouterProvider router={routes}></RouterProvider>
-    </>
-  );
+
+  return <>
+
+<ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={true} // Right-to-left for Arabic
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+ <AuthProvider>
+      <RouterProvider router={routes} />
+    </AuthProvider>
+  
+  </>;
 }
 
 export default App;
