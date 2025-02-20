@@ -1,195 +1,269 @@
+// import React, { useContext, useEffect, useState } from "react";
+// import { Link, useNavigate } from "react-router-dom";
+// import { SubmitHandler, useForm } from "react-hook-form";
+// import axios from "axios";
+// import { toast } from "react-toastify";
+// import { AuthContext } from "../../../context/Context";
+// import Style from "../Login/Login.module.css";
+// import imagelogo from "../../../assets/صورة_واتساب_بتاريخ_2024-11-10_في_22.53.07_158af9f7-removebg-preview.png";
+// import HeroImageSvg from "../../../assets/svg/svgHeroimage.svg";
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
+// interface IFormInput {
+//   email: string;
+//   password: string;
+// }
+
+// interface LoginResponse {
+//   token: string;
+// }
+
+// export default function Login() {
+//   const [visible, Setvisible] = useState<boolean>(true);
+//   const { isAuthenticated, login, role } = useContext(AuthContext);
+
+//   const navigate = useNavigate();
+
+//   const {
+//     register,
+//     handleSubmit,
+//     formState: { errors },
+//   } = useForm<IFormInput>({
+//     defaultValues: {
+//       email: "",
+//       password: "",
+//     },
+//     mode: "all",
+//   });
+
+//   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+//     try {
+//       const response = await axios.post(
+//         "https://projectplant-production.up.railway.app/api/v1/auth/admin/Login",
+//         data
+//       );
+
+//       console.log("Backend Response:", response);
+
+//       // Store token in localStorage
+//       localStorage.setItem("token", response.data.token);
+//       console.log(response.data.token);
+//       // Show success toast
+//       toast.success("تم تسجيل الدخول بنجاح!");
+
+//       // Navigate to the dashboard
+//       navigate("/");
+//     } catch (error) {
+//       console.error("Error during login:", error);
+
+//       // Handle Axios errors
+//       if (axios.isAxiosError(error)) {
+//         // Display the error message from the backend
+//         toast.error(
+//           error.response?.data?.message || "حدث خطأ أثناء تسجيل الدخول"
+//         );
+//       } else {
+//         // Handle generic errors
+//         toast.error("حدث خطأ غير متوقع أثناء تسجيل الدخول", {
+//           position: "top-right",
+//           autoClose: 5000, // Close after 5 seconds
+//         });
+//       }
+//     }
+//   };
+//   // Redirect if the user is already logged in
+//   useEffect(() => {
+//     if (isAuthenticated) {
+//       navigate("/dashboard"); // Redirect to dashboard if logged in
+//     }
+//   }, [isAuthenticated, navigate]);
+
 import React, { useContext, useEffect, useState } from "react";
-import photo from "../../../assets/login.png";
-import logo from "../../../assets/صورة واتساب بتاريخ 2024-11-10 في 22.53.07_158af9f7 1.png";
 import { Link, useNavigate } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
 import axios from "axios";
-import { toast} from "react-toastify";
-import { AuthContext } from "../../../context/Context";
+import { toast } from "react-toastify";
+import { AuthContext } from "../../../context/Context"; // استخدام `useAuth` بدل `AuthContext`
+import Style from "../Login/Login.module.css";
+import imagelogo from "../../../assets/صورة_واتساب_بتاريخ_2024-11-10_في_22.53.07_158af9f7-removebg-preview.png";
+import HeroImageSvg from "../../../assets/svg/svgHeroimage.svg";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 
-interface IFormInput {
+type IFormInput = {
   email: string;
   password: string;
-}
+};
 
-interface LoginResponse {
+type LoginResponse = {
+  payload: {
+    id: number;
+    email: string;
+    role: string;
+    phone: string;
+    name: string;
+  };
   token: string;
-}
+};
 
 export default function Login() {
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const { isAuthenticated } = useContext(AuthContext);
-
+  const { userData, saveUserData } = useContext<any>(AuthContext);
+  const [visible, setVisible] = useState<boolean>(true);
   const navigate = useNavigate();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<IFormInput>();
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
+  } = useForm<IFormInput>({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+    mode: "all",
+  });
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     try {
       const response = await axios.post<LoginResponse>(
-        "https://projectplant-production.up.railway.app/api/v1/auth/user/Login",
+        "https://projectplant-production.up.railway.app/api/v1/auth/admin/Login",
+        // "https://projectplant-production.up.railway.app/api/v1/auth/user/Login",
         data
       );
 
-      console.log("Backend Response:", response);
+      // استدعاء `login` من `AuthContext`
+      console.log(response?.data?.token);
+      console.log(response?.data?.payload.role);
 
-      // Store token in localStorage
-      localStorage.setItem("userToken", response.data.token);
-
-      // Show success toast
-      toast.success("تم تسجيل الدخول بنجاح!");
-
-      // Navigate to the dashboard
-      navigate("/dashboard");
+      const token = response?.data?.token;
+      localStorage.setItem("token", token);
+      saveUserData();
+      // console.log(userData?.payload?.role);
+      if (response?.data?.payload.role === "Admin") {
+        navigate("/admin");
+      } else if (response?.data?.payload.role === "User") {
+        navigate("/");
+      } else {
+        navigate("/auth");
+      }
     } catch (error) {
       console.error("Error during login:", error);
 
-      // Handle Axios errors
       if (axios.isAxiosError(error)) {
-        // Display the error message from the backend
         toast.error(
-          error.response?.data?.message || "حدث خطأ أثناء تسجيل الدخول",
+          error.response?.data?.message || "حدث خطأ أثناء تسجيل الدخول"
         );
       } else {
-        // Handle generic errors
-        toast.error("حدث خطأ غير متوقع أثناء تسجيل الدخول", {
-          position: "top-right",
-          autoClose: 5000, // Close after 5 seconds
-        });
+        toast.error("حدث خطأ غير متوقع أثناء تسجيل الدخول");
       }
     }
   };
-// Redirect if the user is already logged in
-useEffect(() => {
-  if (isAuthenticated) {
-    navigate("/dashboard"); // Redirect to dashboard if logged in
-  }
-}, [isAuthenticated, navigate]);
+
   return (
     <>
-      <div className="container-fluid vh-100">
-        <div className="row h-100 " style={{ overflow: "hidden" }}>
-          <div
-            className="col-md-6  d-none d-md-flex align-items-center justify-content-center bg-light"
-            style={{ maxHeight: "100vh", minHeight: "100vh" }}
-          >
-            <div className="main-img ">
-              <img
-                src={photo}
-                alt="logo-photo"
-                className="img-fluid  "
-                style={{ maxHeight: "90vh" }}
-              />
-            </div>
-          </div>
-
-          <div
-            className="col-md-6 d-flex align-items-center justify-content-center"
-            style={{ maxHeight: "100vh", overflowY: "auto" }}
-          >
-            <div className="w-100 p-4" style={{ maxWidth: "400px" }}>
-              <div className="img text-center mb-4 ">
-                <img src={logo} alt="logo-img" className="img-fluid" style={{ width: "100px" }} />
-              </div>
-
-              <div className="text-center p-4">
-                <h2>سجل دخول</h2>
-                <h3>اذا لم يكن لديك حساب تسطتيع </h3>
-                <Link className="link-to" to="/register">
-                  انشاء حساب !
-                </Link>
-              </div>
-
-              <form action="" dir="rtl" onSubmit={handleSubmit(onSubmit)}>
-                <div className="mb-3 pt-4">
-                  <label htmlFor="email" className="form-label">
-                    البريد الالكتروني
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    className="form-control"
-                    placeholder="ادخل البريد الالكتروني"
-                    autoComplete="email"
-                    {...register("email", {
-                      required: "البريد الالكتروني مطلوب",
-                      pattern: {
-                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                        message: "يجب أن يكون البريد الالكتروني بصيغة صحيحة",
-                      },
-                    })}
-                  />
-                  {errors.email && (
-                    <span className="text-danger">{errors.email.message}</span>
-                  )}
-                </div>
-
-                <div className="mb-3 pt-4">
-                  <label htmlFor="password" className="form-label">
-                    الرقم السري
-                  </label>
-                  <div className="input-group">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      id="password"
-                      className="form-control"
-                      autoComplete="current-password"
-                      placeholder="ادخل الرقم السري"
-                      {...register("password", {
-                        required: "الرقم السري مطلوب",
-                        minLength: {
-                          value: 8,
-                          message: "يجب أن يكون الرقم السري 8 أحرف على الأقل",
-                        },
-                        maxLength: {
-                          value: 20,
-                          message: "يجب أن يكون الرقم السري 20 أحرف على الأكثر",
-                        },
-                      })}
-                    />
-                    <button
-                      type="button"
-                      onClick={togglePasswordVisibility}
-                      className="input-group-text"
-                      aria-label={
-                        showPassword ? "Hide password" : "Show password"
-                      }
-                    >
-                      <i
-                        className={`fa-regular ${
-                          showPassword ? "fa-eye-slash" : "fa-eye"
-                        }`}
-                      ></i>
-                    </button>
-                  </div>
-                  {errors.password && (
-                    <span className="text-danger">
-                      {errors.password.message}
-                    </span>
-                  )}
-                </div>
-
-                <Link className="link-to" to="/auth/forget-password">
-                  نسيت كلمة المرور ؟
-                </Link>
-
-                <button className="btn d-block w-100 border-0 border-4 mt-4">
-                  تسجيل الدخول
-                </button>
-              </form>
-            </div>
+      <div className=" w-100 vh-100 d-flex flex-wrap ">
+        <div
+          className={`${Style.HeroImage} w-50  d-md-flex d-xl-flex flex-column gap-4 d-sm-none   `}
+        >
+          <img src={HeroImageSvg} alt="" />
+          <div className={`${Style.HeroCaption} `}>
+            <h1>مرحبًا بعودتك!</h1>
+            <p>سجل دخولك للوصول إلى حسابك وإدارة مشترياتك بسهولة</p>
           </div>
         </div>
+        <div className="  w-50 d-flex flex-column flex-grow-1 ">
+          <div className=" w-100  position-relative">
+            <img
+              src={imagelogo}
+              alt="logo"
+              className={`${Style.LogoCampony}`}
+            />
+            <div className=" w-75 m-auto mt-5 ">
+              <h3>سجل دخول</h3>
+              <p>اذا لم يكن لديك حساب تستطيع </p>
+              <Link className="link-to" to="register">
+                <p className={`${Style.TitleNavigate}`}> انشاء حساب من هنا !</p>
+              </Link>
+            </div>
+          </div>
+          <form className="w-100" onSubmit={handleSubmit(onSubmit)}>
+            <div className=" w-75  d-flex flex-column m-auto gap-1 mt-5 ">
+              <div className="w-100 d-flex flex-column">
+                <label htmlFor="email">البريد الالكتروني</label>
+                <input
+                  placeholder="أدخل البريد الالكتروني"
+                  className="w-100 p-2"
+                  type="email"
+                  id="name"
+                  aria-label="email"
+                  {...register("email", {
+                    required: "البريد الالكتروني مطلوب",
+                    pattern: {
+                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                      message: "يجب أن يكون البريد الالكتروني بصيغة صحيحة",
+                    },
+                  })}
+                />
+                {errors.email && (
+                  <span className="text-danger">{errors.email.message}</span>
+                )}
+              </div>
+              <div className="w-100 d-flex flex-column position-relative">
+                <label htmlFor="name">كلمة المرور</label>
+                <input
+                  placeholder="أدخل كلمة المرور"
+                  className="w-100 p-2"
+                  type={visible ? "password" : "text"}
+                  id="password"
+                  aria-label="password"
+                  {...register("password", {
+                    required: "الرقم السري مطلوب",
+                    minLength: {
+                      value: 8,
+                      message: "يجب أن يكون الرقم السري 8 أحرف على الأقل",
+                    },
+                    maxLength: {
+                      value: 20,
+                      message: "يجب أن يكون الرقم السري 20 أحرف على الأكثر",
+                    },
+                  })}
+                />
+                {errors.password && (
+                  <span className="text-danger">{errors.password.message}</span>
+                )}
+                <FontAwesomeIcon
+                  icon={visible ? faEyeSlash : faEye}
+                  onClick={() => setVisible(!visible)}
+                  className={Style.IconEye}
+                />
+              </div>
+              <div className="">
+                <Link className="link-to" to="/auth/forget-password">
+                  <span className={`${Style.TitleNavigate}`}>
+                    نسيت كلمة المرور!
+                  </span>
+                </Link>
+              </div>
+              <button
+                type="submit"
+                className={`${Style.BttnSubmit} p-3 bg-success `}
+              >
+                {" "}
+                انشاء حساب
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-     
+      <style>{`
+         @media (max-width: 768px) {
+           .${Style.HeroImage}, vh-100 w-50 {
+             width: 100% !important;
+             height: auto !important;
+              display: none !important
+           }
+         }
+      `}</style>
     </>
   );
 }

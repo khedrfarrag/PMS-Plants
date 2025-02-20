@@ -1,62 +1,55 @@
-import React, { createContext, useState, useContext, useEffect } from "react";
+import React, { createContext, useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 
-// Define the shape of the context data
-interface AuthContextType {
-  isAuthenticated: boolean;
-  role: string | null;
-  login: (token: string, role: string) => void;
+// تعريف نوع البيانات داخل السياق
+type AuthContextType = {
+  userData: UserData | null;
+  saveUserData: () => void;
   logout: () => void;
-}
+};
 
-// Create the context with default values
-export  const AuthContext = createContext<AuthContextType>({
-  isAuthenticated: false,
-  role: null,
-  login: () => {},
-  logout: () => {},
-});
+type UserData = {
+  email: string;
+  name: string;
+  role: string;
+};
 
-// Custom hook to use the AuthContext
-export  const useAuth = () => useContext(AuthContext);
+// إنشاء السياق
+export const AuthContext = createContext<AuthContextType | null>(null);
 
-// AuthProvider component to wrap your app
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [role, setRole] = useState<string | null>(null);
+// مزود السياق لتغليف التطبيق
+export default function AuthContextProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [userData, setUserData] = useState<UserData | null>(null);
 
-  // Check localStorage for token and role on initial load
+  // دالة لاستخراج بيانات المستخدم من الـ token
+  const saveUserData = () => {
+    const enCodedToken: any = localStorage.getItem("token");
+    if (enCodedToken) {
+      const deCodedToken: UserData = jwtDecode<UserData>(enCodedToken);
+      setUserData(deCodedToken);
+    }
+  };
+
+  // دالة تسجيل الخروج
+  const logout = () => {
+    localStorage.removeItem("token");
+    setUserData(null);
+  };
+
+  // تحميل بيانات المستخدم عند تشغيل التطبيق أو عند تغيير التوكن
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const userRole = localStorage.getItem("role");
-    if (token && userRole) {
-      setIsAuthenticated(true);
-      setRole(userRole);
+    if (localStorage.getItem("token")) {
+      saveUserData();
     }
   }, []);
 
-  // Login function
-  const login = (token: string, role: string) => {
-    localStorage.setItem("token", token);
-    localStorage.setItem("role", role);
-    setIsAuthenticated(true);
-    setRole(role);
-  };
-
-  // Logout function
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    setIsAuthenticated(false);
-    setRole(null);
-  };
-
-  // Context value
-  const value = {
-    isAuthenticated,
-    role,
-    login,
-    logout,
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-};
+  return (
+    <AuthContext.Provider value={{ userData, saveUserData, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}

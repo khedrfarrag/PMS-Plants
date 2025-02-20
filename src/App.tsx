@@ -16,28 +16,38 @@ import UserInfo from "./components/AdminModule/Users/UserInfo/UserInfo";
 import AddProduct from "./components/AdminModule/Products/Add/AddProduct";
 import ProductsList from "./components/AdminModule/Products/views/ProductsList";
 import Payment from "./components/UserModule/Payment/Payment";
-import ProtectedRoute from "./components/shared/ProtectedRoute/ProtectedRoute";
-
-import '@fortawesome/fontawesome-free/css/all.min.css';
+import "@fortawesome/fontawesome-free/css/all.min.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "./App.css";
 import AdminMaster from "./components/shared/AdminMasterLayout/AdminMaster";
 import { ToastContainer } from "react-toastify";
-import { AuthProvider } from "./context/Context";
+import ProtectedRoute from "./components/shared/ProtectedRoute/ProtectedRoute";
 
 function App() {
   const routes = createBrowserRouter([
     // 🌍 Public User Routes
     {
-      path: "/dashboard",
-      element: <UserMaster />,
+      path: "/",
+      element: (
+        // <ProtectedRoute>
+        <UserMaster />
+        // {/* </ProtectedRoute> */}
+      ),
       errorElement: <NotFound />,
       children: [
         { index: true, element: <Home /> }, // Home should be the default route
+        { path: "home", element: <Home /> }, // Home should be the default route
         { path: "about-us", element: <About /> },
         { path: "store", element: <Store /> },
-        { path: "payment", element: <Payment /> },
+        {
+          path: "payment",
+          element: (
+            <ProtectedRoute>
+              <Payment />
+            </ProtectedRoute>
+          ),
+        },
       ],
     },
 
@@ -45,13 +55,14 @@ function App() {
     {
       path: "/admin",
       element: (
-        <ProtectedRoute allowedRoles={["admin"]}>
+        <ProtectedRoute>
           <AdminMaster />
         </ProtectedRoute>
       ),
       errorElement: <NotFound />,
       children: [
         { index: true, element: <Dashboard /> }, // Default admin dashboard
+        { path: "dashboard", element: <Dashboard /> }, // Default admin dashboard
         { path: "orders", element: <Orders /> },
         { path: "add-product", element: <AddProduct /> },
         { path: "product-list", element: <ProductsList /> },
@@ -63,7 +74,11 @@ function App() {
     // 🔑 Authentication Routes
     {
       path: "/auth",
-      element: <AuthLayout />,
+      element: (
+        // <ProtectedRoute>
+        <AuthLayout />
+        // {/* </ProtectedRoute> */}
+      ),
       errorElement: <NotFound />,
       children: [
         { index: true, element: <Login /> }, // Default route for /auth is login
@@ -77,9 +92,9 @@ function App() {
     { path: "*", element: <NotFound /> },
   ]);
 
-  return <>
-
-<ToastContainer
+  return (
+    <>
+      <ToastContainer
         position="top-right"
         autoClose={3000}
         hideProgressBar={false}
@@ -90,11 +105,11 @@ function App() {
         draggable
         pauseOnHover
       />
- <AuthProvider>
+      {/* <AuthProvider> */}
       <RouterProvider router={routes} />
-    </AuthProvider>
-  
-  </>;
+      {/* </AuthProvider> */}
+    </>
+  );
 }
 
 export default App;

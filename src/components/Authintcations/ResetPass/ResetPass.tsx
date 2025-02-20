@@ -1,16 +1,19 @@
-import React from "react";
-import photo from "../../../assets/login.png";
-import logo from "../../../assets/صورة واتساب بتاريخ 2024-11-10 في 22.53.07_158af9f7 1.png";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "bootstrap/dist/css/bootstrap.min.css"; // Ensure Bootstrap CSS is imported
+import imagelogo from "../../../assets/صورة_واتساب_بتاريخ_2024-11-10_في_22.53.07_158af9f7-removebg-preview.png";
+import HeroImageSvg from "../../../assets/svg/svgHeroimage.svg";
+import Style from "../ResetPass/ResetPass.module.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 
 function ResetPass() {
   const navigate = useNavigate();
-  const [showConfirmPassword, setShowConfirmPassword] = React.useState<boolean>(false);
-  const [showNewPassword, setShowNewPassword] = React.useState<boolean>(false);
+
+  const [visible, Setvisible] = useState<boolean>(true);
 
   interface IFormInput {
     email: string;
@@ -26,18 +29,10 @@ function ResetPass() {
     watch,
   } = useForm<IFormInput>();
 
-  const toggleNewPasswordVisibility = () => {
-    setShowNewPassword((prev) => !prev);
-  };
-
-  const toggleConfirmPasswordVisibility = () => {
-    setShowConfirmPassword((prev) => !prev);
-  };
-
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     try {
       const response = await axios.post(
-        "https://projectplant-production.up.railway.app/api/v1/auth/user/ResetPassword",
+        "https://projectplant-production.up.railway.app/api/v1/auth/admin/Reset-Password",
         data
       );
 
@@ -47,13 +42,16 @@ function ResetPass() {
       toast.success("تم إعادة تعيين كلمة المرور بنجاح");
 
       // Redirect to login page
-      navigate("/login");
+      navigate("/auth");
     } catch (error) {
       console.error("Error during password reset:", error);
 
       // Display error message to the user
       if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.message || "حدث خطأ أثناء إعادة تعيين كلمة المرور");
+        toast.error(
+          error.response?.data?.message ||
+            "حدث خطأ أثناء إعادة تعيين كلمة المرور"
+        );
       } else {
         toast.error("حدث خطأ غير متوقع");
       }
@@ -61,37 +59,45 @@ function ResetPass() {
   };
 
   return (
-    <div className="container-fluid vh-100">
-      <div className="row h-100">
-        {/* Image Column (Hidden on Small Screens) */}
-        <div className="col-md-6 d-none d-md-flex align-items-center justify-content-center bg-light">
-          <img
-            src={photo}
-            alt="logo-photo"
-            className="img-fluid"
-            style={{ maxHeight: "90vh" }}
-          />
+    <>
+      <div className=" w-100 vh-100 d-flex flex-wrap ">
+        <div
+          className={`${Style.HeroImage} w-50  d-md-flex d-xl-flex flex-column gap-4 d-sm-none   `}
+        >
+          <img src={HeroImageSvg} alt="" />
+          <div className={`${Style.HeroCaption} `}>
+            <h1>حسنا تبقي خطوة واحدة!</h1>
+            <p> أدخل هذه البيانات لاستعادة الوصول إلى حسابك !</p>
+          </div>
         </div>
-
-        {/* Form Column */}
-        <div className="col-md-6 d-flex align-items-center justify-content-center">
-          <div className="w-100 p-4" style={{ maxWidth: "400px" }}>
-            {/* Logo */}
-            <div className="text-center mb-4">
-              <img src={logo} alt="logo-img" className="img-fluid" style={{ width: "100px" }} />
+        <div className="  w-50 d-flex flex-column flex-grow-1 ">
+          <div className=" w-100  position-relative">
+            <img
+              src={imagelogo}
+              alt="logo"
+              className={`${Style.LogoCampony}`}
+            />
+            <div className=" w-75 m-auto mt-5 ">
+              <h3>اعادة تعيين كلمة المرور</h3>
+              <p>اذا أردت الرجوع الي تسجيل الدخول </p>
+              <Link className="link-to" to="/auth">
+                <p className={`${Style.TitleNavigate}`}>
+                  {" "}
+                  تسجيل الدخول من هنا !
+                </p>
+              </Link>
             </div>
-
-            {/* Reset Password Form */}
-            <form onSubmit={handleSubmit(onSubmit)} dir="rtl">
-              <div className="mb-3">
-                <label htmlFor="email" className="form-label">
-                  البريد الالكتروني
-                </label>
+          </div>
+          <form action="" className="w-100  " onSubmit={handleSubmit(onSubmit)}>
+            <div className=" w-75  d-flex flex-column m-auto gap-1 ">
+              <div className="w-100 d-flex flex-column">
+                <label htmlFor="name">البريد الالكتروني</label>
                 <input
+                  placeholder="أدخل البريد الالكتروني"
+                  className="w-100 p-2"
                   type="email"
-                  id="email"
-                  className="form-control"
-                  placeholder="ادخل البريد الالكتروني"
+                  id="name"
+                  aria-label="email"
                   {...register("email", {
                     required: "البريد الالكتروني مطلوب",
                     pattern: {
@@ -101,126 +107,98 @@ function ResetPass() {
                   })}
                 />
                 {errors.email && (
-                  <span className="text-danger">{errors.email.message}</span>
+                  <span className="text-danger">{errors.email?.message}</span>
                 )}
               </div>
-
-              <div className="mb-3">
-                <label htmlFor="code" className="form-label">
-                  الرقم المتغير
-                </label>
+              <div className="w-100 d-flex flex-column">
+                <label htmlFor="name">الرقم المتغير</label>
                 <input
+                  placeholder="أدخل الرقم المتغير "
+                  className="w-100 p-2"
                   type="text"
+                  aria-label="code"
                   id="code"
-                  className="form-control"
-                  placeholder="ادخل الرقم المتغير"
                   {...register("code", {
                     required: "الرقم المتغير مطلوب",
                   })}
                 />
-                {errors.code && (
-                  <span className="text-danger">{errors.code.message}</span>
-                )}
               </div>
-
-              <div className="mb-3">
-                <label htmlFor="newPassword" className="form-label">
-                  كلمة المرور الجديدة
-                </label>
-                <div className="input-group">
-                  <input
-                    type={showNewPassword ? "text" : "password"}
-                    id="newPassword"
-                    className="form-control"
-                    placeholder="ادخل رقم سري جديد"
-                    {...register("newPassword", {
-                      required: "يجب ادخال رقم سري جديد",
-                      minLength: {
-                        value: 8,
-                        message: "يجب أن يكون الرقم السري 8 أحرف على الأقل",
-                      },
-                      maxLength: {
-                        value: 20,
-                        message: "يجب أن يكون الرقم السري 20 أحرف على الأكثر",
-                      },
-                    })}
-                  />
-                  <button
-                    type="button"
-                    className="btn btn-outline-secondary"
-                    onClick={toggleNewPasswordVisibility}
-                    aria-label={showNewPassword ? "Hide password" : "Show password"}
-                  >
-                    <i
-                      className={`fa-regular ${
-                        showNewPassword ? "fa-eye-slash" : "fa-eye"
-                      }`}
-                    ></i>
-                  </button>
-                </div>
-                {errors.newPassword && (
-                  <span className="text-danger">{errors.newPassword.message}</span>
-                )}
+              <div className="w-100 d-flex flex-column position-relative">
+                <label htmlFor="name"> كلمة المرور الجديدة</label>
+                <input
+                  placeholder="أدخل كلمة المرور"
+                  className="w-100 p-2"
+                  type={visible ? "password" : "text"}
+                  id="name"
+                  aria-label="newPassword"
+                  {...register("newPassword", {
+                    required: "يجب ادخال رقم سري جديد",
+                    minLength: {
+                      value: 8,
+                      message: "يجب أن يكون الرقم السري 8 أحرف على الأقل",
+                    },
+                    maxLength: {
+                      value: 20,
+                      message: "يجب أن يكون الرقم السري 20 أحرف على الأكثر",
+                    },
+                  })}
+                />
+                <FontAwesomeIcon
+                  icon={visible ? faEyeSlash : faEye}
+                  onClick={() => Setvisible(!visible)}
+                  className={Style.IconEye}
+                />
               </div>
-
-              <div className="mb-3">
-                <label htmlFor="confirmPassword" className="form-label">
-                  تاكيد كلمة المرور
-                </label>
-                <div className="input-group">
-                  <input
-                    type={showConfirmPassword ? "text" : "password"}
-                    id="confirmPassword"
-                    className="form-control"
-                    placeholder="تاكيد كلمة المرور"
-                    {...register("confirmPassword", {
-                      required: "يجب ادخال رقم سري جديد",
-                      minLength: {
-                        value: 8,
-                        message: "يجب أن يكون الرقم السري 8 أحرف على الأقل",
-                      },
-                      maxLength: {
-                        value: 20,
-                        message: "يجب أن يكون الرقم السري 20 أحرف على الأكثر",
-                      },
-                      validate: (value) =>
-                        value === watch("newPassword") || "كلمات المرور غير متطابقة",
-                    })}
-                  />
-                  <button
-                    type="button"
-                    className="btn btn-outline-secondary"
-                    onClick={toggleConfirmPasswordVisibility}
-                    aria-label={showConfirmPassword ? "Hide password" : "Show password"}
-                  >
-                    <i
-                      className={`fa-regular ${
-                        showConfirmPassword ? "fa-eye-slash" : "fa-eye"
-                      }`}
-                    ></i>
-                  </button>
-                </div>
-                {errors.confirmPassword && (
-                  <span className="text-danger">{errors.confirmPassword.message}</span>
-                )}
+              <div className="w-100 d-flex flex-column position-relative">
+                <label htmlFor="name">تاكيد كلمة المرور</label>
+                <input
+                  placeholder="أدخل كلمة المرور"
+                  className="w-100 p-2"
+                  type={visible ? "password" : "text"}
+                  id="name"
+                  aria-label="confirmpassword"
+                  {...register("confirmPassword", {
+                    required: "يجب ادخال رقم سري جديد",
+                    minLength: {
+                      value: 8,
+                      message: "يجب أن يكون الرقم السري 8 أحرف على الأقل",
+                    },
+                    maxLength: {
+                      value: 20,
+                      message: "يجب أن يكون الرقم السري 20 أحرف على الأكثر",
+                    },
+                    validate: (value) =>
+                      value === watch("newPassword") ||
+                      "كلمات المرور غير متطابقة",
+                  })}
+                />
+                <FontAwesomeIcon
+                  icon={visible ? faEyeSlash : faEye}
+                  className={Style.IconHideEye}
+                  onClick={() => Setvisible(!visible)}
+                />
               </div>
-
-              <button type="submit" className="btn btn-primary w-100">
-                إعادة تعيين كلمة المرور
+              <button
+                type="submit"
+                className={`${Style.BttnSubmit} p-3 bg-success `}
+              >
+                {" "}
+                انشاء حساب
               </button>
-            </form>
-
-            {/* Login Link */}
-            <div className="text-center mt-3">
-              <span>تذكرت كلمة المرور؟ </span>
-              <Link to="/login" className="text-decoration-none">
-                تسجيل الدخول
-              </Link>
             </div>
-          </div>
+          </form>
         </div>
       </div>
-    </div>
+      <style>{`
+         @media (max-width: 768px) {
+           .${Style.HeroImage}, vh-100 w-50 {
+             width: 100% !important;
+             height: auto !important;
+              display: none !important
+           }
+         }
+      `}</style>
+    </>
   );
 }
 
