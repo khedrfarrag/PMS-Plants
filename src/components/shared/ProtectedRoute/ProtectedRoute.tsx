@@ -1,16 +1,12 @@
-import React from "react";
-
+import React, { useContext } from "react";
 import { Navigate } from "react-router-dom";
-import { useContext } from "react";
-import { AuthContext } from "../../../../context/authcontext";
+import { AuthContext } from "../../../context/Context";
 
-interface ProtectedRouteProps {
-  children?: React.ReactNode;
-  loginData?: any;
-}
-function ProtectedRoute({ loginData, children }: ProtectedRouteProps) {
-  if (localStorage.getItem("token") || loginData) return children;
-  else return <Navigate to="/dashboard/homepage" />;
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { userData } = useContext(AuthContext);
+  if (!localStorage.getItem("token")) {
+    return <Navigate to="/" />;
+  } else return children;
 }
 
 export default ProtectedRoute;

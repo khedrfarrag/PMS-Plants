@@ -1,0 +1,83 @@
+.IconEye {
+    position: absolute;
+    top: 55%;
+    left: 20px;
+    cursor: pointer;
+}
+
+.IconHideEye {
+    position: absolute;
+    top: 55%;
+    left: 20px;
+    cursor: pointer;
+}
+
+.LogoCampony {
+    position: absolute;
+    top: 0;
+    left: 20px;
+    width: 80px;
+    height: 80px;
+}
+
+.BttnSubmit {
+    border-radius: 5px !important;
+    border: none;
+    outline: none !important;
+    color: white;
+    margin-top: 20px;
+}
+
+input {
+    border: none !important;
+    outline: none !important;
+    border-radius: 3px;
+    height: 50px;
+    background-color: #e3e0e0;
+}
+
+::placeholder {
+    color: #a8aaab;
+}
+
+label {
+    margin-bottom: 10px;
+}
+
+
+.HeroImage {
+    background-color: #009247;
+    align-items: center;
+
+    img {
+        margin-top: 10px;
+        width: 70%;
+        height: 80%;
+    }
+
+    .HeroCaption {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        h1 {
+            color: #FFFFFF;
+            font-weight: bold;
+        }
+
+        p {
+            color: #FFFFFF
+        }
+
+
+        ;
+    }
+
+}
+
+.TitleNavigate {
+    color: #009247;
+    font-weight: bold;
+    cursor: pointer;
+}
