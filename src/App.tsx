@@ -25,6 +25,16 @@ import { ToastContainer } from "react-toastify";
 import ProtectedRoute from "./components/shared/ProtectedRoute/ProtectedRoute";
 
 function App() {
+
+
+
+
+
+
+
+
+
+  
   const routes = createBrowserRouter([
     // 🌍 Public User Routes
     {
@@ -82,6 +92,7 @@ function App() {
       errorElement: <NotFound />,
       children: [
         { index: true, element: <Login /> }, // Default route for /auth is login
+        { path:"login", element: <Login /> },
         { path: "register", element: <Register /> },
         { path: "forget-password", element: <ForgetPass /> },
         { path: "reset-password", element: <ResetPass /> },

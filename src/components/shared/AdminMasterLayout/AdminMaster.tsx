@@ -3,23 +3,36 @@ import { Navigate, Outlet } from "react-router-dom";
 import { AuthContext } from "../../../context/Context";
 import SideBar from "../Side/SideBar";
 import NavBar from "../Nav/NavBar";
-import Style from "./AdminMaster.module.css";
+
 
 function AdminMaster() {
   const { userData }: any = useContext(AuthContext);
   console.log(userData);
 
   // const token: string | null = localStorage.getItem("token");
-  return (
-    <>
-      <div className="container-fluid d-flex position-relative w-100 vh-100">
-        <SideBar />
-        {userData?.payload?.role === "User" ? <Navigate to={"/auth"} /> : ""}
-        <NavBar />
-      </div>
-      <Outlet />
-    </>
-  );
-}
+  return <>
+     <NavBar/>
+    
+      <div className="container-fluid" dir="ltr">
+        <div className="row">
 
+
+          <div className="col-md-2  bg-info">
+          <SideBar />
+          </div>
+
+          <div className="col-md-10 ">
+          <Outlet />
+          {userData?.payload?.role === "User" ? <Navigate to={"/auth"} /> : ""}
+          </div>
+        
+       
+       
+      </div>
+      
+    </div>
+        </>
+    
+  ;
+}
 export default AdminMaster;
