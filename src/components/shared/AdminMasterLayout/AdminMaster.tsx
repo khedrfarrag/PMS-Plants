@@ -12,12 +12,14 @@ function AdminMaster() {
   // const token: string | null = localStorage.getItem("token");
   return (
     <>
-      <div className="container-fluid d-flex position-relative w-100 vh-100">
+      {userData?.payload?.role === "User" ? <Navigate to={"/auth"} /> : ""}
+      <div className={`${Style.appcontainer}`}>
         <SideBar />
-        {userData?.payload?.role === "User" ? <Navigate to={"/auth"} /> : ""}
-        <NavBar />
+        <div className={`${Style.content}`}>
+          <NavBar />
+          <Outlet />
+        </div>
       </div>
-      <Outlet />
     </>
   );
 }

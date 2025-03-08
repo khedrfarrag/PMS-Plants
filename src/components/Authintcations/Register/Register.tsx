@@ -6,21 +6,20 @@ import imagelogo from "../../../assets/صورة_واتساب_بتاريخ_2024-1
 import HeroImageSvg from "../../../assets/svg/svgHeroimage.svg";
 import { SubmitHandler, useForm } from "react-hook-form";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 function Register() {
   type Login = {
     email: string;
     password: string;
-    confirmPassword: string;
     phone: string;
     city: string;
   };
-
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
-    formState: { errors },
     watch,
+    formState: { errors },
   } = useForm({
     defaultValues: {
       name: "",
@@ -35,10 +34,11 @@ function Register() {
   const Onsubmit: SubmitHandler<Login> = async (data) => {
     try {
       const respose = await axios.post(
-        "https://projectplant-production.up.railway.app/api/v1/auth/user/Register",
+        "https://projectplant-production.up.railway.app/api/v1/auth/admin/Register",
         data
       );
       console.log(respose.data);
+      navigate("/auth");
     } catch (errors) {
       console.log(errors);
     }
@@ -201,11 +201,6 @@ function Register() {
                       value === watch("password") || "كلمات المرور غير متطابقة",
                   })}
                 />
-                {errors.confirmPassword && (
-                  <span className="text-danger">
-                    {errors.confirmPassword.message}
-                  </span>
-                )}
                 <FontAwesomeIcon
                   icon={visible ? faEyeSlash : faEye}
                   className={Style.IconHideEye}
@@ -236,10 +231,4 @@ function Register() {
   );
 }
 
-{
-  /* <FontAwesomeIcon
-icon={faEyeSlash}
-className={Style.IconHideEye}
-/> */
-}
 export default Register;

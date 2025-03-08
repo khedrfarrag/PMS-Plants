@@ -1,84 +1,4 @@
-// import React, { useContext, useEffect, useState } from "react";
-// import { Link, useNavigate } from "react-router-dom";
-// import { SubmitHandler, useForm } from "react-hook-form";
-// import axios from "axios";
-// import { toast } from "react-toastify";
-// import { AuthContext } from "../../../context/Context";
-// import Style from "../Login/Login.module.css";
-// import imagelogo from "../../../assets/صورة_واتساب_بتاريخ_2024-11-10_في_22.53.07_158af9f7-removebg-preview.png";
-// import HeroImageSvg from "../../../assets/svg/svgHeroimage.svg";
-// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-// import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
-// interface IFormInput {
-//   email: string;
-//   password: string;
-// }
-
-// interface LoginResponse {
-//   token: string;
-// }
-
-// export default function Login() {
-//   const [visible, Setvisible] = useState<boolean>(true);
-//   const { isAuthenticated, login, role } = useContext(AuthContext);
-
-//   const navigate = useNavigate();
-
-//   const {
-//     register,
-//     handleSubmit,
-//     formState: { errors },
-//   } = useForm<IFormInput>({
-//     defaultValues: {
-//       email: "",
-//       password: "",
-//     },
-//     mode: "all",
-//   });
-
-//   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-//     try {
-//       const response = await axios.post(
-//         "https://projectplant-production.up.railway.app/api/v1/auth/admin/Login",
-//         data
-//       );
-
-//       console.log("Backend Response:", response);
-
-//       // Store token in localStorage
-//       localStorage.setItem("token", response.data.token);
-//       console.log(response.data.token);
-//       // Show success toast
-//       toast.success("تم تسجيل الدخول بنجاح!");
-
-//       // Navigate to the dashboard
-//       navigate("/");
-//     } catch (error) {
-//       console.error("Error during login:", error);
-
-//       // Handle Axios errors
-//       if (axios.isAxiosError(error)) {
-//         // Display the error message from the backend
-//         toast.error(
-//           error.response?.data?.message || "حدث خطأ أثناء تسجيل الدخول"
-//         );
-//       } else {
-//         // Handle generic errors
-//         toast.error("حدث خطأ غير متوقع أثناء تسجيل الدخول", {
-//           position: "top-right",
-//           autoClose: 5000, // Close after 5 seconds
-//         });
-//       }
-//     }
-//   };
-//   // Redirect if the user is already logged in
-//   useEffect(() => {
-//     if (isAuthenticated) {
-//       navigate("/dashboard"); // Redirect to dashboard if logged in
-//     }
-//   }, [isAuthenticated, navigate]);
-
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
 import axios from "axios";
@@ -87,8 +7,9 @@ import { AuthContext } from "../../../context/Context"; // استخدام `useAu
 import Style from "../Login/Login.module.css";
 import imagelogo from "../../../assets/صورة_واتساب_بتاريخ_2024-11-10_في_22.53.07_158af9f7-removebg-preview.png";
 import HeroImageSvg from "../../../assets/svg/svgHeroimage.svg";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
+import TextFeild from "../../shared/utils/TextFeild";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 type IFormInput = {
   email: string;
@@ -107,7 +28,7 @@ type LoginResponse = {
 };
 
 export default function Login() {
-  const { userData, saveUserData } = useContext<any>(AuthContext);
+  const { saveUserData } = useContext<any>(AuthContext);
   const [visible, setVisible] = useState<boolean>(true);
   const navigate = useNavigate();
 
@@ -171,7 +92,7 @@ export default function Login() {
             <p>سجل دخولك للوصول إلى حسابك وإدارة مشترياتك بسهولة</p>
           </div>
         </div>
-        <div className="  w-50 d-flex flex-column flex-grow-1 ">
+        <div className="  w-50 d-flex flex-column flex-grow-1 p-2 ">
           <div className=" w-100  position-relative">
             <img
               src={imagelogo}
@@ -188,55 +109,45 @@ export default function Login() {
           </div>
           <form className="w-100" onSubmit={handleSubmit(onSubmit)}>
             <div className=" w-75  d-flex flex-column m-auto gap-1 mt-5 ">
-              <div className="w-100 d-flex flex-column">
-                <label htmlFor="email">البريد الالكتروني</label>
-                <input
-                  placeholder="أدخل البريد الالكتروني"
-                  className="w-100 p-2"
-                  type="email"
-                  id="name"
-                  aria-label="email"
-                  {...register("email", {
-                    required: "البريد الالكتروني مطلوب",
-                    pattern: {
-                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                      message: "يجب أن يكون البريد الالكتروني بصيغة صحيحة",
-                    },
-                  })}
-                />
-                {errors.email && (
-                  <span className="text-danger">{errors.email.message}</span>
-                )}
-              </div>
-              <div className="w-100 d-flex flex-column position-relative">
-                <label htmlFor="name">كلمة المرور</label>
-                <input
-                  placeholder="أدخل كلمة المرور"
-                  className="w-100 p-2"
-                  type={visible ? "password" : "text"}
-                  id="password"
-                  aria-label="password"
-                  {...register("password", {
-                    required: "الرقم السري مطلوب",
-                    minLength: {
-                      value: 8,
-                      message: "يجب أن يكون الرقم السري 8 أحرف على الأقل",
-                    },
-                    maxLength: {
-                      value: 20,
-                      message: "يجب أن يكون الرقم السري 20 أحرف على الأكثر",
-                    },
-                  })}
-                />
-                {errors.password && (
-                  <span className="text-danger">{errors.password.message}</span>
-                )}
-                <FontAwesomeIcon
-                  icon={visible ? faEyeSlash : faEye}
-                  onClick={() => setVisible(!visible)}
-                  className={Style.IconEye}
-                />
-              </div>
+              <TextFeild
+                label="البريد الالكتروني"
+                placeholder="أدخل البريد الالكتروني"
+                type="email"
+                id="email"
+                error={errors?.email?.message}
+                {...register("email", {
+                  required: "البريد الالكتروني مطلوب",
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: "يجب أن يكون البريد الالكتروني بصيغة صحيحة",
+                  },
+                })}
+              />
+              <TextFeild
+                label="كلمة المرور"
+                placeholder="أدخل كلمة المرور"
+                type={visible ? "password" : "text"}
+                id="password"
+                error={errors?.password?.message}
+                {...register("password", {
+                  required: "الرقم السري مطلوب",
+                  minLength: {
+                    value: 8,
+                    message: "يجب أن يكون الرقم السري 8 أحرف على الأقل",
+                  },
+                  maxLength: {
+                    value: 20,
+                    message: "يجب أن يكون الرقم السري 20 أحرف على الأكثر",
+                  },
+                })}
+                starticon={
+                  <FontAwesomeIcon
+                    icon={visible ? faEyeSlash : faEye}
+                    onClick={() => setVisible(!visible)}
+                    className={Style.IconEye}
+                  />
+                }
+              />
               <div className="">
                 <Link className="link-to" to="/auth/forget-password">
                   <span className={`${Style.TitleNavigate}`}>
