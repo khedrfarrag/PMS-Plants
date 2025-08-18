@@ -56,7 +56,7 @@ interface UserProfile {
     FirstName: string;
     LastName: string;
     PhoneNumber: string;
-  City: string;
+    City: string;
     Email: string;
     ImageUrl: string;
   };
@@ -124,8 +124,9 @@ function Payment() {
 
   // Helper functions for pending checkout
   const createPendingCheckout = (orderData: PendingCheckout) => {
-    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-    
+    const token =
+      localStorage.getItem("token") || sessionStorage.getItem("token");
+
     try {
       if (token && UserId) {
         // مستخدم مسجل: استخدم localStorage
@@ -133,7 +134,6 @@ function Payment() {
       } else {
         // ضيف: استخدم sessionStorage
         sessionStorage.setItem("pendingCheckout", JSON.stringify(orderData));
-       ("Pending checkout saved to sessionStorage for guest");
       }
     } catch (error) {
       console.error("Error saving pending checkout:", error);
@@ -142,8 +142,9 @@ function Payment() {
   };
 
   const checkPendingCheckout = (): PendingCheckout | null => {
-    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-    
+    const token =
+      localStorage.getItem("token") || sessionStorage.getItem("token");
+
     if (token && UserId) {
       // فحص localStorage للمستخدمين المسجلين
       const localPending = localStorage.getItem("pendingCheckout");
@@ -175,26 +176,24 @@ function Payment() {
         }
       }
     }
-    
+
     return null;
   };
 
   const clearPendingCheckout = () => {
-    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-    
+    const token =
+      localStorage.getItem("token") || sessionStorage.getItem("token");
+
     try {
       if (token && UserId) {
         localStorage.removeItem("pendingCheckout");
       } else {
         sessionStorage.removeItem("pendingCheckout");
-       ("Pending checkout cleared from sessionStorage for guest");
       }
     } catch (error) {
       console.error("Error clearing pending checkout:", error);
     }
   };
-
-
 
   const onSubmit = async (data: FormData) => {
     setSubmitLoading(true);
@@ -211,29 +210,28 @@ function Payment() {
       fd.append("Governorate", data.Governorate);
       fd.append("PaymentMethod", data.PaymentMethod);
 
-      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+      const token =
+        localStorage.getItem("token") || sessionStorage.getItem("token");
       const headers: any = {};
       if (token) headers["Authorization"] = `Bearer ${token}`;
       if (sessionId) headers["session-Id"] = sessionId; // إرسال دائم إن وُجد
 
-      const response = await axios.post(
-        cartShopPoint.CheckoutToPay,
-        fd,
-        { headers }
-      );
+      const response = await axios.post(cartShopPoint.CheckoutToPay, fd, {
+        headers,
+      });
 
       if (response.data.Succeeded) {
         const paymentUrl = response.data.Data?.PaymentUrl;
         const transactionId = response.data.Data?.TransactionId;
-        
+
         // تحديث السلة في الناف بار بعد إرسال الطلب بنجاح
         if (fetchCart) {
           await fetchCart();
         }
-        
+
         if (paymentUrl) {
           toast.success("تم إنشاء رابط الدفع بنجاح");
-          
+
           // إنشاء pendingCheckout
           const orderData: PendingCheckout = {
             transactionId,
@@ -249,19 +247,18 @@ function Payment() {
             governorate: data.Governorate,
             paymentMethod: data.PaymentMethod,
             cartItems: cart?.CartItems || [],
-            totalQuantity: cart?.TotalQuantity || 0
+            totalQuantity: cart?.TotalQuantity || 0,
           };
-          
+
           createPendingCheckout(orderData);
-          
+
           // عرض شاشة التأكيد
           setOrderConfirmed(true);
           setOrderDetails(orderData);
           setSubmitLoading(false);
-          
+
           // افتح صفحة الدفع في تبويب جديد
           window.open(paymentUrl, "_blank", "width=800,height=600");
-          
         } else {
           // الدفع عند الاستلام - عرض صفحة التأكيد
           const orderData: PendingCheckout = {
@@ -278,9 +275,9 @@ function Payment() {
             governorate: data.Governorate,
             paymentMethod: data.PaymentMethod,
             cartItems: cart?.CartItems || [],
-            totalQuantity: cart?.TotalQuantity || 0
+            totalQuantity: cart?.TotalQuantity || 0,
           };
-          
+
           setOrderDetails(orderData);
           setOrderCompleted(true);
           setSubmitLoading(false);
@@ -290,9 +287,7 @@ function Payment() {
         setSubmitLoading(false);
       }
     } catch (error: any) {
-     (error)
-  
-        toast.error(error.response?.data?.Errors[0])
+      toast.error(error.response?.data?.Errors[0]);
       setSubmitLoading(false);
     }
   };
@@ -385,12 +380,12 @@ function Payment() {
           headers: putHeaders,
         }
       );
-      
+
       // تحديث السلة في الناف بار بعد تغيير الكمية
       if (fetchCart) {
         await fetchCart();
       }
-      
+
       toast.success("تم تحديث الكمية بنجاح");
     } catch (error: any) {
       setCart(prevCart);
@@ -415,15 +410,15 @@ function Payment() {
         headers: delHeaders,
       });
       await Getcartitems();
-      
+
       // تحديث السلة في الناف بار بعد حذف المنتج
       if (fetchCart) {
         await fetchCart();
       }
-      
+
       toast.success("تمت إزالة المنتج من السلة بنجاح");
-    } catch (errors) {
-      toast.error("حدث خطأ أثناء حذف المنتج");
+    } catch (errors: any) {
+      toast.error(errors.response?.Data?.message || "حدث خطأ أثناء حذف المنتج");
     } finally {
       setLoadingStates((prev) => ({ ...prev, [productId]: false }));
     }
@@ -456,18 +451,19 @@ function Payment() {
 
     setSubmittingRating(true);
     try {
-      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+      const token =
+        localStorage.getItem("token") || sessionStorage.getItem("token");
       const headers: any = {};
       if (token) headers["Authorization"] = `Bearer ${token}`;
 
       const ratingData = {
         UserId: UserId || "",
         Rating: rating,
-        Comment: comment.trim() || ""
+        Comment: comment.trim() || "",
       };
 
       await axios.post(siteFeedbackPoint.Post, ratingData, { headers });
-      
+
       toast.success("شكراً لك! تم إرسال تقييمك بنجاح");
       setShowRating(false);
       setRating(0);
@@ -511,10 +507,10 @@ function Payment() {
       const TTL_MS = 60 * 60 * 1000;
       const createdAt = new Date(pendingData.createdAt).getTime();
       const now = Date.now();
-      
-      if (pendingData.createdAt && (now - createdAt) <= TTL_MS) {
+
+      if (pendingData.createdAt && now - createdAt <= TTL_MS) {
         setOrderDetails(pendingData);
-        
+
         // تحديد نوع الطلب بناءً على وجود paymentUrl
         if (pendingData.paymentUrl && pendingData.paymentUrl.trim() !== "") {
           setOrderConfirmed(true);
@@ -523,7 +519,6 @@ function Payment() {
         }
       } else {
         // البيانات منتهية الصلاحية
-       ("Pending checkout expired, clearing...");
         clearPendingCheckout();
       }
     }
@@ -555,10 +550,24 @@ function Payment() {
     const fromCart = !!location.state?.fromCart;
     const cartEmpty = !cart || (cart && cart.CartItems.length === 0);
     // اذا جاء من صفحة الكارت، لا تعيد توجيهه حتى لو السلة فاضية، اتركه يملأ النموذج
-    if (!loadingStates.cart && cartEmpty && !hasPending && !fromCart && !orderConfirmed && !orderCompleted) {
+    if (
+      !loadingStates.cart &&
+      cartEmpty &&
+      !hasPending &&
+      !fromCart &&
+      !orderConfirmed &&
+      !orderCompleted
+    ) {
       navigate("/store/productcart");
     }
-  }, [cart, loadingStates.cart, navigate, location.state, orderConfirmed, orderCompleted]);
+  }, [
+    cart,
+    loadingStates.cart,
+    navigate,
+    location.state,
+    orderConfirmed,
+    orderCompleted,
+  ]);
 
   if (loadingStates.cart) {
     return (
@@ -602,35 +611,48 @@ function Payment() {
             <div className={Style.detailRow}>
               <span>الاسم:</span>
               <span>
-                {(orderDetails.orderData?.FirstName ?? orderDetails.firstName ?? "")} {(
-                  orderDetails.orderData?.LastName ?? orderDetails.lastName ?? ""
-                )}
+                {orderDetails.orderData?.FirstName ??
+                  orderDetails.firstName ??
+                  ""}{" "}
+                {orderDetails.orderData?.LastName ??
+                  orderDetails.lastName ??
+                  ""}
               </span>
             </div>
             <div className={Style.detailRow}>
               <span>رقم الهاتف:</span>
-              <span>{orderDetails.orderData?.MobileNumber ?? orderDetails.mobileNumber ?? "-"}</span>
+              <span>
+                {orderDetails.orderData?.MobileNumber ??
+                  orderDetails.mobileNumber ??
+                  "-"}
+              </span>
             </div>
             <div className={Style.detailRow}>
               <span>العنوان:</span>
               <span>
-                {(orderDetails.orderData?.Address ?? orderDetails.address ?? "-")}
-                {(orderDetails.orderData?.Governorate || orderDetails.governorate)
-                  ? `, ${orderDetails.orderData?.Governorate ?? orderDetails.governorate}`
+                {orderDetails.orderData?.Address ?? orderDetails.address ?? "-"}
+                {orderDetails.orderData?.Governorate || orderDetails.governorate
+                  ? `, ${
+                      orderDetails.orderData?.Governorate ??
+                      orderDetails.governorate
+                    }`
                   : ""}
               </span>
             </div>
             <div className={Style.detailRow}>
               <span>طريقة الدفع:</span>
               <span>
-                {((orderDetails.orderData?.PaymentMethod ?? orderDetails.paymentMethod) === "CashOnDelivery")
+                {(orderDetails.orderData?.PaymentMethod ??
+                  orderDetails.paymentMethod) === "CashOnDelivery"
                   ? "الدفع عند الاستلام"
                   : "بطاقة أو محفظة إلكترونية"}
               </span>
             </div>
             <div className={Style.detailRow}>
               <span>المجموع:</span>
-              <span className={Style.finalTotal}>${orderDetails.totalPrice?.toFixed(2)}</span>
+              <span className={Style.finalTotal}>
+                ${orderDetails.totalPrice?.toFixed(2)}
+              </span>
             </div>
           </div>
 
@@ -642,26 +664,30 @@ function Payment() {
                 if (fetchCart) {
                   await fetchCart();
                 }
-                
-                window.open(orderDetails.paymentUrl, "_blank", "width=800,height=600");
+
+                window.open(
+                  orderDetails.paymentUrl,
+                  "_blank",
+                  "width=800,height=600"
+                );
               }}
             >
               <span>💳</span>
               إتمام الدفع الآن
             </button>
-            
+
             <button
               className={Style.cancelButton}
               onClick={async () => {
                 clearPendingCheckout();
                 setOrderConfirmed(false);
                 setOrderDetails(null);
-                
+
                 // تحديث السلة في الناف بار بعد إلغاء الطلب
                 if (fetchCart) {
                   await fetchCart();
                 }
-                
+
                 toast.success("تم إلغاء الطلب بنجاح");
                 navigate("/store/productcart");
               }}
@@ -669,19 +695,19 @@ function Payment() {
               <span>❌</span>
               إلغاء الطلب
             </button>
-            
+
             <button
               className={Style.secondaryButton}
               onClick={async () => {
                 setOrderConfirmed(false);
                 setOrderDetails(null);
                 reset();
-                
+
                 // تحديث السلة في الناف بار
                 if (fetchCart) {
                   await fetchCart();
                 }
-                
+
                 navigate("/");
               }}
             >
@@ -719,7 +745,7 @@ function Payment() {
                   <span>⭐</span>
                   تقييم الموقع
                 </h3>
-                
+
                 <div className={Style.starsContainer}>
                   <label className={Style.starsLabel}>التقييم:</label>
                   <div className={Style.starsGroup}>
@@ -734,7 +760,9 @@ function Payment() {
                       >
                         <FontAwesomeIcon
                           icon={faStar}
-                          className={star <= rating ? Style.starFilled : Style.starEmpty}
+                          className={
+                            star <= rating ? Style.starFilled : Style.starEmpty
+                          }
                         />
                       </button>
                     ))}
@@ -780,7 +808,7 @@ function Payment() {
                       </>
                     )}
                   </button>
-                  
+
                   <button
                     type="button"
                     className={Style.cancelRatingButton}
@@ -804,7 +832,10 @@ function Payment() {
             <ul>
               <li>سيتم التواصل معك قريباً لتأكيد الطلب</li>
               <li>يمكنك متابعة حالة الطلب من خلال رقم المعاملة</li>
-              <li>في حالة الدفع الإلكتروني، سيتم إرسال رابط الدفع عبر البريد الإلكتروني</li>
+              <li>
+                في حالة الدفع الإلكتروني، سيتم إرسال رابط الدفع عبر البريد
+                الإلكتروني
+              </li>
             </ul>
           </div>
         </div>
@@ -823,10 +854,15 @@ function Payment() {
               تم إرسال طلبك بنجاح
               <span>✅</span>
             </h1>
-          {orderDetails.sessionId && <p className={Style.headerSubtitle}>
-              رقم الطلب: {orderDetails.sessionId}
-            </p>}
-            <p className={Style.headerSubtitle} style={{ color: "#666", fontSize: "16px", marginTop: "8px" }}>
+            {orderDetails.sessionId && (
+              <p className={Style.headerSubtitle}>
+                رقم الطلب: {orderDetails.sessionId}
+              </p>
+            )}
+            <p
+              className={Style.headerSubtitle}
+              style={{ color: "#666", fontSize: "16px", marginTop: "8px" }}
+            >
               سيتم التواصل معك قريباً لتأكيد الطلب والتوصيل
             </p>
           </div>
@@ -844,21 +880,31 @@ function Payment() {
             <div className={Style.detailRow}>
               <span>الاسم:</span>
               <span>
-                {(orderDetails.orderData?.FirstName ?? orderDetails.firstName ?? "")} {(
-                  orderDetails.orderData?.LastName ?? orderDetails.lastName ?? ""
-                )}
+                {orderDetails.orderData?.FirstName ??
+                  orderDetails.firstName ??
+                  ""}{" "}
+                {orderDetails.orderData?.LastName ??
+                  orderDetails.lastName ??
+                  ""}
               </span>
             </div>
             <div className={Style.detailRow}>
               <span>رقم الهاتف:</span>
-              <span>{orderDetails.orderData?.MobileNumber ?? orderDetails.mobileNumber ?? "-"}</span>
+              <span>
+                {orderDetails.orderData?.MobileNumber ??
+                  orderDetails.mobileNumber ??
+                  "-"}
+              </span>
             </div>
             <div className={Style.detailRow}>
               <span>العنوان:</span>
               <span>
-                {(orderDetails.orderData?.Address ?? orderDetails.address ?? "-")}
-                {(orderDetails.orderData?.Governorate || orderDetails.governorate)
-                  ? `, ${orderDetails.orderData?.Governorate ?? orderDetails.governorate}`
+                {orderDetails.orderData?.Address ?? orderDetails.address ?? "-"}
+                {orderDetails.orderData?.Governorate || orderDetails.governorate
+                  ? `, ${
+                      orderDetails.orderData?.Governorate ??
+                      orderDetails.governorate
+                    }`
                   : ""}
               </span>
             </div>
@@ -868,7 +914,9 @@ function Payment() {
             </div>
             <div className={Style.detailRow}>
               <span>المجموع:</span>
-              <span className={Style.finalTotal}>${orderDetails.totalPrice?.toFixed(2)}</span>
+              <span className={Style.finalTotal}>
+                ${orderDetails.totalPrice?.toFixed(2)}
+              </span>
             </div>
           </div>
 
@@ -879,31 +927,31 @@ function Payment() {
                 setOrderCompleted(false);
                 setOrderDetails(null);
                 reset();
-                
+
                 // تحديث السلة في الناف بار
                 if (fetchCart) {
                   await fetchCart();
                 }
-                
+
                 navigate("/");
               }}
             >
               <span>🏠</span>
               العودة للصفحة الرئيسية
             </button>
-            
+
             <button
               className={Style.secondaryButton}
               onClick={async () => {
                 setOrderCompleted(false);
                 setOrderDetails(null);
                 reset();
-                
+
                 // تحديث السلة في الناف بار
                 if (fetchCart) {
                   await fetchCart();
                 }
-                
+
                 navigate("/store");
               }}
             >
@@ -941,7 +989,7 @@ function Payment() {
                   <span>⭐</span>
                   تقييم الموقع
                 </h3>
-                
+
                 <div className={Style.starsContainer}>
                   <label className={Style.starsLabel}>التقييم:</label>
                   <div className={Style.starsGroup}>
@@ -956,7 +1004,9 @@ function Payment() {
                       >
                         <FontAwesomeIcon
                           icon={faStar}
-                          className={star <= rating ? Style.starFilled : Style.starEmpty}
+                          className={
+                            star <= rating ? Style.starFilled : Style.starEmpty
+                          }
                         />
                       </button>
                     ))}
@@ -1002,7 +1052,7 @@ function Payment() {
                       </>
                     )}
                   </button>
-                  
+
                   <button
                     type="button"
                     className={Style.cancelRatingButton}
@@ -1374,8 +1424,8 @@ function Payment() {
 
         <div className={Style.buttonSection}>
           <div className={Style.buttonGroup}>
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className={Style.primaryButton}
               disabled={submitLoading || !cart || cart.CartItems.length === 0}
             >
@@ -1392,8 +1442,8 @@ function Payment() {
               )}
             </button>
 
-            <button 
-              type="button" 
+            <button
+              type="button"
               onClick={handleReset}
               className={Style.secondaryButton}
               disabled={submitLoading}
