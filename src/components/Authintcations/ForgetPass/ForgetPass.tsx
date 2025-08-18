@@ -5,9 +5,11 @@ import HeroImageSvg from "../../../assets/svg/svgHeroimage.svg";
 import { SubmitHandler, useForm } from "react-hook-form";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { authEndPoint } from "../../../constant/Const";
 function ForgetPass() {
   type Login = {
-    email: string;
+    Email: string;
   };
   const navigate = useNavigate();
 
@@ -17,17 +19,20 @@ function ForgetPass() {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      email: "",
+      Email: "",
     },
     mode: "all",
   });
   const Onsubmit: SubmitHandler<Login> = async (data) => {
     try {
       const respose = await axios.post(
-        "https://projectplant-production.up.railway.app/api/v1/auth/admin/Forgot-Password",
+        authEndPoint.ForgotPassword,
         data
       );
+      toast.success(respose.data);
+      console.log(respose.data);
       navigate("/auth/reset-password");
+
       console.log(respose.data);
     } catch (errors) {
       console.log(errors);
@@ -73,7 +78,7 @@ function ForgetPass() {
                   type="email"
                   id="name"
                   aria-label="email"
-                  {...register("email", {
+                  {...register("Email", {
                     required: "البريد الالكتروني مطلوب",
                     pattern: {
                       value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g,
@@ -81,8 +86,8 @@ function ForgetPass() {
                     },
                   })}
                 />
-                {errors.email && (
-                  <span className="text-danger">{errors.email?.message}</span>
+                {errors.Email && (
+                  <span className="text-danger">{errors.Email?.message}</span>
                 )}
               </div>
               <button
@@ -90,7 +95,7 @@ function ForgetPass() {
                 className={`${Style.BttnSubmit} p-3 bg-success `}
               >
                 {" "}
-                انشاء حساب
+                ارسال الرابط
               </button>
             </div>
           </form>

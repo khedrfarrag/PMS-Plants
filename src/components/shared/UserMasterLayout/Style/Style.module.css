@@ -1,0 +1,500 @@
+/* ==== Custom Footer Section ==== */
+.footerSectionCustom {
+    background: linear-gradient(135deg, #2d5016 0%, #4a7c59 100%);
+    color: #fff;
+    padding: 48px 0 0 0;
+    margin-top: 60px;
+    font-family: 'Cairo', 'Arial', sans-serif;
+    direction: rtl;
+    box-shadow: 0 -2px 16px rgba(45, 80, 22, 0.08);
+}
+
+.footerContentCustom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px 24px 24px;
+    gap: 32px;
+}
+
+.footerBrandBlock {
+    flex: 1 1 320px;
+    min-width: 260px;
+}
+
+.logoFooterCustom {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.logoImgFooterCustom {
+    width: 56px;
+    height: 56px;
+    object-fit: contain;
+    border-radius: 50%;
+    background: #fff2;
+    box-shadow: 0 2px 8px rgba(45, 80, 22, 0.08);
+}
+
+.logonameFooterCustom {
+    color: #fff;
+}
+
+.captionlogoFooterCustom {
+    margin-top: 10px;
+    color: #b6e388;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.footerLinksBlock,
+.footerCategoriesBlock {
+    flex: 1 1 180px;
+    min-width: 160px;
+}
+
+.footerLinksTitleCustom {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 14px;
+    color: #fff;
+    letter-spacing: 0.5px;
+}
+
+.footerLinksListCustom {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footerLinksListCustom li {
+    margin-bottom: 8px;
+    color: #e8f5e8;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.footerLinkCustom {
+    color: #e8f5e8;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.footerLinkCustom:hover {
+    color: #b6e388;
+}
+
+.footerContactBlock {
+    flex: 1 1 220px;
+    min-width: 180px;
+}
+
+.footerContactItemCustom {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}
+
+.footerContactItemCustom i {
+    color: #b6e388;
+    font-size: 1.3rem;
+    background: #fff2;
+    border-radius: 50%;
+    padding: 7px;
+    transition: background 0.2s;
+}
+
+.footerSocialTextCustom {
+    color: #e8f5e8;
+    font-size: 0.98rem;
+    margin: 10px 0 8px 0;
+}
+
+.footerSocialIconsCustom {
+    display: flex;
+    gap: 14px;
+    margin-top: 4px;
+}
+
+.socialIconLinkCustom {
+    color: #fff;
+    background: #4a7c59;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+    box-shadow: 0 2px 8px rgba(45, 80, 22, 0.08);
+}
+
+.socialIconLinkCustom:hover {
+    background: #b6e388;
+    color: #2d5016;
+    transform: translateY(-2px) scale(1.08);
+}
+
+.footerCopyrightCustom {
+    background: #224012;
+    color: #b6e388;
+    text-align: center;
+    padding: 16px 0 8px 0;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+    margin-top: 0;
+}
+
+@media (max-width: 900px) {
+    .footerContentCustom {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 24px;
+        padding: 0 12px 18px 12px;
+    }
+
+    .footerBrandBlock,
+    .footerLinksBlock,
+    .footerCategoriesBlock,
+    .footerContactBlock {
+        min-width: 0;
+        text-align: right;
+    }
+}
+
+@media (max-width: 600px) {
+    .footerSectionCustom {
+        padding: 32px 0 0 0;
+    }
+
+    .footerLinksTitleCustom {
+        font-size: 1rem;
+    }
+
+    .footerCopyrightCustom {
+        font-size: 0.9rem;
+        padding: 10px 0 6px 0;
+    }
+
+    .logoImgFooterCustom {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+/* .contaner {
+    background: #bfecd5;
+    background: -webkit-linear-gradient(211deg, #bfecd5 0%, #ffffff 100%);
+    background: linear-gradient(211deg, #bfecd5 0%, #ffffff 100%);
+} */
+
+.buttoncontactus {
+    position: fixed;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 1px solid green;
+    background-color: green;
+    color: white;
+    bottom: 50px;
+    right: 5px;
+    z-index: 55;
+    animation: animi 3s alternate-reverse infinite;
+}
+
+.buttoncontactus::before {
+    content: "";
+    position: absolute;
+    left: -100%;
+    bottom: -40%;
+    color: green;
+}
+
+.buttoncontactus:hover::before {
+    content: "تواصل معنا";
+}
+
+.buttoncontactus:hover {
+    background-color: white;
+    border: 1px solid green;
+    transition: .5s all ease-in-out;
+    color: green;
+    animation-play-state: paused;
+
+}
+
+@keyframes animi {
+    from {
+        opacity: .5;
+        transform: scale(.8);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.footer {
+    width: 100%;
+
+    .Linefooter {
+        border: 1px solid grey;
+
+    }
+
+    .ContanerFooter {
+
+        .FooterLogo {
+
+
+            .logo {
+                .logoname {
+                    margin-top: 15px;
+
+                    h6 {
+                        font-size: 20px;
+                        font-weight: bold;
+                    }
+
+                    p {
+                        font-weight: 600;
+                    }
+                }
+            }
+
+
+            .captionlogo {
+                color: grey;
+                font-size: 20px;
+                font-weight: 500;
+            }
+
+        }
+
+        .FooterDepartment {
+            h2 {
+                font-size: 20px;
+                font-weight: bold;
+            }
+
+            p {
+                color: gray;
+            }
+        }
+
+        .FooterCategoris {
+            h2 {
+                font-size: 20px;
+                font-weight: bold;
+            }
+
+            p {
+                color: gray;
+            }
+        }
+
+        .FooterContactus {
+            h2 {
+                font-size: 20px;
+                font-weight: bold;
+            }
+
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+
+            span {
+                i {
+
+                    color: green;
+                }
+            }
+
+            .iconsSocialmedia {
+                display: flex;
+                gap: 20px;
+
+
+
+                i {
+                    width: 40px;
+                    height: 40px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 25px;
+                    background-color: green;
+                    border-radius: 10px;
+                    color: #ffffff;
+
+                }
+            }
+        }
+    }
+}
+
+/* Responsive Design for Footer */
+@media (max-width: 768px) {
+    .ContanerFooter {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 25px;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .FooterLogo,
+    .FooterDepartment,
+    .FooterCategoris,
+    .FooterContactus {
+        width: 100%;
+    }
+
+    /* إخفاء قسمي الفئات وأقسام الموقع على الموبايل */
+    .FooterDepartment,
+    .FooterCategoris {
+        display: none !important;
+    }
+
+    .FooterLogo h6 {
+        font-size: 18px !important;
+    }
+
+    .FooterLogo p {
+        font-size: 14px !important;
+    }
+
+    .captionlogo {
+        font-size: 16px !important;
+    }
+
+    .FooterContactus h2 {
+        font-size: 18px !important;
+        margin-bottom: 15px;
+    }
+
+    .FooterContactus span {
+        font-size: 14px !important;
+        margin-bottom: 8px;
+    }
+
+    .FooterContactus p {
+        font-size: 13px !important;
+        margin-bottom: 15px;
+    }
+
+    .iconsSocialmedia {
+        justify-content: center !important;
+        gap: 15px !important;
+    }
+
+    .iconsSocialmedia i {
+        width: 35px !important;
+        height: 35px !important;
+        font-size: 20px !important;
+    }
+
+    .buttoncontactus {
+        width: 45px;
+        height: 45px;
+        bottom: 20px;
+        right: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .ContanerFooter {
+        padding: 15px;
+        gap: 20px;
+    }
+
+    .FooterLogo h6 {
+        font-size: 16px !important;
+    }
+
+    .FooterLogo p {
+        font-size: 12px !important;
+    }
+
+    .captionlogo {
+        font-size: 14px !important;
+    }
+
+    .FooterDepartment h2,
+    .FooterCategoris h2,
+    .FooterContactus h2 {
+        font-size: 16px !important;
+    }
+
+    .FooterDepartment p,
+    .FooterCategoris p,
+    .FooterContactus span {
+        font-size: 12px !important;
+    }
+
+    .FooterContactus p {
+        font-size: 11px !important;
+    }
+
+    .iconsSocialmedia i {
+        width: 30px !important;
+        height: 30px !important;
+        font-size: 18px !important;
+    }
+
+    .buttoncontactus {
+        width: 40px;
+        height: 40px;
+        bottom: 15px;
+        right: 8px;
+    }
+}
+
+/* Tablet Responsive */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .ContanerFooter {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
+        text-align: left;
+        padding: 25px;
+    }
+
+    .FooterLogo {
+        grid-column: 1 / -1;
+        text-align: center;
+    }
+
+    /* إظهار قسم واحد فقط على التابلت */
+    .FooterDepartment {
+        display: block !important;
+    }
+
+    .FooterCategoris {
+        display: none !important;
+    }
+
+    .FooterDepartment h2,
+    .FooterContactus h2 {
+        font-size: 19px !important;
+    }
+
+    .FooterDepartment p,
+    .FooterContactus span {
+        font-size: 15px !important;
+    }
+
+    .iconsSocialmedia i {
+        width: 38px !important;
+        height: 38px !important;
+        font-size: 22px !important;
+    }
+}

@@ -12,6 +12,35 @@
     cursor: pointer;
 }
 
+.heroAction {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* background-color: #009247; */
+}
+
+
+.herorememberme {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+
+}
+
+.chickRemember {
+    accent-color: #4caf50;
+    cursor: pointer;
+}
+
+.chicklable {
+    position: absolute;
+    font-size: 12px;
+    bottom: -10px;
+    left: 0;
+    color: #009247;
+}
+
 .LogoCampony {
     position: absolute;
     top: 0;

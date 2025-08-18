@@ -1,247 +1,425 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { CategoryPoint, ProductsPoint } from "../../../../constant/Const";
+import ImageUpload from "./ImageUpload";
+import styles from "./AddProduct.module.css";
+import { ShimmerSimpleGallery, ShimmerPostItem } from "react-shimmer-effects";
 
 interface FormData {
-  productName: string;
-  quantity: number;
-  price: number;
-  category: string;
-  discount?: number;
-  description: string;
-  files: FileList;
-  NewTitle: string;
-  NewDescription: string;
+  Id: string;
+  Name: string;
+  CategoryId: number;
+  SubCategoryId: number;
+  Description: string;
+  DiscountPercentage?: number;
+  ImageUrl: FileList | string;
+  Price: number;
+  StockQuantity: number;
+  Title1: string;
+  Body1: string;
+  Title2: string;
+  Body2: string;
+}
+
+interface SubCategory {
+  Id: number;
+  Name: string;
+}
+
+interface Category {
+  Id: number;
+  Name: string;
+  SubCategories: SubCategory[];
 }
 
 function AddProduct() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const method = location?.state?.method === "Edit";
+  const productdata = location?.state?.data;
+
+  const [GetProductData, setProductData] = useState<FormData | null>(null);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [AllCategoryId, setAllCategoryId] = useState<Category[]>([]);
+  const [SubCategoryId, setSubCategoryId] = useState<SubCategory[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
+    watch,
   } = useForm<FormData>({ mode: "all" });
 
-  const onSubmit = async (data: FormData) => {
-    const formData = new FormData();
-    formData.append("productName", data.productName);
-    formData.append("quantity", data.quantity.toString());
-    formData.append("price", data.price.toString());
-    formData.append("category", data.category);
-    if (data.discount !== undefined) {
-      formData.append("discount", data.discount.toString());
+  const watchedCategoryId = watch("CategoryId");
+
+  const getProductData = async (id: number) => {
+    try {
+      setLoading(true);
+      const response = await axios.get<FormData>(
+        ProductsPoint.GetProductId(id),
+        {
+          headers: {
+              Authorization: `Bearer ${localStorage.getItem("token") || sessionStorage.getItem("token")}`,
+          },
+        }
+      );
+      setProductData(response?.data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(
+          error.response?.data?.message || "حدث خطأ أثناء جلب بيانات المنتج"
+        );
+      } else {
+        toast.error("حدث خطأ أثناء جلب بيانات المنتج");
+      }
+    } finally {
+      setLoading(false);
     }
-    formData.append("description", data.description);
-    if (data.files && data.files.length > 0) {
-      formData.append("files", data.files[0]);
+  };
+
+  const GetAllcategory = async () => {
+    try {
+      const response = await axios.get(CategoryPoint.GetAllCategories);
+    setAllCategoryId(response.data);
+    } catch (error) {
+      toast.error("حدث خطأ في جلب الفئات");
+    }
+  };
+
+  const handleImageSelect = useCallback((file: File | null) => {
+    setSelectedImage(file);
+  }, []);
+
+  const formdata = (data: FormData) => {
+    const formData = new FormData();
+    formData.append("Name", data.Name);
+    formData.append("Price", String(data.Price));
+    formData.append("StockQuantity", String(data.StockQuantity));
+    formData.append("Description", data.Description);
+    
+    // Handle image upload
+    if (selectedImage) {
+      formData.append("ImageUrl", selectedImage);
+    }
+    
+    formData.append("DiscountPercentage", String(data.DiscountPercentage || 0));
+    formData.append("CategoryId", String(data.CategoryId));
+    
+    // Handle SubCategoryId - if it's empty or 0, send 0
+    const subCategoryId = data.SubCategoryId || 0;
+    formData.append("SubCategoryId", String(subCategoryId));
+    
+    formData.append("Title1", data.Title1 || "");
+    formData.append("Title2", data.Title2 || "");
+    formData.append("Body1", data.Body1 || "");
+    formData.append("Body2", data.Body2 || "");
+    return formData;
+  };
+
+  const onSubmit = async (data: FormData) => {
+    if (!method && !selectedImage) {
+      toast.error("يرجى اختيار صورة للمنتج");
+      return;
     }
 
     try {
-      const response = await fetch(
-        "https://projectplant-production.up.railway.app/api/v1/cartify-product/createCartifyProduct",
-        {
-          method: "POST",
-          body: formData,
-        }
+      setLoading(true);
+    const conveirtdata = formdata(data);
+      
+      await axios({
+        method: method ? "put" : "post",
+        url: method ? ProductsPoint.Put(productdata) : ProductsPoint.Post,
+        data: conveirtdata,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token") || sessionStorage.getItem("token")}`,
+        },
+      });
+      
+      toast.success(
+        method ? "تم تعديل المنتج بنجاح" : "تمت إضافة المنتج بنجاح"
       );
-
-      const result = await response.json();
-
-      if (response.ok) {
-        toast.success(
-          `✅ تمت الإضافة بنجاح! 🎉\n${result.message || "تمت العملية بنجاح"}`
-        );
-        reset();
-      } else {
-        toast.error(`❌ خطأ: ${result.message || "حدث خطأ، حاول مجددًا!"}`);
-      }
+      method ? navigate("/admin/product-list") : ""
+      // navigate("/admin/product-list");
+      reset();
+      
     } catch (error) {
-      console.error("❌ خطأ في الاتصال بالسيرفر:", error);
-      toast.error("❌ حدث خطأ أثناء الاتصال بالسيرفر.");
+      if (axios.isAxiosError(error)) {
+        toast.error(
+          error.response?.data?.message || "حدث خطأ أثناء حفظ المنتج"
+        );
+      } else {
+        toast.error("حدث خطأ أثناء حفظ المنتج");
+      }
+    } finally {
+      setLoading(false);
     }
   };
-  return (
-    <>
-      <div className="container">
-        <div className="content mt-3 mb-4">
-          <h3>المنتجات</h3>
-          <h6> تستطيع ان تضيف ما تريد من منتجاتك لرفعها على موقعك</h6>
-        </div>
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="row my-form shadow-lg rounded-2 p-2"
-          dir="rtl"
-          encType="multipart/form-data"
-        >
+  // Load categories on mount
+  useEffect(() => {
+    GetAllcategory();
+    if (method && productdata) {
+      getProductData(productdata);
+    }
+  }, [method, productdata]);
+
+  // Set form data when product data is loaded (for edit mode)
+  useEffect(() => {
+    if (GetProductData && isInitialLoad && AllCategoryId.length > 0) {
+      setIsInitialLoad(false);
+      reset({
+        ...GetProductData,
+        ImageUrl: "", // لا يمكن تعيين ملف تلقائيًا
+      });
+      // Load subcategories for the current category
+      if (GetProductData.CategoryId) {
+        const selectedCat = AllCategoryId.find(cat => cat.Id === Number(GetProductData.CategoryId));
+        setSubCategoryId(selectedCat?.SubCategories || []);
+        setTimeout(() => {
+          setValue("SubCategoryId", GetProductData.SubCategoryId || 0);
+        }, 200);
+      }
+    }
+  }, [GetProductData, reset, setValue, isInitialLoad, AllCategoryId]);
+
+  // Handle category change - clear subcategory when category changes
+  useEffect(() => {
+    if (AllCategoryId.length > 0) {
+      if (watchedCategoryId) {
+        setValue("SubCategoryId", 0);
+        const selectedCat = AllCategoryId.find(cat => cat.Id === Number(watchedCategoryId));
+        setSubCategoryId(selectedCat?.SubCategories || []);
+      } else {
+        setSubCategoryId([]);
+        setValue("SubCategoryId", 0);
+      }
+    }
+  }, [watchedCategoryId, setValue, AllCategoryId]);
+
+  if (loading) {
+    return (
+      <div className={styles.loadingContainer} style={{ padding: '40px 0' }}>
+        {/* شيمر الهيدر */}
+        <div style={{ marginBottom: 32 }}>
+          <ShimmerPostItem hasImage={false} title cta />
+        </div>
+        {/* شيمر جاليري لعناصر النموذج */}
+        <div style={{ marginBottom: 32 }}>
+          <ShimmerSimpleGallery row={2} col={3} imageHeight={32} />
+        </div>
+        {/* شيمر مستطيل كبير مكان الفورم */}
+        <div style={{ width: '100%', height: 220, background: '#e0e0e0', borderRadius: 16, marginBottom: 32 }} />
+        {/* شيمر زرار كبير مكان أزرار التحكم */}
+        <div style={{ width: 180, height: 48, background: '#e0e0e0', borderRadius: 12, margin: '0 auto' }} />
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <h1>{method ? "تعديل المنتج" : "إضافة منتج جديد"}</h1>
+        <p>{method ? "قم بتعديل بيانات المنتج" : "أدخل بيانات المنتج الجديد"}</p>
+      </div>
+
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+        className={styles.form}
+      dir="rtl"
+      encType="multipart/form-data"
+    >
+        <div className={styles.formGrid}>
           {/* اسم المنتج */}
-          <div className="col-md-12">
-            <div className="mb-3">
-              <input
-                type="text"
-                className="inputs-form"
-                placeholder="اسم المنتج"
-                {...register("productName", { required: "هذا الحقل مطلوب" })}
-              />
-              {errors.productName && (
-                <p className="text-danger me-2">{errors.productName.message}</p>
-              )}
-            </div>
-          </div>
+          <div className={styles.formGroup}>
+            <label className={styles.label}>اسم المنتج *</label>
+        <input
+          type="text"
+              className={`${styles.input} ${errors.Name ? styles.error : ''}`}
+              placeholder="أدخل اسم المنتج"
+              {...register("Name", { required: "اسم المنتج مطلوب" })}
+        />
+            {errors.Name && <span className={styles.errorText}>{errors.Name.message}</span>}
+      </div>
 
           {/* الكمية */}
-          <div className="col-md-6">
-            <input
-              type="text"
-              placeholder="الكمية"
-              className="inputs-form"
-              {...register("quantity", {
-                required: "هذا الحقل مطلوب",
-                min: { value: 1, message: "يجب أن تكون القيمة أكبر من 0" },
-              })}
-            />
-            {errors.quantity && (
-              <p className="text-danger me-2">{errors.quantity.message}</p>
-            )}
-          </div>
+          <div className={styles.formGroup}>
+            <label className={styles.label}>الكمية *</label>
+        <input
+          type="number"
+              placeholder="أدخل الكمية المتوفرة"
+              className={`${styles.input} ${errors.StockQuantity ? styles.error : ''}`}
+          {...register("StockQuantity", {
+                required: "الكمية مطلوبة",
+            min: { value: 1, message: "يجب أن تكون القيمة أكبر من 0" },
+          })}
+        />
+            {errors.StockQuantity && <span className={styles.errorText}>{errors.StockQuantity.message}</span>}
+      </div>
 
           {/* السعر */}
-          <div className="col-md-6">
-            <input
-              type="text"
-              placeholder="السعر"
-              className="inputs-form"
-              {...register("price", {
-                required: "هذا الحقل مطلوب",
-                min: { value: 1, message: "يجب أن يكون السعر أكبر من 0" },
-              })}
-            />
-            {errors.price && (
-              <p className="text-danger me-2">{errors.price.message}</p>
-            )}
+          <div className={styles.formGroup}>
+            <label className={styles.label}>السعر *</label>
+        <input
+          type="number"
+              placeholder="أدخل سعر المنتج"
+              className={`${styles.input} ${errors.Price ? styles.error : ''}`}
+          {...register("Price", {
+                required: "السعر مطلوب",
+            min: { value: 1, message: "يجب أن يكون السعر أكبر من 0" },
+          })}
+        />
+            {errors.Price && <span className={styles.errorText}>{errors.Price.message}</span>}
+      </div>
+
+          {/* الفئة الرئيسية */}
+          <div className={styles.formGroup}>
+            <label className={styles.label}>الفئة الرئيسية *</label>
+        <select
+              className={`${styles.select} ${errors.CategoryId ? styles.error : ''}`}
+              {...register("CategoryId", { required: "الفئة الرئيسية مطلوبة", valueAsNumber: true })}
+        >
+          <option value="">اختر الفئة الرئيسية</option>
+          {AllCategoryId.map((cat) => (
+            <option key={cat.Id} value={cat.Id}>
+              {cat.Name}
+            </option>
+          ))}
+        </select>
+            {errors.CategoryId && <span className={styles.errorText}>{errors.CategoryId.message}</span>}
           </div>
 
-          {/* الفئة */}
-          <div className="col-md-6">
-            <select
-              className="inputs-form"
-              {...register("category", { required: "هذا الحقل مطلوب" })}
-            >
-              <option value="">اختر فئة</option>
-              <option value="مبيدات">مبيدات</option>
-              <option value="اسمده زراعيه">أسمده زراعيه</option>
-              <option value="تقاوي">تقاوي</option>
-            </select>
-            {errors.category && (
-              <p className="text-danger me-2">{errors.category.message}</p>
-            )}
-          </div>
+          {/* الفئة الفرعية */}
+          <div className={styles.formGroup}>
+            <label className={styles.label}>الفئة الفرعية</label>
+        <select
+              className={styles.select}
+              {...register("SubCategoryId")}
+              disabled={loading}
+              defaultValue={method && GetProductData ? GetProductData.SubCategoryId : ""}
+        >
+              <option value="">
+                {loading ? "جاري التحميل..." : "اختر الفئة الفرعية"}
+              </option>
+          {SubCategoryId.map((sub) => (
+            <option key={sub.Id} value={sub.Id}>
+              {sub.Name}
+            </option>
+          ))}
+        </select>
+        
+            {SubCategoryId.length === 0 && watchedCategoryId && !loading && (
+              <span className={styles.infoText}>لا توجد فئات فرعية لهذه الفئة</span>
+        )} 
+      </div>
 
           {/* الخصم */}
-          <div className="col-md-6">
-            <input
-              type="text"
-              placeholder="الخصم"
-              className="inputs-form"
-              {...register("discount", {
-                required: " هذا الحقل مطلوب",
-                min: { value: 1, message: "يجب أن يكون الخصم أكبر من 0" },
-              })}
-            />
-            {errors.discount && (
-              <p className="text-danger me-2">{errors.discount.message}</p>
-            )}
+          <div className={styles.formGroup}>
+            <label className={styles.label}>نسبة الخصم (%)</label>
+        <input
+              type="number"
+              placeholder="أدخل نسبة الخصم"
+              className={`${styles.input} ${errors.DiscountPercentage ? styles.error : ''}`}
+          {...register("DiscountPercentage", {
+                min: { value: 0, message: "الخصم يجب أن يكون 0 أو أكثر" },
+                max: { value: 100, message: "الخصم لا يمكن أن يتجاوز 100%" },
+          })}
+        />
+            {errors.DiscountPercentage && <span className={styles.errorText}>{errors.DiscountPercentage.message}</span>}
           </div>
-
-          {/* الوصف */}
-          <div className="col-md-12">
-            <textarea
-              placeholder="الوصف"
-              {...register("description", { required: "هذا الحقل مطلوب" })}
-            ></textarea>
-            {errors.description && (
-              <p className="text-danger me-2">{errors.description.message}</p>
-            )}
-          </div>
-          {/* اضافة عنصر */}
-          <div className="row  ">
-            <div className="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 d-flex align-items-center">
-              <label htmlFor="العنصر" id="العنصر" className="w-50 me-3">
-                {" "}
-                أسم العنصر
-              </label>
-              <input
-                type="text"
-                id="NewTitle"
-                aria-label="NewTitle"
-                placeholder="أدخل أسم العنصر"
-                className="inputs-form"
-                {...register("NewTitle", {
-                  min: {
-                    value: 5,
-                    message: "يجب أن يكون الاسم اكبر من 5 احرف",
-                  },
-                })}
-              />
-            </div>
-            <div className="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 d-flex align-items-center">
-              <label htmlFor="الوصف" id="الوصف" className="w-50 me-3">
-                {" "}
-                الوصف
-              </label>
-              <input
-                type="text"
-                id="NewDescription"
-                aria-label="NewDescription"
-                placeholder="أدخل الوصف"
-                className="inputs-form"
-                {...register("NewDescription", {
-                  min: {
-                    value: 10,
-                    message: "يجب أن يكون الوصف اكبر من 10 حروف ",
-                  },
-                })}
-              />
-            </div>
-            <div className="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 d-flex align-items-center">
-              <button className="btn btn-primary w-auto">إضافة عنصر</button>
-            </div>
-          </div>
-
-          {/* تحميل الصورة */}
-          <div className="col-md-12 my-form">
-            <label htmlFor="imageUpload" className="custom-file-upload">
-              <i className="fa-solid fa-arrow-up"></i>
-              <h6>
-                اسحب الصورة و أسقطها <span>هنا</span>
-              </h6>
-            </label>
-            <input
-              type="file"
-              className="img"
-              id="imageUpload"
-              aria-label="files"
-              {...register("files", { required: "يجب تحميل صورة" })}
-            />
-            {errors.files && <p className="error">{errors.files.message}</p>}
-          </div>
-
-          {/* الأزرار */}
-          <div className="my-button">
-            <button type="submit" className="btn btn-light">
-              إضافة
-            </button>
-            <button
-              type="button"
-              className="btn cancel-btn"
-              onClick={() => reset()}
-            >
-              إلغاء
-            </button>
-          </div>
-        </form>
       </div>
-    </>
+
+        {/* الوصف */}
+        <div className={styles.formGroup}>
+          <label className={styles.label}>وصف المنتج *</label>
+        <textarea
+            placeholder="أدخل وصف المنتج"
+            className={`${styles.textarea} ${errors.Description ? styles.error : ''}`}
+            rows={4}
+            {...register("Description", { required: "وصف المنتج مطلوب" })}
+          />
+          {errors.Description && <span className={styles.errorText}>{errors.Description.message}</span>}
+      </div>
+
+        {/* تفاصيل إضافية */}
+        <div className={styles.formGrid}>
+          <div className={styles.formGroup}>
+            <label className={styles.label}>العنوان الأول</label>
+        <input
+          type="text"
+              placeholder="أدخل العنوان الأول"
+              className={styles.input}
+          {...register("Title1")}
+        />
+      </div>
+          <div className={styles.formGroup}>
+            <label className={styles.label}>الوصف الأول</label>
+        <input
+          type="text"
+              placeholder="أدخل الوصف الأول"
+              className={styles.input}
+          {...register("Body1")}
+        />
+      </div>
+          <div className={styles.formGroup}>
+            <label className={styles.label}>العنوان الثاني</label>
+        <input
+          type="text"
+              placeholder="أدخل العنوان الثاني"
+              className={styles.input}
+          {...register("Title2")}
+        />
+      </div>
+          <div className={styles.formGroup}>
+            <label className={styles.label}>الوصف الثاني</label>
+        <input
+          type="text"
+              placeholder="أدخل الوصف الثاني"
+              className={styles.input}
+          {...register("Body2")}
+        />
+      </div>
+        </div>
+
+        {/* رفع الصورة */}
+        <div className={styles.formGroup}>
+          <label className={styles.label}>
+            صورة المنتج {!method && '*'}
+          </label>
+          <ImageUpload
+            onImageSelect={handleImageSelect}
+            currentImageUrl={GetProductData?.ImageUrl as string}
+            error={errors.ImageUrl?.message}
+            required={!method}
+          />
+      </div>
+
+        {/* أزرار التحكم */}
+        <div className={styles.buttonGroup}>
+          <button 
+            type="submit" 
+            className={styles.submitButton}
+            disabled={loading}
+          >
+            {loading ? "جاري الحفظ..." : (method ? "تحديث المنتج" : "إضافة المنتج")}
+        </button>
+        <button
+          type="button"
+            className={styles.cancelButton}
+          onClick={() => navigate("/admin/product-list")}
+            disabled={loading}
+        >
+          إلغاء
+        </button>
+      </div>
+    </form>
+    </div>
   );
 }
 

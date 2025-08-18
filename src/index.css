@@ -1,0 +1,233 @@
+[dir="rtl"] {
+    direction: rtl;
+    text-align: right;
+    /* Align text to the right in RTL mode */
+}
+
+.active {
+    color: #009247 !important;
+    transition: .5s all ease-in-out;
+}
+
+
+
+body {
+    font-family: "Cairo", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+    font-variation-settings:
+        "slnt" 0;
+    @import "~slick-carousel/slick/slick.css";
+    @import "~slick-carousel/slick/slick-theme.css";
+
+}
+
+:root {
+    --main-color-text: #009247;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.card img {
+    max-height: 95vh;
+    object-fit: cover;
+    border-radius: 38px;
+}
+
+.img img {
+    width: 100px;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.link-to {
+    text-decoration: none;
+    margin-top: 20px;
+    color: var(--main-color-text);
+}
+
+.btn {
+    background-color: var(--main-color-text);
+    color: white;
+}
+
+.btn:hover {
+    background-color: #00693e;
+}
+
+.my-input .serch-inp {
+    overflow: hidden;
+    width: 100%;
+    background-color: #00000080;
+}
+
+.custom-icon {
+    /* background-color: #0d6efd; Blue background */
+    color: black;
+    border: none;
+}
+
+.my-input input {
+    border-radius: 8px !important;
+    border: 1px solid #00000080 !important;
+    padding-right: 30px;
+}
+
+.my-input span {
+    position: absolute;
+    z-index: 5;
+    right: 10px;
+}
+
+.btn-dropdown {
+    border: 1px solid #00000080 !important;
+    border-radius: 8px !important;
+    padding: 10px 20px;
+    width: 100%;
+
+}
+
+.modal .modal-dialog .modal-content .modal-body span {
+    background-color: #009247 !important;
+    font-size: 2.5rem;
+    color: white;
+    border-radius: 50px;
+    padding-inline: 10px;
+}
+
+.modal .modal-dialog .modal-footer .btn1 {
+    color: white;
+    padding: 10px 50px;
+    border: none;
+    background-color: red;
+    border-radius: 20px;
+}
+
+.modal .modal-dialog .modal-footer .btn2 {
+    color: black;
+    padding: 10px 50px;
+    border: none;
+    border-radius: 20px;
+}
+
+.modal-dialog {
+    max-width: 350px;
+    /* Adjust the width */
+}
+
+.modal-content {
+    padding: 10px;
+    /* Reduce padding */
+}
+
+.modal-body {
+    padding: 10px 15px;
+}
+
+.popup-icon i {
+    font-size: 1.8rem;
+    /* Reduce icon size */
+}
+
+.modal-footer {
+    padding: 8px;
+    border-top: none !important;
+}
+
+tbody tr.row-light {
+    background-color: #f8f9fa !important;
+}
+
+tbody tr.row-dark {
+    background-color: #ebedf0 !important;
+}
+
+.my-form .inputs-form {
+    width: 100%;
+    border-radius: 10px;
+    gap: 10px;
+    /* border-width: 1px; */
+    padding-top: 14px;
+    padding-right: 16px;
+    padding-bottom: 14px;
+    padding-left: 16px;
+    background-color: white;
+    border: 1px solid #00000080 !important;
+    margin: 5px;
+}
+
+.my-form textarea {
+    width: 100%;
+    border-radius: 10px;
+    gap: 10px;
+    border-width: 1px;
+    padding-top: 14px;
+    padding-right: 16px;
+    padding-bottom: 14px;
+    padding-left: 16px;
+    margin: 5px;
+}
+
+.my-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.inputs-form:focus,
+textarea:focus {
+    border: 2px solid #9ed4a0;
+    /* لون التحديد */
+    outline: none;
+    /* إزالة التحديد الافتراضي */
+    box-shadow: 0 0 5px rgba(0, 255, 64, 0.5);
+    /* تأثير ظل */
+    transition: all 0.3s ease-in-out;
+}
+
+.img {
+    display: none;
+}
+
+.custom-file-upload {
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    padding: 48px;
+    text-align: center;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    font-weight: bold;
+    background-color: #f8f9fa;
+
+    & span {
+        color: var(--main-color-text);
+    }
+}
+
+.custom-file-upload:hover {
+    background-color: #e9ecef;
+}
+
+
+.custom-file-upload i {
+    font-size: 24px;
+    color: black;
+}
+
+
+.my-form .my-button .cancel-btn {
+    background-color: #ebedf0 !important;
+    color: black;
+    margin-right: 3rem;
+
+}

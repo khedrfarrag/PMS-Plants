@@ -44,6 +44,152 @@ label {
     margin-bottom: 10px;
 }
 
+/* حقل الصورة العصري */
+.imageUploadContainer {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    border: 2px dashed #009247;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.imageUploadContainer:hover {
+    border-color: #007b3a;
+    background-color: #e8f5e8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 146, 71, 0.15);
+}
+
+.imageUploadContainer.dragOver {
+    border-color: #007b3a;
+    background-color: #d4edda;
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(0, 146, 71, 0.25);
+}
+
+.imageUploadContainer.hasImage {
+    border-style: solid;
+    border-width: 2px;
+}
+
+.uploadContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    width: 100%;
+    height: 100%;
+}
+
+.cameraIcon {
+    font-size: 3rem;
+    color: #009247;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+.imageUploadContainer:hover .cameraIcon {
+    transform: scale(1.1);
+    color: #007b3a;
+}
+
+.uploadContent p {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.uploadContent span {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 400;
+}
+
+.fileInput {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.imagePreview {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.imagePreview img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.removeImageBtn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.removeImageBtn:hover {
+    background-color: #c82333;
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .imageUploadContainer {
+        height: 150px;
+    }
+
+    .cameraIcon {
+        font-size: 2.5rem;
+    }
+
+    .uploadContent p {
+        font-size: 1rem;
+    }
+
+    .uploadContent span {
+        font-size: 0.8rem;
+    }
+
+    .removeImageBtn {
+        width: 30px;
+        height: 30px;
+        font-size: 0.9rem;
+    }
+}
 
 .HeroImage {
     background-color: #009247;

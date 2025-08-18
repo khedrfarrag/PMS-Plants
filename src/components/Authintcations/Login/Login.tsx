@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
 import axios from "axios";
@@ -10,75 +10,91 @@ import HeroImageSvg from "../../../assets/svg/svgHeroimage.svg";
 import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 import TextFeild from "../../shared/utils/TextFeild";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { authEndPoint } from "../../../constant/Const";
 
 type IFormInput = {
   email: string;
   password: string;
+  RememberMe: boolean;
 };
 
 type LoginResponse = {
-  payload: {
-    id: number;
-    email: string;
-    role: string;
-    phone: string;
-    name: string;
-  };
-  token: string;
+  id: number;
+  email: string;
+  role: string;
+  phone: string;
+  name: string;
+  Token: string;
+  message: string;
 };
 
 export default function Login() {
-  const { saveUserData } = useContext<any>(AuthContext);
+  const { userData, saveUserData } = useContext<any>(AuthContext);
   const [visible, setVisible] = useState<boolean>(true);
   const navigate = useNavigate();
 
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<IFormInput>({
     defaultValues: {
       email: "",
       password: "",
+      RememberMe: false,
     },
     mode: "all",
   });
-
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     try {
       const response = await axios.post<LoginResponse>(
-        "https://projectplant-production.up.railway.app/api/v1/auth/admin/Login",
-        // "https://projectplant-production.up.railway.app/api/v1/auth/user/Login",
+        authEndPoint.Login,
         data
       );
-
       // استدعاء `login` من `AuthContext`
-      console.log(response?.data?.token);
-      console.log(response?.data?.payload.role);
-
-      const token = response?.data?.token;
-      localStorage.setItem("token", token);
-      saveUserData();
-      // console.log(userData?.payload?.role);
-      if (response?.data?.payload.role === "Admin") {
-        navigate("/admin");
-      } else if (response?.data?.payload.role === "User") {
-        navigate("/");
+      const token = response?.data?.Token;
+      // حفظ التوكن حسب RememberMe
+      if (data.RememberMe) {
+        localStorage.setItem("token", token);
+        sessionStorage.removeItem("token");
       } else {
-        navigate("/auth");
+        sessionStorage.setItem("token", token);
+        localStorage.removeItem("token");
       }
-    } catch (error) {
-      console.error("Error during login:", error);
+      saveUserData();
+      if (watchRemember) {
+        // لو RememberMe محددة، ممكن تحفظ بيانات إضافية زي الإيميل أو تفعيل صلاحيات أطول
+        localStorage.setItem("remember", "true");
 
+      } else {
+        localStorage.removeItem("remember");
+
+      }
+      toast.success("مرحبا بك في الشركه الزراعيه ");
+    } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error(
-          error.response?.data?.message || "حدث خطأ أثناء تسجيل الدخول"
+          error.response?.data.Errors[0] || "حدث خطأ أثناء تسجيل الدخول"
         );
-      } else {
-        toast.error("حدث خطأ غير متوقع أثناء تسجيل الدخول");
       }
     }
   };
+  useEffect(() => {
+    if (userData?.role === "Admin" || userData?.role === "SuperAdmin") {
+      navigate("/admin");
+    } else if (userData?.role === "User") {
+      navigate("/");
+
+    } 
+    else {
+      navigate("/auth");
+    }
+  }, [userData, navigate]);
+  const watchRemember = watch("RememberMe");
+  useEffect(() => {
+    console.log("هل تم تحديد تذكرني؟", watchRemember);
+  }, [watchRemember]);
 
   return (
     <>
@@ -102,7 +118,7 @@ export default function Login() {
             <div className=" w-75 m-auto mt-5 ">
               <h3>سجل دخول</h3>
               <p>اذا لم يكن لديك حساب تستطيع </p>
-              <Link className="link-to" to="register">
+              <Link className="link-to" to="/auth/register">
                 <p className={`${Style.TitleNavigate}`}> انشاء حساب من هنا !</p>
               </Link>
             </div>
@@ -148,19 +164,33 @@ export default function Login() {
                   />
                 }
               />
-              <div className="">
+
+              <div className={Style.heroAction}>
                 <Link className="link-to" to="/auth/forget-password">
                   <span className={`${Style.TitleNavigate}`}>
                     نسيت كلمة المرور!
                   </span>
                 </Link>
+                <div className={`${Style.herorememberme}`}>
+                  <TextFeild
+                    label=""
+                    type="checkbox"
+                    aria-label="RememberMe"
+                    className={Style.chickRemember}
+                    {...register("RememberMe")}
+                    error={errors?.RememberMe?.message}
+                  />
+                  <label className={Style.chicklable} htmlFor="RememberMe">
+                    تذكر
+                  </label>
+                </div>
               </div>
               <button
                 type="submit"
                 className={`${Style.BttnSubmit} p-3 bg-success `}
               >
                 {" "}
-                انشاء حساب
+                تسجيل الدخول
               </button>
             </div>
           </form>

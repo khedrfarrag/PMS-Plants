@@ -9,6 +9,7 @@ import HeroImageSvg from "../../../assets/svg/svgHeroimage.svg";
 import Style from "../ResetPass/ResetPass.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
+import { authEndPoint } from "../../../constant/Const";
 
 function ResetPass() {
   const navigate = useNavigate();
@@ -16,10 +17,10 @@ function ResetPass() {
   const [visible, Setvisible] = useState<boolean>(true);
 
   interface IFormInput {
-    email: string;
-    code: string;
-    newPassword: string;
-    confirmPassword: string;
+    Email: string;
+    OTP: string;
+    NewPassword: string;
+    ConfirmedNewPassword: string;
   }
 
   const {
@@ -27,12 +28,20 @@ function ResetPass() {
     handleSubmit,
     formState: { errors },
     watch,
-  } = useForm<IFormInput>();
+  } = useForm<IFormInput>({
+    defaultValues: {
+      Email: "",
+      OTP: "",
+      NewPassword: "",
+      ConfirmedNewPassword: "",
+    },
+  });
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     try {
       const response = await axios.post(
-        "https://projectplant-production.up.railway.app/api/v1/auth/admin/Reset-Password",
+        authEndPoint.ResetPassword,
+        // "https://localhost:8083/api/Auth/reset-password",
         data
       );
 
@@ -98,7 +107,7 @@ function ResetPass() {
                   type="email"
                   id="name"
                   aria-label="email"
-                  {...register("email", {
+                  {...register("Email", {
                     required: "البريد الالكتروني مطلوب",
                     pattern: {
                       value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
@@ -106,8 +115,8 @@ function ResetPass() {
                     },
                   })}
                 />
-                {errors.email && (
-                  <span className="text-danger">{errors.email?.message}</span>
+                {errors.Email && (
+                  <span className="text-danger">{errors.Email?.message}</span>
                 )}
               </div>
               <div className="w-100 d-flex flex-column">
@@ -116,9 +125,9 @@ function ResetPass() {
                   placeholder="أدخل الرقم المتغير "
                   className="w-100 p-2"
                   type="text"
-                  aria-label="code"
-                  id="code"
-                  {...register("code", {
+                  aria-label="OTP"
+                  id="OTP"
+                  {...register("OTP", {
                     required: "الرقم المتغير مطلوب",
                   })}
                 />
@@ -131,7 +140,7 @@ function ResetPass() {
                   type={visible ? "password" : "text"}
                   id="name"
                   aria-label="newPassword"
-                  {...register("newPassword", {
+                  {...register("NewPassword", {
                     required: "يجب ادخال رقم سري جديد",
                     minLength: {
                       value: 8,
@@ -157,7 +166,7 @@ function ResetPass() {
                   type={visible ? "password" : "text"}
                   id="name"
                   aria-label="confirmpassword"
-                  {...register("confirmPassword", {
+                  {...register("ConfirmedNewPassword", {
                     required: "يجب ادخال رقم سري جديد",
                     minLength: {
                       value: 8,
@@ -168,7 +177,7 @@ function ResetPass() {
                       message: "يجب أن يكون الرقم السري 20 أحرف على الأكثر",
                     },
                     validate: (value) =>
-                      value === watch("newPassword") ||
+                      value === watch("NewPassword") ||
                       "كلمات المرور غير متطابقة",
                   })}
                 />

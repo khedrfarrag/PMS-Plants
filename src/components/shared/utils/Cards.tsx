@@ -1,6 +1,8 @@
 import React from "react";
 import { motion } from "framer-motion";
 import Style from "../../AdminModule/Home/Dashboard.module.css";
+import Stack from "@mui/material/Stack";
+import { Gauge } from "@mui/x-charts";
 
 type Props = {
   imgPath: string;
@@ -27,20 +29,8 @@ export default function Cards(props: Props) {
           <h1 className="me-3">{props.Value}</h1>
         </div>
         <div className={`${Style.heroDesc} `}>
-          <span className="ms-1">
-            <select className="form-select form-select-sm w-auto">
-              <option>شهري</option>
-              <option>سنوي</option>
-              <option>اسبوعي</option>
-            </select>
-          </span>
-          <span
-            className={`${Style.heroinfo} ms-5`}
-            style={{ background: props.background, color: props.color }}
-          >
-            {" "}
-            {props.rate}%+{" "}
-          </span>
+
+          
         </div>
       </motion.div>
     </>

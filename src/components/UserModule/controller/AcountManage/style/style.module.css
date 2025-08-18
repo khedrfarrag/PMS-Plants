@@ -1,0 +1,289 @@
+.managementUser {
+    width: 100%;
+    min-height: 100vh;
+    background: #f6faf8;
+    padding: 32px 0 0 0;
+    font-family: 'Cairo', 'Tajawal', Arial, sans-serif;
+    /* direction: ltr; */
+}
+
+.mainGrid {
+    display: flex;
+    gap: 24px;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-bottom: 32px;
+    margin-top: 80px;
+}
+
+
+
+.userInfoCard {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px #00924722;
+    padding: 24px 32px 24px 32px;
+    width: 50%;
+    margin: auto;
+    /* flex: 1 1 340px; */
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    align-items: flex-end;
+}
+
+.userInfoHeader {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 18px;
+}
+
+.userId {
+    font-size: 18px;
+    color: #009247;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.editIcon {
+    color: #018f2c;
+    font-size: 16px;
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+.userAvatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #e0f2e9;
+    box-shadow: 0 2px 8px #00924722;
+}
+
+.userInfoBody {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+.userInfoRow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    color: #222;
+    font-weight: 500;
+}
+
+.userInfoRow svg {
+    color: #009247;
+    font-size: 18px;
+}
+
+.servicesGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin: 32px 10px 50px 10px;
+
+}
+
+.serviceCard {
+    background: #fff;
+    border: 2px solid #009247;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px #00924711;
+    padding: 32px 0 18px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    font-size: 18px;
+    color: #222;
+    font-weight: 600;
+    cursor: pointer;
+    transition: box-shadow 0.2s, background 0.2s, color 0.2s;
+}
+
+.serviceCard:hover {
+    background: #e0f2e9;
+    color: #009247;
+    box-shadow: 0 4px 16px #00924733;
+}
+
+.serviceIcon {
+    background: #e0f2e9;
+    color: #009247;
+    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin-bottom: 8px;
+    box-shadow: 0 2px 8px #00924722;
+}
+
+@media (max-width: 1100px) {
+    .mainGrid {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .balanceCard,
+    .userInfoCard {
+        max-width: 100%;
+        min-width: unset;
+        width: 100%;
+    }
+
+    .servicesGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 700px) {
+    .servicesGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .mainGrid {
+        gap: 12px;
+    }
+
+    .userInfoCard {
+        padding: 16px 8px;
+    }
+
+    .serviceCard {
+        padding: 24px 0 12px 0;
+        font-size: 16px;
+    }
+
+    .serviceIcon {
+        width: 44px;
+        height: 44px;
+        font-size: 22px;
+    }
+}
+
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.25);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modalBox {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 8px 32px #00924744;
+    padding: 32px 24px 24px 24px;
+    min-width: 340px;
+    max-width: 95vw;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    direction: rtl;
+}
+
+.closeModalBtn {
+    position: absolute;
+    top: 12px;
+    left: 18px;
+    background: #e0f2e9;
+    color: #009247;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+    z-index: 10;
+}
+
+.closeModalBtn:hover {
+    background: #009247;
+    color: #fff;
+}
+
+.modalTitle {
+    font-size: 22px;
+    font-weight: bold;
+    color: #009247;
+    margin-bottom: 18px;
+    text-align: right;
+}
+
+.ordersList {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.orderCard {
+    background: #f6faf8;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px #00924711;
+    padding: 18px 16px;
+    margin-bottom: 8px;
+    font-size: 16px;
+    color: #222;
+    font-weight: 500;
+    direction: rtl;
+}
+
+.orderCard b {
+    color: #018f2c;
+}
+
+.orderItemsBox {
+    margin-top: 8px;
+    background: #e0f2e9;
+    border-radius: 8px;
+    padding: 8px 12px;
+}
+
+.orderItemsBox ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.orderItemRow {
+    display: flex;
+    gap: 18px;
+    font-size: 15px;
+    color: #222;
+    margin-bottom: 4px;
+}
+
+@media (max-width: 600px) {
+    .modalBox {
+        min-width: 90vw;
+        padding: 16px 4px 12px 4px;
+    }
+
+    .orderCard {
+        font-size: 14px;
+        padding: 10px 4px;
+    }
+
+    .modalTitle {
+        font-size: 18px;
+    }
+}

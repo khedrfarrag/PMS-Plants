@@ -6,20 +6,7 @@
 
 .content {
     flex-grow: 1;
-    margin-left: 80px;
-    /* يطابق عرض الـ Sidebar */
-    width: calc(100% - 80px);
+    margin-left: 100px;
+    width: calc(100% - 100px);
     transition: margin-left 0.3s ease-in-out;
-}
-
-@media (max-width: 768px) {
-    .sidebar {
-        width: 70px;
-        /* جعل الشريط الجانبي أصغر على الشاشات الصغيرة */
-    }
-
-    .content {
-        margin-left: 70px;
-        width: calc(100% - 70px);
-    }
 }

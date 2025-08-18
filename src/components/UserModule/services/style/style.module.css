@@ -1,0 +1,844 @@
+/* Container Service Styles */
+.containerService {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8fdf8 0%, #e8f5e8 100%);
+    font-family: 'Arial', sans-serif;
+    direction: rtl;
+}
+
+/* Hero Section */
+.heroSection {
+    background: linear-gradient(135deg, #2d5016 0%, #4a7c59 100%);
+    color: white;
+    padding: 100px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.heroSection::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+}
+
+.heroContent {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+}
+
+.heroTitle {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    animation: fadeInUp 1s ease-out;
+}
+
+.heroDescription {
+    font-size: 1.3rem;
+    line-height: 1.8;
+    opacity: 0.95;
+    animation: fadeInUp 1s ease-out 0.3s both;
+}
+
+/* Tabs Container */
+.tabsContainer {
+    background: white;
+    padding: 0 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 100px;
+    z-index: 100;
+}
+
+.tabsWrapper {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    gap: 10px;
+    background: #f8f9fa;
+    padding: 8px;
+    border-radius: 50px;
+}
+
+.tab {
+    flex: 1;
+    padding: 15px 25px;
+    border: none;
+    background: transparent;
+    border-radius: 40px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: #666;
+}
+
+.tab:hover {
+    background: rgba(45, 80, 22, 0.1);
+    color: #2d5016;
+}
+
+.activeTab {
+    background: linear-gradient(135deg, #2d5016 0%, #4a7c59 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(45, 80, 22, 0.3);
+}
+
+.tabIcon {
+    font-size: 1.2rem;
+}
+
+/* Products Section */
+.productsSection {
+    padding: 60px 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.sectionHeader {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.sectionTitle {
+    font-size: 2.5rem;
+    color: #2d5016;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.sectionSubtitle {
+    font-size: 1.2rem;
+    color: #666;
+    font-weight: 500;
+}
+
+/* Products Grid */
+.productsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+/* Product Card */
+.productCard {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border: 1px solid #e8f5e8;
+}
+
+.productCard:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(45, 80, 22, 0.15);
+}
+
+.cardImageContainer {
+    position: relative;
+    height: 250px;
+    background: linear-gradient(135deg, #f8fdf8 0%, #e8f5e8 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.cardImage {
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.productCard:hover .cardImage {
+    transform: scale(1.05);
+}
+
+.cardBadge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: linear-gradient(135deg, #2d5016 0%, #4a7c59 100%);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 10px rgba(45, 80, 22, 0.3);
+}
+
+/* Card Content */
+.cardContent {
+    padding: 25px;
+}
+
+.cardTitle {
+    font-size: 1.4rem;
+    color: #2d5016;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.cardDetails {
+    margin-bottom: 20px;
+}
+
+.detailItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.detailLabel {
+    font-weight: 600;
+    color: #666;
+}
+
+.detailValue {
+    color: #2d5016;
+    font-weight: 500;
+}
+
+/* Card Features */
+.cardFeatures {
+    margin-bottom: 25px;
+}
+
+.featuresTitle {
+    font-size: 1.1rem;
+    color: #2d5016;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.featuresList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.featureItem {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    color: #555;
+    font-size: 0.95rem;
+}
+
+.featureIcon {
+    color: #4a7c59;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+/* Card Button */
+.cardButton {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #2d5016 0%, #4a7c59 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cardButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(45, 80, 22, 0.3);
+}
+
+/* Why Choose Section */
+.whyChooseSection {
+    background: linear-gradient(135deg, #2d5016 0%, #4a7c59 100%);
+    color: white;
+    padding: 80px 20px;
+    margin-top: 60px;
+}
+
+.whyChooseContent {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.whyChooseTitle {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 50px;
+    font-weight: 700;
+}
+
+.advantagesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+}
+
+.advantageCard {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.advantageCard:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.advantageIcon {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    display: block;
+}
+
+.advantageTitle {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.advantageDescription {
+    font-size: 1rem;
+    line-height: 1.6;
+    opacity: 0.9;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .heroTitle {
+        font-size: 2.5rem;
+    }
+
+    .heroDescription {
+        font-size: 1.1rem;
+    }
+
+    .productsGrid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .tabsWrapper {
+        flex-direction: column;
+        border-radius: 15px;
+    }
+
+    .tab {
+        border-radius: 10px;
+    }
+
+    .sectionTitle {
+        font-size: 2rem;
+    }
+
+    .advantagesGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .heroSection {
+        padding: 60px 15px;
+    }
+
+    .heroTitle {
+        font-size: 2rem;
+    }
+
+    .productsSection {
+        padding: 40px 15px;
+    }
+
+    .cardContent {
+        padding: 20px;
+    }
+
+    .whyChooseSection {
+        padding: 60px 15px;
+    }
+}
+
+/* Land Reclamation Page Styles */
+.landReclamationPage {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8fdf8 0%, #e8f5e8 100%);
+    font-family: 'Arial', sans-serif;
+    direction: rtl;
+}
+
+.heroSection {
+    background: linear-gradient(135deg, #2d5016 0%, #4a7c59 100%);
+    color: white;
+    padding: 120px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.heroSection::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+}
+
+.heroContent {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+}
+
+.heroTitle {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    animation: fadeInUp 1s ease-out;
+}
+
+.heroDescription {
+    font-size: 1.3rem;
+    line-height: 1.8;
+    opacity: 0.95;
+    margin-bottom: 30px;
+    animation: fadeInUp 1s ease-out 0.3s both;
+}
+
+.comingSoonBadge {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 15px 30px;
+    border-radius: 50px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.servicesPreview {
+    padding: 80px 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.servicesTitle {
+    text-align: center;
+    font-size: 2.5rem;
+    color: #2d5016;
+    margin-bottom: 50px;
+    font-weight: 700;
+}
+
+.servicesList {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-bottom: 60px;
+}
+
+.serviceItem {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 1px solid #e8f5e8;
+}
+
+.serviceItem:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(45, 80, 22, 0.15);
+}
+
+.serviceIcon {
+    font-size: 3rem;
+    color: #4a7c59;
+    margin-bottom: 20px;
+    display: block;
+}
+
+.serviceText {
+    font-size: 1.1rem;
+    color: #555;
+    line-height: 1.6;
+    font-weight: 500;
+}
+
+.notificationForm {
+    background: linear-gradient(135deg, #2d5016 0%, #4a7c59 100%);
+    color: white;
+    padding: 60px 20px;
+    text-align: center;
+    margin-top: 60px;
+}
+
+.formContainer {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.formTitle {
+    font-size: 2rem;
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+
+.formDescription {
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+    opacity: 0.9;
+}
+
+.formGroup {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.formInput {
+    flex: 1;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+}
+
+.formInput::placeholder {
+    color: #666;
+}
+
+.formButton {
+    padding: 15px 30px;
+    background: white;
+    color: #2d5016;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.formButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive Design for Land Reclamation */
+@media (max-width: 768px) {
+    .heroTitle {
+        font-size: 2.5rem;
+    }
+
+    .heroDescription {
+        font-size: 1.1rem;
+    }
+
+    .servicesList {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .formGroup {
+        flex-direction: column;
+    }
+
+    .servicesTitle {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .heroSection {
+        padding: 80px 15px;
+    }
+
+    .heroTitle {
+        font-size: 2rem;
+    }
+
+    .servicesPreview {
+        padding: 60px 15px;
+    }
+
+    .notificationForm {
+        padding: 40px 15px;
+    }
+
+    .formTitle {
+        font-size: 1.5rem;
+    }
+}
+
+/* Customer Support Page Styles */
+.customerSupportPage {
+    margin-top: 100px;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8fdf8 0%, #e8f5e8 100%);
+    padding: 40px 20px;
+}
+
+.supportHeader {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.supportTitle {
+    font-size: 3rem;
+    color: #2d5016;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.supportSubtitle {
+    font-size: 1.2rem;
+    color: #666;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.supportCards {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+    margin-bottom: 60px;
+}
+
+.supportCard {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border: 1px solid #e8f5e8;
+    position: relative;
+}
+
+.supportCard:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 25px 50px rgba(45, 80, 22, 0.15);
+}
+
+.cardImageContainer {
+    position: relative;
+    height: 250px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f8fdf8 0%, #e8f5e8 100%);
+}
+
+.cardImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.supportCard:hover .cardImage {
+    transform: scale(1.05);
+}
+
+.cardOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(45, 80, 22, 0.8), rgba(74, 124, 89, 0.8));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.supportCard:hover .cardOverlay {
+    opacity: 1;
+}
+
+.overlayText {
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.cardContent {
+    padding: 30px;
+}
+
+.cardTitle {
+    font-size: 1.4rem;
+    color: #2d5016;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.cardPosition {
+    font-size: 1rem;
+    color: #4a7c59;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.contactInfo {
+
+    margin-top: 20px;
+    /* margin-bottom: 25px; */
+}
+
+.contactLinks {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+}
+
+
+.phoneButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3);
+    border-radius: 10px;
+}
+
+
+
+.whatsappButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3);
+    border-radius: 10px;
+
+}
+
+
+
+.facebookButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(24, 119, 242, 0.3);
+    border-radius: 10px;
+
+}
+
+
+
+.gmailButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(234, 67, 53, 0.3);
+    border-radius: 10px;
+
+}
+
+.contactIcon {
+    font-size: 1.1rem;
+}
+
+/* Responsive Design for Customer Support */
+@media (max-width: 768px) {
+    .customerSupportPage {
+        padding: 30px 15px;
+    }
+
+    .supportTitle {
+        font-size: 2.5rem;
+    }
+
+    .supportCards {
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+
+    .cardContent {
+        padding: 25px;
+    }
+}
+
+@media (max-width: 480px) {
+    .supportTitle {
+        font-size: 2rem;
+    }
+
+    .supportSubtitle {
+        font-size: 1rem;
+    }
+
+    .cardImageContainer {
+        height: 200px;
+    }
+
+    .cardContent {
+        padding: 20px;
+    }
+
+    .contactLinks {
+        gap: 10px;
+        text-align: center;
+    }
+
+    .contactButton {
+        justify-content: center;
+    }
+}

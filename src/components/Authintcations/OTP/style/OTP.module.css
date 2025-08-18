@@ -1,0 +1,153 @@
+.IconEye {
+    position: absolute;
+    top: 55%;
+    left: 20px;
+    cursor: pointer;
+}
+
+.IconHideEye {
+    position: absolute;
+    top: 55%;
+    left: 20px;
+    cursor: pointer;
+}
+
+.LogoCampony {
+    position: absolute;
+    top: 0;
+    left: 20px;
+    width: 80px;
+    height: 80px;
+}
+
+.BttnSubmit {
+    border-radius: 5px !important;
+    border: none;
+    outline: none !important;
+    color: white;
+    margin-top: 20px;
+    background: linear-gradient(135deg, #009247 0%, #007b3a 100%) !important;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.BttnSubmit:hover:not(.disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 146, 71, 0.3);
+}
+
+.BttnSubmit.disabled {
+    background: #ccc !important;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.resendButton {
+    background: none;
+    border: 2px solid #009247;
+    color: #009247;
+    padding: 8px 16px;
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 10px 0;
+    font-size: 14px;
+}
+
+.resendButton:hover:not(.disabled) {
+    background: #009247;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 146, 71, 0.2);
+}
+
+.resendButton.secondary {
+    border-color: #6c757d;
+    color: #6c757d;
+}
+
+.resendButton.secondary:hover:not(.disabled) {
+    background: #6c757d;
+    color: white;
+    box-shadow: 0 2px 8px rgba(108, 117, 125, 0.2);
+}
+
+.resendButton.disabled {
+    border-color: #ccc;
+    color: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+input {
+    border: none !important;
+    outline: none !important;
+    border-radius: 3px;
+    height: 50px;
+    background-color: #e3e0e0;
+}
+
+::placeholder {
+    color: #a8aaab;
+}
+
+label {
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #333;
+}
+
+.HeroImage {
+    background-color: #009247;
+    align-items: center;
+
+    img {
+        margin-top: 10px;
+        width: 70%;
+        height: 80%;
+    }
+
+    .HeroCaption {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        h1 {
+            color: #FFFFFF;
+            font-weight: bold;
+        }
+
+        p {
+            color: #FFFFFF
+        }
+    }
+}
+
+.TitleNavigate {
+    color: #009247;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.TitleNavigate:hover {
+    color: #007b3a;
+    text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .resendButton {
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+
+    .BttnSubmit {
+        font-size: 14px;
+        padding: 12px !important;
+    }
+}
