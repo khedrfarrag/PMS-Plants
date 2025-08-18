@@ -1,0 +1,402 @@
+.captiontitle {
+    transform: translateY(5px);
+
+    h3 {
+        font-size: 21px !important;
+        font-weight: bold !important;
+        transform: translateY(10px) !important;
+    }
+
+    p {
+        font-size: 14px !important;
+        letter-spacing: .5px;
+        font-weight: bold !important;
+    }
+}
+
+ul {
+    li {
+        font-weight: bold;
+    }
+
+    a {
+        text-decoration: none !important;
+    }
+
+}
+
+
+.dropdown {
+    button {
+        cursor: pointer;
+        transition: .3s all ease-in-out;
+
+        &:hover {
+            background-color: #009247 !important;
+            color: white !important;
+            transition: .3s all ease-in-out;
+            border-radius: 5px;
+        }
+    }
+}
+
+
+.iconbars {
+    display: none;
+}
+
+
+
+.HeroNavuser {
+    position: fixed !important;
+    top: 20px;
+    right: 50%;
+    transform: translateX(50%);
+    width: 95%;
+    transition: 1s all ease-in-out;
+    z-index: 555;
+}
+
+.contanernav {
+    position: absolute !important;
+    left: 0;
+    top: 20px;
+    width: 100%;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+    padding: 10px 20px;
+    height: 60px !important;
+}
+
+.imglogo {
+    width: 60px;
+    margin-left: 10px;
+}
+
+.dropdown-item {
+    font-weight: bold;
+    transition: .3s all ease-in-out;
+
+
+}
+
+.iconbars button:hover {
+    /* background-color: #009247 !important; */
+    color: white !important;
+    transition: .3s all ease-in-out;
+    /* border-radius: 5px; */
+}
+
+.cartIcon {
+    position: relative;
+    width: 80px;
+    height: 60px;
+    background-color: red;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+}
+
+.icons {
+    cursor: pointer;
+}
+
+.userImg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.cartCount {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+
+
+.contanersearching {
+    /* width: 100%; */
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-right: 50px;
+    justify-content: end;
+
+}
+
+.LoginNav {
+    width: 50px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    /* background-color: #009247; */
+    color: red;
+}
+
+@media (max-width: 1400px) {
+    .HeroNavuser {
+        top: 0;
+        width: 100%;
+        transition: 1s all ease-in-out;
+
+    }
+
+    .contanernav {
+        left: 0;
+        top: 0;
+
+        background: rgba(255, 255, 255, 0.15);
+        -webkit-backdrop-filter: blur(2px);
+        backdrop-filter: blur(2px);
+        border: 1px solid rgba(255, 255, 255, 0.075);
+        /* border-radius: unset; */
+        transition: 1s all ease-in-out;
+    }
+
+
+
+    .captiontitle {
+        text-align: center;
+        display: none;
+    }
+
+
+
+
+}
+
+
+@media (max-width:1200px) {
+
+    .LinksNav li {
+        display: none;
+    }
+
+    .iconbars {
+        /* background-color: #009247; */
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 5px;
+        color: #f8f9fa;
+        transition: 1s all ease-in-out;
+
+    }
+
+    .userImg {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .iconbars {
+        margin-right: 0 !important;
+        margin-left: auto !important;
+    }
+
+    .contanersearching {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        justify-content: end;
+    }
+
+
+}
+
+@media (max-width:1138px) {
+    .cartIcon {
+        position: relative;
+        width: 80px;
+        height: 60px;
+        background-color: red;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        /* transform: translate(-250px) !important; */
+
+    }
+
+    .LinksNav li {
+        display: none;
+    }
+
+    .iconbars {
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 5px;
+        color: #f8f9fa;
+        transition: 1s all ease-in-out;
+
+    }
+
+    .userImg {
+        margin-left: 0 !important;
+        margin-right: auto !important;
+    }
+
+
+
+    .contanersearching {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+    }
+}
+
+@media (max-width:950px) {
+
+    .userImg {
+        margin-left: 0 !important;
+        margin-right: auto !important;
+    }
+
+    .iconbars {
+        margin-right: 0 !important;
+        margin-left: auto !important;
+    }
+
+
+
+}
+
+@media (max-width:655px) {
+
+
+    .contanernav {
+        background: rgba(255, 255, 255, 0.15);
+        -webkit-backdrop-filter: blur(2px);
+        backdrop-filter: blur(2px);
+        border: 1px solid rgba(255, 255, 255, 0.075);
+    }
+
+    .userImg {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .iconbars {
+
+        margin-right: 0 !important;
+        margin-left: auto !important;
+    }
+
+    .cartIcon {
+        position: relative;
+        width: 50px !important;
+        height: 50px !important;
+        background-color: red;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    .contanersearching {
+        /* justify-content: flex-end !important; */
+        gap: 10px;
+    }
+
+
+
+
+}
+
+@media (max-width:480px) {
+    .contanernav {
+        background: rgba(255, 255, 255, 0.15);
+        -webkit-backdrop-filter: blur(2px);
+        backdrop-filter: blur(2px);
+        border: 1px solid rgba(255, 255, 255, 0.075);
+    }
+
+    .userImg {
+        margin-left: 10px !important;
+    }
+
+    /* .iconbars {
+        transform: translateX(40px);
+    } */
+
+    .LoginNav {
+        margin-right: 10px;
+        transform: translate(10px);
+    }
+
+
+}
+
+/* Mobile Menu Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+/* Mobile Menu Styles */
+.mobileMenuOverlay {
+    animation: fadeIn 0.3s ease-out;
+}
+
+.mobileMenu {
+    animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mobileMenuClosing {
+    animation: slideOut 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}

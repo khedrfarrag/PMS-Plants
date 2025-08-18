@@ -1,0 +1,12 @@
+.appcontainer {
+    display: flex;
+    min-height: 100vh;
+}
+
+
+.content {
+    flex-grow: 1;
+    margin-left: 100px;
+    width: calc(100% - 100px);
+    transition: margin-left 0.3s ease-in-out;
+}

@@ -1,0 +1,253 @@
+body {
+    background-color: white !important;
+}
+
+.heroSelect:focus {
+    box-shadow: unset !important;
+}
+
+.heroSearch:focus {
+    border: 1px solid #009247 !important;
+    box-shadow: 0 3px 3.5px 4.5px #dddddd;
+}
+
+.heroProductsTop {
+    position: relative;
+
+    .pragraphTop {
+        margin-right: 30px;
+    }
+
+    .heroHeadCaption {
+        margin-right: 30px;
+    }
+
+    .herobttn {
+        width: 90px !important;
+        margin-right: 30px;
+        height: 40px !important;
+        font-size: 12px;
+        font-weight: bold;
+        border: 3px solid #009247;
+
+    }
+
+    @media (max-width: 768px) {
+
+        /* Add responsive styles */
+        .pragraphTop,
+        .heroHeadCaption,
+        .herobttn {
+            margin-right: 0;
+            text-align: center;
+        }
+    }
+}
+
+/* .chartsLastRequiest {
+    -moz-box-shadow: 0 3px 3.5px 4.5px #dddddd;
+    box-shadow: 0 3px 3.5px 4.5px #dddddd;
+
+} */
+
+
+
+
+.cards1 {
+    border-radius: 10px;
+    height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+    cursor: pointer;
+
+
+
+
+    h5 {
+        color: gray;
+        font-weight: bold;
+        transform: translateY(10px);
+        font-size: 18px;
+        margin-left: 30px;
+
+    }
+
+    .herologo {
+        width: 90px;
+        height: 90px;
+
+        img {
+            width: 100%;
+            height: 100%;
+        }
+
+    }
+
+    .heroCaption {
+        display: flex;
+        align-items: center;
+
+        h1 {
+            font-weight: 600;
+        }
+    }
+
+    .heroDesc {
+        display: flex;
+        justify-content: end;
+        gap: 45px;
+        width: 100%;
+        transform: translateY(-10px);
+
+
+        span {
+            /* margin-right: /0px; */
+            font-size: 13px;
+            display: flex;
+            gap: 10px;
+            font-weight: bold;
+            color: gray;
+        }
+
+        .heroinfo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 30px;
+            background-color: #8df6c0;
+            border-radius: 7px;
+            opacity: .8;
+            margin-left: 30px;
+            color: unset;
+        }
+
+
+    }
+
+    @media (max-width: 768px) {
+        width: 100%;
+        height: auto;
+        height: 150px;
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+
+    }
+
+}
+
+
+.cards1:hover {
+    border: 1px solid #009247 !important;
+    transform: scale(1.05) !important;
+    transition: .3s ease-in-out !important;
+}
+
+/* تصميم عصري لجدول المستخدمين */
+.usersTable {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 2px 16px rgba(1, 143, 44, 0.07);
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+
+.usersTable th {
+    background: #f6f8fa;
+    color: #018f2c;
+    font-weight: 800;
+    font-size: 16px;
+    border-bottom: 2px solid #e9ecef;
+    padding: 16px 8px;
+}
+
+.usersTable td {
+    padding: 14px 8px;
+    font-size: 15px;
+    color: #222;
+    vertical-align: middle;
+    background: #fff;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.usersTable tr {
+    transition: background 0.2s;
+}
+
+.usersTable tr:hover {
+    background: #f2fdf6 !important;
+}
+
+/* أزرار التنقل */
+.usersPagination .page-link {
+    border-radius: 8px !important;
+    margin: 0 2px;
+    color: #018f2c;
+    border: 1.5px solid #e0e0e0;
+    font-weight: 700;
+    transition: background 0.2s, color 0.2s;
+}
+
+.usersPagination .page-link:hover,
+.usersPagination .page-item.active .page-link {
+    background: #018f2c;
+    color: #fff;
+    border-color: #018f2c;
+}
+
+/* حقل البحث والفلاتر */
+.usersSearchBox {
+    border-radius: 12px;
+    border: 1.5px solid #e0e0e0;
+    padding: 10px 16px;
+    font-size: 15px;
+    transition: border 0.2s;
+}
+
+.usersSearchBox:focus {
+    border: 1.5px solid #018f2c;
+    outline: none;
+}
+
+/* Scroll X للجدول في الشاشات الصغيرة */
+.usersTableScroll {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 8px;
+}
+
+/* تحسين مظهر السليكت */
+.usersSelect {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: #fff url('data:image/svg+xml;utf8,<svg fill="%23019247" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 12px center/18px 18px;
+    padding-right: 36px !important;
+    position: relative;
+}
+
+.usersSelect:focus {
+    border: 1.5px solid #018f2c;
+    outline: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+
+    .usersTable th,
+    .usersTable td {
+        padding: 10px 4px;
+        font-size: 13px;
+    }
+
+    .usersSearchBox,
+    .usersSelect {
+        font-size: 13px;
+        padding: 7px 8px;
+    }
+
+    .usersTableScroll {
+        margin-bottom: 12px;
+    }
+}

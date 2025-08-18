@@ -1,0 +1,34 @@
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-y: auto;
+}
+
+.sidebarLink {
+    width: 100%;
+    padding: 16px 0;
+    color: #016f22;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 1rem;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    text-decoration: none;
+    cursor: pointer;
+    background: transparent;
+}
+
+.sidebarLink:hover {
+    background: linear-gradient(135deg, #e9ecef 0%, #9ee8b9 100%);
+    color: #00c97b;
+    box-shadow: 0 2px 8px rgba(1, 143, 44, 0.10);
+}
+
+.sidebarLinkActive {
+    background: linear-gradient(135deg, #018f2c 0%, #016f22 100%);
+    color: #fff !important;
+    box-shadow: 0 4px 16px rgba(1, 143, 44, 0.13);
+}
