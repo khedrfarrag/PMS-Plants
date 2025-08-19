@@ -21,7 +21,7 @@ import {
   faClock,
   faShoppingBag,
   faArrowLeft,
-  faHeartBroken
+  faHeartBroken,
 } from "@fortawesome/free-solid-svg-icons";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -79,8 +79,13 @@ export default function Favorites() {
   const [favoritesIds, setFavoritesIds] = useState<number[]>([]);
   const [cart, setCart] = useState<CartResponse | null>(null);
   const [addQty, setAddQty] = useState<{ [productId: number]: number }>({});
-  const [loadingStates, setLoadingStates] = useState<{ [key: number]: boolean; favorites?: boolean }>({});
-  const [addingToCart, setAddingToCart] = useState<{ [productId: number]: boolean }>({});
+  const [loadingStates, setLoadingStates] = useState<{
+    [key: number]: boolean;
+    favorites?: boolean;
+  }>({});
+  const [addingToCart, setAddingToCart] = useState<{
+    [productId: number]: boolean;
+  }>({});
   const { userData }: null | any = useContext(AuthContext);
   const UserId = userData?.userId;
   const navigate = useNavigate();
@@ -88,13 +93,15 @@ export default function Favorites() {
   // Fetch favorites
   const GetAllFavoritesItems = useCallback(
     async (pageNumber: number = 1, pageSize: number = 10) => {
-      setLoadingStates(prev => ({ ...prev, favorites: true }));
+      setLoadingStates((prev) => ({ ...prev, favorites: true }));
       try {
         const response = await axios.get<FavoritesResponse>(
           ProductsPoint.GetFavorites(UserId, pageNumber, pageSize),
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("token") || sessionStorage.getItem("token")}`,
+              Authorization: `Bearer ${
+                localStorage.getItem("token") || sessionStorage.getItem("token")
+              }`,
             },
           }
         );
@@ -104,7 +111,7 @@ export default function Favorites() {
         console.error("Error fetching favorites items:", error);
         toast.error("فشل في جلب المنتجات المفضلة");
       } finally {
-        setLoadingStates(prev => ({ ...prev, favorites: false }));
+        setLoadingStates((prev) => ({ ...prev, favorites: false }));
       }
     },
     [UserId]
@@ -117,7 +124,9 @@ export default function Favorites() {
         cartShopPoint.GetAllCartShop,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token") || sessionStorage.getItem("token")}`,
+            Authorization: `Bearer ${
+              localStorage.getItem("token") || sessionStorage.getItem("token")
+            }`,
           },
         }
       );
@@ -130,8 +139,8 @@ export default function Favorites() {
   // Add to cart
   const handleAddToCart = async (product: FavoriteProduct) => {
     const qty = addQty[product.Id] || 1;
-    setAddingToCart(prev => ({ ...prev, [product.Id]: true }));
-    
+    setAddingToCart((prev) => ({ ...prev, [product.Id]: true }));
+
     try {
       await axios.post(
         cartShopPoint.Post,
@@ -145,7 +154,9 @@ export default function Favorites() {
         },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token") || sessionStorage.getItem("token")}`,
+            Authorization: `Bearer ${
+              localStorage.getItem("token") || sessionStorage.getItem("token")
+            }`,
           },
         }
       );
@@ -154,13 +165,13 @@ export default function Favorites() {
     } catch (error) {
       toast.error("حدث خطأ أثناء إضافة المنتج للسلة");
     } finally {
-      setAddingToCart(prev => ({ ...prev, [product.Id]: false }));
+      setAddingToCart((prev) => ({ ...prev, [product.Id]: false }));
     }
   };
 
   // Favorite toggle
   const handleFavorite = async (userId: string, productId: number) => {
-    setLoadingStates(prev => ({ ...prev, [productId]: true }));
+    setLoadingStates((prev) => ({ ...prev, [productId]: true }));
     try {
       if (!userId) return;
       if (favoritesIds && favoritesIds.includes(productId)) {
@@ -168,7 +179,9 @@ export default function Favorites() {
           `${ProductsPoint.DeleteFavorites}?userId=${userId}&productId=${productId}`,
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("token") || sessionStorage.getItem("token")}`,
+              Authorization: `Bearer ${
+                localStorage.getItem("token") || sessionStorage.getItem("token")
+              }`,
             },
           }
         );
@@ -189,19 +202,25 @@ export default function Favorites() {
     } catch (error) {
       toast.error("حدث خطأ أثناء تحديث المفضلة");
     } finally {
-      setLoadingStates(prev => ({ ...prev, [productId]: false }));
+      setLoadingStates((prev) => ({ ...prev, [productId]: false }));
     }
   };
 
   // Remove from favorites
-  const handleRemoveFromFavorites = async (productId: number) => {
-    setLoadingStates(prev => ({ ...prev, [productId]: true }));
+  const handleRemoveFromFavorites = async (
+    userId: string,
+    productId: number
+  ) => {
+    setLoadingStates((prev) => ({ ...prev, [productId]: true }));
     try {
+      if (!userId) return;
       await axios.delete(
-        `${ProductsPoint.DeleteFavorites}?userId=${UserId}&productId=${productId}`,
+        `${ProductsPoint.DeleteFavorites}?userId=${userId}&productId=${productId}`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${
+              localStorage.getItem("token") || sessionStorage.getItem("token")
+            }`,
           },
         }
       );
@@ -210,7 +229,7 @@ export default function Favorites() {
     } catch (errors) {
       toast.error("حدث خطأ أثناء إزالة المنتج من المفضلة");
     } finally {
-      setLoadingStates(prev => ({ ...prev, [productId]: false }));
+      setLoadingStates((prev) => ({ ...prev, [productId]: false }));
     }
   };
 
@@ -240,31 +259,19 @@ export default function Favorites() {
     const stars = [];
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 !== 0;
-    
+
     for (let i = 0; i < 5; i++) {
       if (i < fullStars) {
         stars.push(
-          <FontAwesomeIcon 
-            key={i} 
-            icon={faStar} 
-            className={Style.starFilled}
-          />
+          <FontAwesomeIcon key={i} icon={faStar} className={Style.starFilled} />
         );
       } else if (i === fullStars && hasHalfStar) {
         stars.push(
-          <FontAwesomeIcon 
-            key={i} 
-            icon={faStar} 
-            className={Style.starHalf}
-          />
+          <FontAwesomeIcon key={i} icon={faStar} className={Style.starHalf} />
         );
       } else {
         stars.push(
-          <FontAwesomeIcon 
-            key={i} 
-            icon={faStar} 
-            className={Style.starEmpty}
-          />
+          <FontAwesomeIcon key={i} icon={faStar} className={Style.starEmpty} />
         );
       }
     }
@@ -274,7 +281,12 @@ export default function Favorites() {
   if (loadingStates.favorites) {
     return (
       <div className={Style.loadingContainer}>
-        <FontAwesomeIcon icon={faSpinner} spin size="3x" style={{ color: '#009247' }} />
+        <FontAwesomeIcon
+          icon={faSpinner}
+          spin
+          size="3x"
+          style={{ color: "#009247" }}
+        />
         <p>جاري تحميل المفضلة...</p>
       </div>
     );
@@ -283,17 +295,14 @@ export default function Favorites() {
   return (
     <div className={Style.favoritesContainer}>
       {/* Header */}
-      <motion.header 
+      <motion.header
         className={Style.favoritesHeader}
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
         <div className={Style.headerContent}>
-          <button 
-            className={Style.backButton}
-            onClick={() => navigate(-1)}
-          >
+          <button className={Style.backButton} onClick={() => navigate(-1)}>
             <FontAwesomeIcon icon={faArrowLeft} />
             رجوع
           </button>
@@ -310,21 +319,24 @@ export default function Favorites() {
       {/* Favorites Items */}
       <AnimatePresence>
         {favoritesData?.data && favoritesData.data.length > 0 ? (
-          <motion.section 
+          <motion.section
             className={Style.favoritesItems}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
             {favoritesData.data.map((item, index) => (
-              <motion.div 
+              <motion.div
                 className={Style.favoriteItem}
                 key={item.Id}
                 initial={{ opacity: 0, x: -50 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 50 }}
                 transition={{ duration: 0.3, delay: index * 0.1 }}
-                whileHover={{ y: -2, boxShadow: "0 8px 25px rgba(0, 146, 71, 0.15)" }}
+                whileHover={{
+                  y: -2,
+                  boxShadow: "0 8px 25px rgba(0, 146, 71, 0.15)",
+                }}
               >
                 {/* صورة المنتج */}
                 <div className={Style.favoriteItemImage}>
@@ -348,7 +360,7 @@ export default function Favorites() {
                   <div className={Style.productInfo}>
                     <h2>{item.Name}</h2>
                     <p>{item.Description}</p>
-                    
+
                     {/* التقييم */}
                     <div className={Style.rating}>
                       <div className={Style.stars}>
@@ -397,20 +409,22 @@ export default function Favorites() {
                       disabled={loadingStates[item.Id]}
                       title="إزالة من المفضلة"
                     >
-                      <FontAwesomeIcon 
-                        icon={loadingStates[item.Id] ? faSpinner : faHeartBroken} 
+                      <FontAwesomeIcon
+                        icon={
+                          loadingStates[item.Id] ? faSpinner : faHeartBroken
+                        }
                         spin={loadingStates[item.Id]}
                       />
                     </button>
-                    
+
                     <button
                       className={`${Style.actionBtn} ${Style.deleteBtn}`}
-                      onClick={() => handleRemoveFromFavorites(item.Id)}
+                      onClick={() => handleRemoveFromFavorites(UserId, item.Id)}
                       disabled={loadingStates[item.Id]}
                       title="حذف من المفضلة"
                     >
-                      <FontAwesomeIcon 
-                        icon={loadingStates[item.Id] ? faSpinner : faTrash} 
+                      <FontAwesomeIcon
+                        icon={loadingStates[item.Id] ? faSpinner : faTrash}
                         spin={loadingStates[item.Id]}
                       />
                     </button>
@@ -422,23 +436,27 @@ export default function Favorites() {
                       <span className={Style.currentPrice}>
                         ${item.DiscountedPrice || item.Price}
                       </span>
-                      {item.DiscountedPrice && item.DiscountedPrice !== item.Price && (
-                        <span className={Style.originalPrice}>
-                          ${item.Price}
+                      {item.DiscountedPrice &&
+                        item.DiscountedPrice !== item.Price && (
+                          <span className={Style.originalPrice}>
+                            ${item.Price}
+                          </span>
+                        )}
+                    </div>
+                    {item.DiscountedPrice &&
+                      item.DiscountedPrice !== item.Price && (
+                        <span className={Style.savings}>
+                          وفر ${(item.Price - item.DiscountedPrice).toFixed(2)}
                         </span>
                       )}
-                    </div>
-                    {item.DiscountedPrice && item.DiscountedPrice !== item.Price && (
-                      <span className={Style.savings}>
-                        وفر ${(item.Price - item.DiscountedPrice).toFixed(2)}
-                      </span>
-                    )}
                   </div>
 
                   {/* زر إضافة للسلة */}
                   {!isInCart(item.Id) ? (
                     <button
-                      className={`${Style.addToCartBtn} ${addingToCart[item.Id] ? Style.loading : ''}`}
+                      className={`${Style.addToCartBtn} ${
+                        addingToCart[item.Id] ? Style.loading : ""
+                      }`}
                       onClick={() => handleAddToCart(item)}
                       disabled={addingToCart[item.Id]}
                     >
@@ -465,7 +483,7 @@ export default function Favorites() {
             ))}
           </motion.section>
         ) : (
-          <motion.div 
+          <motion.div
             className={Style.emptyFavorites}
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -474,9 +492,9 @@ export default function Favorites() {
             <FontAwesomeIcon icon={faHeartBroken} size="4x" />
             <h2>المفضلة فارغة</h2>
             <p>لم تقم بإضافة أي منتجات للمفضلة بعد</p>
-            <button 
+            <button
               className={Style.continueShopping}
-              onClick={() => navigate('/store')}
+              onClick={() => navigate("/store")}
             >
               تصفح المنتجات
             </button>

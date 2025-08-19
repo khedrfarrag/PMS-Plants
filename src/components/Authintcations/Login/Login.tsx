@@ -66,10 +66,8 @@ export default function Login() {
       if (watchRemember) {
         // لو RememberMe محددة، ممكن تحفظ بيانات إضافية زي الإيميل أو تفعيل صلاحيات أطول
         localStorage.setItem("remember", "true");
-
       } else {
         localStorage.removeItem("remember");
-
       }
       toast.success("مرحبا بك في الشركه الزراعيه ");
     } catch (error) {
@@ -85,9 +83,7 @@ export default function Login() {
       navigate("/admin");
     } else if (userData?.role === "User") {
       navigate("/");
-
-    } 
-    else {
+    } else {
       navigate("/auth");
     }
   }, [userData, navigate]);
@@ -121,6 +117,13 @@ export default function Login() {
               <Link className="link-to" to="/auth/register">
                 <p className={`${Style.TitleNavigate}`}> انشاء حساب من هنا !</p>
               </Link>
+              <div className={`${Style.Herohome} `}>
+                <Link className="link-to" to="/">
+                  <p className={`${Style.TitleNavigate}`}>
+                    المتابعة بدون تسجيل
+                  </p>
+                </Link>
+              </div>
             </div>
           </div>
           <form className="w-100" onSubmit={handleSubmit(onSubmit)}>

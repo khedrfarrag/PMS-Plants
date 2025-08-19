@@ -73,6 +73,24 @@ label {
     margin-bottom: 10px;
 }
 
+.Herohome {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #009247;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    width: 250px;
+    height: 60px;
+
+    .TitleNavigate {
+        color: #009247 !important;
+        font-weight: bold;
+        cursor: pointer;
+        padding: 10px 20px;
+    }
+}
+
 
 .HeroImage {
     background-color: #009247;
