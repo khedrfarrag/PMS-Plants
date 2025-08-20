@@ -1,5 +1,5 @@
-export const BeasdURL: string = "https://localhost:8083/api";
-export const ImgURLBeasd: string = "https://localhost:8083";
+export const BeasdURL: string = "http://alkhaligya.runasp.net/api";
+export const ImgURLBeasd: string = "http://alkhaligya.runasp.net/";
 // auth-end-points
 const authBeasd = "Auth";
 export const authEndPoint = {
