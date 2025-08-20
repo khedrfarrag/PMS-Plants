@@ -1,5 +1,5 @@
-export const BeasdURL: string = "http://alkhaligya.runasp.net/index.html/api";
-export const ImgURLBeasd: string = "http://alkhaligya.runasp.net/index.html/";
+export const BeasdURL: string = "api";
+export const ImgURLBeasd: string = "api";
 // auth-end-points
 const authBeasd = "Auth";
 export const authEndPoint = {
