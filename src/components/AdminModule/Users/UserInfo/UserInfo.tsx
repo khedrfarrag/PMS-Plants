@@ -25,7 +25,8 @@ import {
 } from "../../../../constant/Const";
 import { motion } from "framer-motion";
 import imgiuser from "../../../../assets/svg/userimg.svg";
-import { ShimmerSimpleGallery, ShimmerPostItem } from "react-shimmer-effects";
+// Replaced shimmer components with simple placeholders for compatibility
+import { useMediaQuery } from "@mui/material";
 
 interface User {
   Id: string;
@@ -104,6 +105,7 @@ function UserInfo() {
   const { id } = useParams<{ id: string }>();
   const userId = id; // استخدام id من الـ route parameter
   const navigate = useNavigate();
+  const isMobile = useMediaQuery('(max-width:768px)');
   const [user, setUser] = useState<User | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [favorites, setFavorites] = useState<Favorite[]>([]);
@@ -247,7 +249,7 @@ function UserInfo() {
         console.log('No userId provided');
         setLoading(false);
         return;
-      }
+        }
       setLoading(true);
       console.log('Starting to fetch all data for userId:', userId);
       try {
@@ -346,24 +348,26 @@ function UserInfo() {
 
   if (loading) {
     return (
-      <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-        {/* شيمر الهيدر */}
-        <div style={{ marginBottom: 32 }}>
-          <ShimmerPostItem hasImage={false} title cta />
+      <div style={{ padding: isMobile ? '12px' : '20px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div className="placeholder-glow" style={{ marginBottom: 24 }}>
+          <span className="placeholder col-6" style={{ height: 28 }}></span>
         </div>
-        {/* شيمر معلومات المستخدم الأساسية */}
-        <div style={{ marginBottom: 24 }}>
-          <ShimmerSimpleGallery row={1} col={4} caption />
+        <div className="row g-2" style={{ marginBottom: 16 }}>
+          {Array.from({ length: isMobile ? 2 : 4 }).map((_, i) => (
+            <div key={i} className={isMobile ? 'col-6' : 'col-3'}>
+              <div className="placeholder d-block w-100" style={{ height: 60, borderRadius: 12 }}></div>
+            </div>
+          ))}
         </div>
-        {/* شيمر التابس */}
-        <div style={{ marginBottom: 24 }}>
-          <ShimmerSimpleGallery row={1} col={4} imageHeight={32} />
+        <div className="row g-2" style={{ marginBottom: 16 }}>
+          {Array.from({ length: isMobile ? 2 : 4 }).map((_, i) => (
+            <div key={i} className={isMobile ? 'col-6' : 'col-3'}>
+              <div className="placeholder d-block w-100" style={{ height: 36, borderRadius: 10 }}></div>
+            </div>
+          ))}
         </div>
-        {/* شيمر محتوى التاب */}
-        <div style={{ minHeight: 400 }}>
-          <ShimmerPostItem title cta />
-          <ShimmerPostItem title cta />
-          <ShimmerPostItem title cta />
+        <div className="placeholder-glow" style={{ minHeight: 200 }}>
+          <span className="placeholder col-12" style={{ height: 120 }}></span>
         </div>
       </div>
     );
@@ -403,7 +407,7 @@ function UserInfo() {
   }
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
+    <div style={{ padding: isMobile ? '12px' : '20px', maxWidth: '1200px', margin: '0 auto' }}>
       {/* Header */}
       <motion.div
         style={{
@@ -411,7 +415,7 @@ function UserInfo() {
           background: '#fff',
           borderRadius: '18px',
           boxShadow: '0 2px 12px rgba(1,143,44,0.06)',
-          padding: '24px 32px 18px 32px',
+          padding: isMobile ? '16px 16px 12px 16px' : '24px 32px 18px 32px',
           margin: '0 auto 32px auto',
           display: 'flex',
           alignItems: 'center',
@@ -427,7 +431,7 @@ function UserInfo() {
         <h2
           style={{
             fontWeight: 900,
-            fontSize: 32,
+            fontSize: isMobile ? 24 : 32,
             color: '#222',
             margin: 0,
             letterSpacing: 1,
@@ -436,8 +440,7 @@ function UserInfo() {
             gap: 12,
           }}
         >
-          <span style={{ color: '#018f2c', fontSize: 34 }}>👤</span>
-          تفاصيل المستخدم
+          <span style={{ color: '#018f2c', fontSize: isMobile ? 28 : 34 }}>👤</span>
         </h2>
         <button
           onClick={() => navigate("/admin/users-list")}
@@ -446,9 +449,9 @@ function UserInfo() {
             color: '#018f2c',
             border: '1.5px solid #018f2c',
             borderRadius: 12,
-            padding: '8px 28px',
+            padding: isMobile ? '6px 18px' : '8px 28px',
             fontWeight: 700,
-            fontSize: 18,
+            fontSize: isMobile ? 14 : 18,
             cursor: 'pointer',
             boxShadow: '0 2px 8px rgba(1,143,44,0.06)',
             display: 'flex',
@@ -456,9 +459,9 @@ function UserInfo() {
             gap: 8,
             transition: 'background 0.2s, color 0.2s',
           }}
+          aria-label="رجوع"
         >
-          <FontAwesomeIcon icon={faArrowAltCircleRight} style={{ fontSize: 22, marginLeft: 6 }} />
-          رجوع
+          <FontAwesomeIcon icon={faArrowAltCircleRight} style={{ fontSize: isMobile ? 18 : 22, marginLeft: 0 }} />
         </button>
       </motion.div>
 
@@ -467,7 +470,7 @@ function UserInfo() {
         style={{
           background: '#fff',
           borderRadius: '16px',
-          padding: '24px',
+          padding: isMobile ? '16px' : '24px',
           marginBottom: '24px',
           boxShadow: '0 4px 20px rgba(0, 146, 71, 0.08)',
           border: '1px solid #f0f0f0'
@@ -476,43 +479,43 @@ function UserInfo() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
       >
-        <h3 style={{ color: '#009247', marginBottom: '20px', fontWeight: 700 }}>
-          <FontAwesomeIcon icon={faUser} style={{ marginLeft: 8 }} />
+        <h3 style={{ color: '#009247', marginBottom: '20px', fontWeight: 700, fontSize: isMobile ? 18 : 20 }}>
+          <FontAwesomeIcon icon={faUser} style={{ marginLeft: 8, fontSize: isMobile ? 16 : 18 }} />
           البيانات الأساسية
         </h3>
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+          gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? 180 : 250}px, 1fr))`,
           gap: '16px'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <FontAwesomeIcon icon={faUser} style={{ color: '#009247', fontSize: 18 }} />
+            <FontAwesomeIcon icon={faUser} style={{ color: '#009247', fontSize: isMobile ? 16 : 18 }} />
             <div>
-              <p style={{ margin: 0, color: '#666', fontSize: 14 }}>الاسم</p>
-              <p style={{ margin: 0, fontWeight: 600, color: '#222' }}>
+              <p style={{ margin: 0, color: '#666', fontSize: isMobile ? 12 : 14 }}>الاسم</p>
+              <p style={{ margin: 0, fontWeight: 600, color: '#222', fontSize: isMobile ? 14 : 16 }}>
                 {user.FirstName} {user.LastName}
               </p>
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <FontAwesomeIcon icon={faEnvelope} style={{ color: '#009247', fontSize: 18 }} />
+            <FontAwesomeIcon icon={faEnvelope} style={{ color: '#009247', fontSize: isMobile ? 16 : 18 }} />
             <div>
-              <p style={{ margin: 0, color: '#666', fontSize: 14 }}>البريد الإلكتروني</p>
-              <p style={{ margin: 0, fontWeight: 600, color: '#222' }}>{user.Email}</p>
+              <p style={{ margin: 0, color: '#666', fontSize: isMobile ? 12 : 14 }}>البريد الإلكتروني</p>
+              <p style={{ margin: 0, fontWeight: 600, color: '#222', fontSize: isMobile ? 14 : 16, overflowWrap: 'anywhere', wordBreak: 'break-word' }}>{user.Email}</p>
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <FontAwesomeIcon icon={faPhone} style={{ color: '#009247', fontSize: 18 }} />
+            <FontAwesomeIcon icon={faPhone} style={{ color: '#009247', fontSize: isMobile ? 16 : 18 }} />
             <div>
-              <p style={{ margin: 0, color: '#666', fontSize: 14 }}>رقم الهاتف</p>
-              <p style={{ margin: 0, fontWeight: 600, color: '#222' }}>{user.PhoneNumber}</p>
+              <p style={{ margin: 0, color: '#666', fontSize: isMobile ? 12 : 14 }}>رقم الهاتف</p>
+              <p style={{ margin: 0, fontWeight: 600, color: '#222', fontSize: isMobile ? 14 : 16 }}>{user.PhoneNumber}</p>
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <FontAwesomeIcon icon={faMapMarkerAlt} style={{ color: '#009247', fontSize: 18 }} />
+            <FontAwesomeIcon icon={faMapMarkerAlt} style={{ color: '#009247', fontSize: isMobile ? 16 : 18 }} />
             <div>
-              <p style={{ margin: 0, color: '#666', fontSize: 14 }}>العنوان</p>
-              <p style={{ margin: 0, fontWeight: 600, color: '#222' }}>{user.City}</p>
+              <p style={{ margin: 0, color: '#666', fontSize: isMobile ? 12 : 14 }}>العنوان</p>
+              <p style={{ margin: 0, fontWeight: 600, color: '#222', fontSize: isMobile ? 14 : 16 }}>{user.City}</p>
             </div>
           </div>
         </div>
@@ -534,7 +537,7 @@ function UserInfo() {
         <div style={{
           display: 'flex',
           gap: '8px',
-          marginBottom: '24px',
+          marginBottom: isMobile ? '16px' : '24px',
           flexWrap: 'wrap'
         }}>
           {[
@@ -552,15 +555,15 @@ function UserInfo() {
                 color: activeTab === tab.id ? '#fff' : '#666',
                 border: 'none',
                 borderRadius: '12px',
-                padding: '12px 20px',
+                padding: isMobile ? '10px 14px' : '12px 20px',
                 cursor: 'pointer',
                 fontWeight: 600,
-                fontSize: 14,
+                fontSize: isMobile ? 13 : 14,
                 display: 'flex',
                 alignItems: 'center',
                 gap: 8,
                 transition: 'all 0.2s',
-                minWidth: '120px',
+                minWidth: isMobile ? '100px' : '120px',
                 justifyContent: 'center'
               }}
             >
@@ -570,12 +573,12 @@ function UserInfo() {
                 background: activeTab === tab.id ? 'rgba(255,255,255,0.2)' : '#e9ecef',
                 color: activeTab === tab.id ? '#fff' : '#666',
                 borderRadius: '50%',
-                width: '20px',
-                height: '20px',
+                width: isMobile ? '18px' : '20px',
+                height: isMobile ? '18px' : '20px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: 12,
+                fontSize: isMobile ? 11 : 12,
                 fontWeight: 700
               }}>
                 {tab.count}

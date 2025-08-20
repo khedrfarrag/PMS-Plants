@@ -1,4 +1,16 @@
-import { faArrowAltCircleLeft, faArrowAltCircleRight, faCheckCircle, faExclamationTriangle, faEye, faHeart, faHeartBroken, faMinus, faPlus, faSpinner, faStar } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowAltCircleLeft,
+  faArrowAltCircleRight,
+  faCheckCircle,
+  faExclamationTriangle,
+  faEye,
+  faHeart,
+  faHeartBroken,
+  faMinus,
+  faPlus,
+  faSpinner,
+  faStar,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence } from "framer-motion";
 import { motion } from "framer-motion";
@@ -6,12 +18,15 @@ import React, { useContext, useEffect, useState } from "react";
 import Styles from "../Home/Style.module.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { cartShopPoint, ImgURLBeasd, ProductsPoint } from "../../../constant/Const";
+import {
+  cartShopPoint,
+  ImgURLBeasd,
+  ProductsPoint,
+} from "../../../constant/Const";
 import { toast } from "react-toastify";
 import { AuthContext, AuthContextType } from "../../../context/Context";
 import { CartshopContext } from "../../../context/CartshopContext";
 export default function Offer() {
-
   interface pagenation {
     CurrentPage: number;
     PageSize: number;
@@ -19,13 +34,11 @@ export default function Offer() {
     TotalPages: number;
   }
 
-  const [count, setCount] = useState(1);
-  const [getDiscountedProducts, setDiscountedProducts] = useState<card>([]);
+  const [getDiscountedProducts, setDiscountedProducts] = useState([]);
   const [pagination, setPagination] = useState<pagenation>();
   const [currentPage, setCurrentPage] = useState(1);
   const [favorites, setFavorites] = useState<number[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [cartLoading, setCartLoading] = useState(false);
+
   const [loadingStates, setLoadingStates] = useState<{
     [key: number]: boolean;
     popular?: boolean;
@@ -42,7 +55,6 @@ export default function Offer() {
   const authContext = useContext(AuthContext) as AuthContextType | null;
   const { fetchCart } = useContext(CartshopContext) || {};
   const userId = authContext?.userData?.userId;
-  const sessionExpired = authContext?.sessionExpired;
   const getallpopuler = async ({
     pageNumber,
     pageSize,
@@ -199,20 +211,18 @@ export default function Offer() {
         prev[productId] && prev[productId] > 1 ? prev[productId] - 1 : 1,
     }));
   };
-   // Helper function to get stock status
-   const getStockStatus = (quantity: number) => {
+  // Helper function to get stock status
+  const getStockStatus = (quantity: number) => {
     if (quantity === 0) {
       return { status: "outOfStock", text: "نفذ المخزون" };
     } else if (quantity <= 10) {
       return { status: "lowStock", text: "مخزون منخفض" };
-    }else if (quantity === 1) {
+    } else if (quantity === 1) {
       return { status: "lastPiece", text: "اخر قطعة" };
-    }
-    else {
+    } else {
       return { status: "inStock", text: "متوفر" };
     }
   };
-
 
   // Add to cart function
   const addToCart = async (productId: number) => {
@@ -243,7 +253,7 @@ export default function Offer() {
             },
           }
         );
-        if(getStockStatus(response.data.StockQuantity).status !== "inStock"){
+        if (getStockStatus(response.data.StockQuantity).status !== "inStock") {
           toast.error("المنتج غير متوفر");
           return;
         }
@@ -276,15 +286,15 @@ export default function Offer() {
         const response = await axios.post(cartShopPoint.Post, body, {
           headers,
         });
-     
+
         if (response.status === 200 || response.status === 201) {
           toast.success("تم إضافة المنتج إلى السلة بنجاح");
-          
+
           // بدلاً من window.location.reload() - تحديث السلة من الـ context
           if (fetchCart) {
             await fetchCart();
           }
-          
+
           getCartItems();
         }
       }
@@ -381,276 +391,269 @@ export default function Offer() {
     );
   }
 
-
-
-return <>
-  <div className={Styles.popularContainer}>
-      <motion.div
-        className={Styles.popularCaption}
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <h1 className="text-center">
-          <FontAwesomeIcon
-            icon={faStar}
-            style={{ color: "#ffc107", marginLeft: "10px" }}
-          />
-          عشروض الشهر
-        </h1>
-        <p className="text-center"> أكثر المنتجات عليها خصم هذا الشهر </p>
-      </motion.div>
-
-      <AnimatePresence>
+  return (
+    <>
+      <div className={Styles.popularContainer}>
         <motion.div
-          className={Styles.popularCards}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          className={Styles.popularCaption}
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          {getDiscountedProducts.map((popcard, index) => (
-            <motion.div
-              key={popcard.Id}
-              className={`${Styles.popularCard} shadow`}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
-              whileHover={{
-                y: -5,
-                boxShadow: "0 8px 25px rgba(0, 146, 71, 0.15)",
-              }}
-            >
-              {/* صورة المنتج */}
-              <div className={Styles.popularCardImage}>
-                <img
-                  src={`${ImgURLBeasd}${popcard.ImageUrl}`}
-                  alt={popcard.Name}
-                  onError={(e) => {
-                    e.currentTarget.src = image;
-                  }}
-                />
-                {addingToCart[popcard.Id] && (
-                  <div className={Styles.imageOverlay}>
-                    <FontAwesomeIcon icon={faSpinner} spin />
-                  </div>
-                )}
-                
-              </div>
+          <h1 className="text-center">
+            <FontAwesomeIcon
+              icon={faStar}
+              style={{ color: "#ffc107", marginLeft: "10px" }}
+            />
+            عروض الشهر
+          </h1>
+          <p className="text-center"> أكثر المنتجات عليها خصم هذا الشهر </p>
+        </motion.div>
 
-              {/* الشارات */}
-              <div className={Styles.badges}>
-              
-                {/* {popcard.StockStatues === "Out of Stock" && (
-                  <span className={Styles.outOfStockBadge}>
-                    <FontAwesomeIcon icon={faExclamationTriangle} />
-                    غير متوفر
-                  </span>
-                )} */}
-                {popcard.DiscountPercentage > 0 && (
-                  <span className={Styles.discountBadge}>
-                    -{popcard.DiscountPercentage}%
-                  </span>
-                )}
-              </div>
-
-              {/* الإجراءات السريعة */}
-              <div className={Styles.quickActions}>
-                <button
-                  className={`${Styles.actionBtn} ${Styles.favoriteBtn} ${
-                    isInFavorites(popcard.Id) ? Styles.active : ""
-                  }`}
-                  onClick={() => toggleFavorite(popcard.Id)}
-                  disabled={loadingStates[popcard.Id]}
-                  title={
-                    isInFavorites(popcard.Id)
-                      ? "إزالة من المفضلة"
-                      : "إضافة للمفضلة"
-                  }
-                >
-                  <FontAwesomeIcon
-                    icon={
-                      loadingStates[popcard.Id]
-                        ? faSpinner
-                        : isInFavorites(popcard.Id)
-                        ? faHeartBroken
-                        : faHeart
-                    }
-                    spin={loadingStates[popcard.Id]}
+        <AnimatePresence>
+          <motion.div
+            className={Styles.popularCards}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            {getDiscountedProducts.map((popcard, index) => (
+              <motion.div
+                key={popcard.Id}
+                className={`${Styles.popularCard} shadow`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
+                whileHover={{
+                  y: -5,
+                  boxShadow: "0 8px 25px rgba(0, 146, 71, 0.15)",
+                }}
+              >
+                {/* صورة المنتج */}
+                <div className={Styles.popularCardImage}>
+                  <img
+                    src={`${ImgURLBeasd}${popcard.ImageUrl}`}
+                    alt={popcard.Name}
+                    onError={(e) => {
+                      e.currentTarget.src = image;
+                    }}
                   />
-                </button>
-
-                <Link
-                  to={`/store/product/${popcard.Id}`}
-                  state={{ data: popcard }}
-                  className={`${Styles.actionBtn} ${Styles.viewBtn}`}
-                  title="عرض التفاصيل"
-                >
-                  <FontAwesomeIcon icon={faEye} />
-                </Link>
-              </div>
-
-              {/* محتوى الكارد */}
-              <div className={Styles.popularCardContent}>
-                {/* العنوان والتقييم */}
-                <div className={Styles.productHeader}>
-                  <h4 className={Styles.productTitle}>{popcard.Name}</h4>
-                  <div className={Styles.rating}>
-                    <div className={Styles.stars}>
-                      {renderStars(popcard.Rate)}
+                  {addingToCart[popcard.Id] && (
+                    <div className={Styles.imageOverlay}>
+                      <FontAwesomeIcon icon={faSpinner} spin />
                     </div>
-                    <span className={Styles.ratingText}>
-                      {popcard.Rate.toFixed(1)} من 5
-                    </span>
-                  </div>
+                  )}
                 </div>
 
-                {/* الوصف */}
-                <p className={Styles.productDescription}>
-                  {popcard.Description}
-                </p>
-
-                {/* السعر */}
-                <div className={Styles.priceSection}>
-                  <div className={Styles.priceInfo}>
-                    <span className={Styles.currentPrice}>
-                      ${popcard.DiscountedPrice}
+                {/* الشارات */}
+                <div className={Styles.badges}>
+                  {popcard.DiscountPercentage > 0 && (
+                    <span className={Styles.discountBadge}>
+                      -{popcard.DiscountPercentage}%
                     </span>
+                  )}
+                </div>
+
+                {/* الإجراءات السريعة */}
+                <div className={Styles.quickActions}>
+                  <button
+                    className={`${Styles.actionBtn} ${Styles.favoriteBtn} ${
+                      isInFavorites(popcard.Id) ? Styles.active : ""
+                    }`}
+                    onClick={() => toggleFavorite(popcard.Id)}
+                    disabled={loadingStates[popcard.Id]}
+                    title={
+                      isInFavorites(popcard.Id)
+                        ? "إزالة من المفضلة"
+                        : "إضافة للمفضلة"
+                    }
+                  >
+                    <FontAwesomeIcon
+                      icon={
+                        loadingStates[popcard.Id]
+                          ? faSpinner
+                          : isInFavorites(popcard.Id)
+                          ? faHeartBroken
+                          : faHeart
+                      }
+                      spin={loadingStates[popcard.Id]}
+                    />
+                  </button>
+
+                  <Link
+                    to={`/store/product/${popcard.Id}`}
+                    state={{ data: popcard }}
+                    className={`${Styles.actionBtn} ${Styles.viewBtn}`}
+                    title="عرض التفاصيل"
+                  >
+                    <FontAwesomeIcon icon={faEye} />
+                  </Link>
+                </div>
+
+                {/* محتوى الكارد */}
+                <div className={Styles.popularCardContent}>
+                  {/* العنوان والتقييم */}
+                  <div className={Styles.productHeader}>
+                    <h4 className={Styles.productTitle}>{popcard.Name}</h4>
+                    <div className={Styles.rating}>
+                      <div className={Styles.stars}>
+                        {renderStars(popcard.Rate)}
+                      </div>
+                      <span className={Styles.ratingText}>
+                        {popcard.Rate.toFixed(1)} من 5
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* الوصف */}
+                  <p className={Styles.productDescription}>
+                    {popcard.Description}
+                  </p>
+
+                  {/* السعر */}
+                  <div className={Styles.priceSection}>
+                    <div className={Styles.priceInfo}>
+                      <span className={Styles.currentPrice}>
+                        ${popcard.DiscountedPrice}
+                      </span>
+                      {popcard.DiscountedPrice !== popcard.Price && (
+                        <span className={Styles.originalPrice}>
+                          ${popcard.Price}
+                        </span>
+                      )}
+                    </div>
                     {popcard.DiscountedPrice !== popcard.Price && (
-                      <span className={Styles.originalPrice}>
-                        ${popcard.Price}
+                      <span className={Styles.savings}>
+                        وفر $
+                        {(popcard.Price - popcard.DiscountedPrice).toFixed(2)}
+                      </span>
+                    )}
+                    {getStockStatus(popcard.StockQuantity).status ===
+                      "lastPiece" && (
+                      <span className={Styles.lastPieceBadge}>
+                        <FontAwesomeIcon icon={faExclamationTriangle} />
+                        اخر قطعة
+                      </span>
+                    )}
+                    {getStockStatus(popcard.StockQuantity).status ===
+                      "lowStock" && (
+                      <span className={Styles.lowStockBadge}>
+                        <FontAwesomeIcon icon={faExclamationTriangle} />
+                        مخزون منخفض
+                      </span>
+                    )}
+                    {getStockStatus(popcard.StockQuantity).status ===
+                      "outOfStock" && (
+                      <span className={Styles.outOfStockBadge}>
+                        <FontAwesomeIcon icon={faExclamationTriangle} />
+                        نفذ المخزون
+                      </span>
+                    )}
+                    {getStockStatus(popcard.StockQuantity).status ===
+                      "inStock" && (
+                      <span className={Styles.inStockBadge}>
+                        <FontAwesomeIcon icon={faCheckCircle} />
+                        متوفر
                       </span>
                     )}
                   </div>
-                  {popcard.DiscountedPrice !== popcard.Price && (
-                    <span className={Styles.savings}>
-                      وفر $
-                      {(popcard.Price - popcard.DiscountedPrice).toFixed(2)}
-                    </span>
-                  )}
-                  {getStockStatus(popcard.StockQuantity).status === "lastPiece" && (
-                    <span className={Styles.lastPieceBadge}>
-                      <FontAwesomeIcon icon={faExclamationTriangle} />
-                      اخر قطعة
-                    </span>
-                  )}
-                  {getStockStatus(popcard.StockQuantity).status === "lowStock" && (
-                    <span className={Styles.lowStockBadge}>
-                      <FontAwesomeIcon icon={faExclamationTriangle} />
-                      مخزون منخفض
-                    </span>
-                  )}
-                  {getStockStatus(popcard.StockQuantity).status === "outOfStock" && (
-                    <span className={Styles.outOfStockBadge}>
-                      <FontAwesomeIcon icon={faExclamationTriangle} />
-                      نفذ المخزون
-                    </span>
-                  )}
-                  {getStockStatus(popcard.StockQuantity).status === "inStock" && (
-                    <span className={Styles.inStockBadge}>
-                      <FontAwesomeIcon icon={faCheckCircle} />
-                      متوفر
-                    </span>
-                  )}
 
-                </div>
+                  {/* التحكم في الكمية وإضافة للسلة */}
+                  <div className={Styles.cartSection}>
+                    {cartProductIds.includes(popcard.Id) ? (
+                      <div className={Styles.inCartText}>
+                        <FontAwesomeIcon icon={faCheckCircle} />
+                        موجود في السلة
+                      </div>
+                    ) : (
+                      <div className={Styles.addToCartControls}>
+                        {/* التحكم في الكمية */}
+                        <div className={Styles.quantityControl}>
+                          <button
+                            className={`${Styles.quantityBtn} ${Styles.decrease}`}
+                            onClick={() => decrementHandler(popcard.Id)}
+                            disabled={addingToCart[popcard.Id]}
+                          >
+                            <FontAwesomeIcon icon={faMinus} />
+                          </button>
+                          <span className={Styles.quantityValue}>
+                            {counter[popcard.Id] || 1}
+                          </span>
+                          <button
+                            className={`${Styles.quantityBtn} ${Styles.increase}`}
+                            onClick={() => incrementHandler(popcard.Id)}
+                            disabled={addingToCart[popcard.Id]}
+                          >
+                            <FontAwesomeIcon icon={faPlus} />
+                          </button>
+                        </div>
 
-                {/* التحكم في الكمية وإضافة للسلة */}
-                <div className={Styles.cartSection}>
-                  {cartProductIds.includes(popcard.Id) ? (
-                    <div className={Styles.inCartText}>
-                      <FontAwesomeIcon icon={faCheckCircle} />
-                      موجود في السلة
-                    </div>
-                  ) : (
-                    <div className={Styles.addToCartControls}>
-                      {/* التحكم في الكمية */}
-                      <div className={Styles.quantityControl}>
+                        {/* زر إضافة للسلة */}
                         <button
-                          className={`${Styles.quantityBtn} ${Styles.decrease}`}
-                          onClick={() => decrementHandler(popcard.Id)}
+                          className={`${Styles.addToCartBtn} ${
+                            addingToCart[popcard.Id] ? Styles.loading : ""
+                          }`}
+                          onClick={() => addToCart(popcard.Id)}
                           disabled={addingToCart[popcard.Id]}
                         >
-                          <FontAwesomeIcon icon={faMinus} />
-                        </button>
-                        <span className={Styles.quantityValue}>
-                          {counter[popcard.Id] || 1}
-                        </span>
-                        <button
-                          className={`${Styles.quantityBtn} ${Styles.increase}`}
-                          onClick={() => incrementHandler(popcard.Id)}
-                          disabled={addingToCart[popcard.Id]}
-                        >
-                          <FontAwesomeIcon icon={faPlus} />
+                          {addingToCart[popcard.Id] ? (
+                            <>
+                              <FontAwesomeIcon icon={faSpinner} spin />
+                              جاري الإضافة...
+                            </>
+                          ) : (
+                            <>
+                              <FontAwesomeIcon icon={faPlus} />
+                              أضف للسلة
+                            </>
+                          )}
                         </button>
                       </div>
-
-                      {/* زر إضافة للسلة */}
-                      <button
-                        className={`${Styles.addToCartBtn} ${
-                          addingToCart[popcard.Id] ? Styles.loading : ""
-                        }`}
-                        onClick={() => addToCart(popcard.Id)}
-                        disabled={addingToCart[popcard.Id]}
-                      >
-                        {addingToCart[popcard.Id] ? (
-                          <>
-                            <FontAwesomeIcon icon={faSpinner} spin />
-                            جاري الإضافة...
-                          </>
-                        ) : (
-                          <>
-                            <FontAwesomeIcon icon={faPlus} />
-                            أضف للسلة
-                          </>
-                        )}
-                      </button>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
-      </AnimatePresence>
+              </motion.div>
+            ))}
+          </motion.div>
+        </AnimatePresence>
 
-      {/* Pagination */}
-      {pagination && pagination.TotalPages >= 1 && (
-        <motion.div
-          className={Styles.popularPagination}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-        >
-          <button
-            className={`${Styles.paginationBtn} ${
-              currentPage > 1 ? Styles.active : Styles.disabled
-            }`}
-            onClick={handlePrevPage}
-            disabled={currentPage <= 1}
+        {/* Pagination */}
+        {pagination && pagination.TotalPages >= 1 && (
+          <motion.div
+            className={Styles.popularPagination}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
           >
-            <FontAwesomeIcon icon={faArrowAltCircleRight} />
-          </button>
+            <button
+              className={`${Styles.paginationBtn} ${
+                currentPage > 1 ? Styles.active : Styles.disabled
+              }`}
+              onClick={handlePrevPage}
+              disabled={currentPage <= 1}
+            >
+              <FontAwesomeIcon icon={faArrowAltCircleRight} />
+            </button>
 
-          <span className={Styles.pageInfo}>
-            {pagination.TotalPages} / <span>{currentPage}</span>
-          </span>
+            <span className={Styles.pageInfo}>
+              {pagination.TotalPages} / <span>{currentPage}</span>
+            </span>
 
-          <button
-            className={`${Styles.paginationBtn} ${
-              currentPage < pagination.TotalPages
-                ? Styles.active
-                : Styles.disabled
-            }`}
-            onClick={handleNextPage}
-            disabled={currentPage >= pagination.TotalPages}
-          >
-            <FontAwesomeIcon icon={faArrowAltCircleLeft} />
-          </button>
-        </motion.div>
-      )}
-    </div>
-  
-  
-  </>;
+            <button
+              className={`${Styles.paginationBtn} ${
+                currentPage < pagination.TotalPages
+                  ? Styles.active
+                  : Styles.disabled
+              }`}
+              onClick={handleNextPage}
+              disabled={currentPage >= pagination.TotalPages}
+            >
+              <FontAwesomeIcon icon={faArrowAltCircleLeft} />
+            </button>
+          </motion.div>
+        )}
+      </div>
+    </>
+  );
 }

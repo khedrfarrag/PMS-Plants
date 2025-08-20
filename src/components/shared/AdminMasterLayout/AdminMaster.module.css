@@ -10,3 +10,15 @@
     width: calc(100% - 100px);
     transition: margin-left 0.3s ease-in-out;
 }
+
+@media (max-width: 768px) {
+    .content {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .contentShift {
+        margin-left: 72px;
+        width: calc(100% - 72px);
+    }
+}

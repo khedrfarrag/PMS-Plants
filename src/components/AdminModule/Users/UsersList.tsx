@@ -4,10 +4,12 @@ import userlogo from "../../../assets/svg/dashsvg/userimg.svg";
 import resteimg from "../../../assets/svg/dashsvg/reate.svg";
 import { motion } from "framer-motion";
 import Cards from "../../shared/utils/Cards";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { authEndPoint, ordersPoint, siteFeedbackPoint } from "../../../constant/Const";
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch, faFilter } from "@fortawesome/free-solid-svg-icons";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -94,6 +96,9 @@ function UsersList() {
   const [searchTerm, setSearchTerm] = useState(""); // البحث
   const [searchType, setSearchType] = useState("الاسم"); // نوع البحث المختار
   const [userCount, setUserCount] = useState(0);
+  const [showSearchMobile, setShowSearchMobile] = useState(false);
+  const [showFilterMobile, setShowFilterMobile] = useState(false);
+  const controlsRef = useRef<HTMLDivElement>(null);
 
   const getUserCount = async () => {
     const response = await axios.get(authEndPoint.GetUserCount, {
@@ -205,6 +210,17 @@ const getFeedbacks = async (pageNumber:number,pageSize:number) => {
   useEffect(() => {
     getUserCount();
     getFeedbacks(1,1000);
+  }, []);
+
+  useEffect(() => {
+    const onDocClick = (e: MouseEvent) => {
+      if (controlsRef.current && !controlsRef.current.contains(e.target as Node)) {
+        setShowSearchMobile(false);
+        setShowFilterMobile(false);
+      }
+    };
+    document.addEventListener('mousedown', onDocClick);
+    return () => document.removeEventListener('mousedown', onDocClick);
   }, []);
 
   const normalizedRatings = feedbacks.map(f => Math.min(Number(f.Rating), 5));
@@ -376,18 +392,13 @@ const getFeedbacks = async (pageNumber:number,pageSize:number) => {
                 width={typeof window !== 'undefined' && window.innerWidth < 600 ? 220 : 350}
                 height={typeof window !== 'undefined' && window.innerWidth < 600 ? 220 : 350}
                 slotProps={{
-                  legend: Object.assign(
-                    {
-                      position: {
-                        vertical: typeof window !== 'undefined' && window.innerWidth < 600 ? 'bottom' : 'middle',
-                        horizontal: typeof window !== 'undefined' && window.innerWidth < 600 ? 'center' : 'end',
-                      },
-                      itemMarkWidth: 18,
-                      itemMarkHeight: 18,
-                      labelStyle: { fontSize: 14, fontWeight: 500 }
+                  legend: {
+                    position: {
+                      vertical: typeof window !== 'undefined' && window.innerWidth < 600 ? 'bottom' : 'middle',
+                      horizontal: typeof window !== 'undefined' && window.innerWidth < 600 ? 'center' : 'end',
                     },
-                    typeof window !== 'undefined' && window.innerWidth >= 600 ? { direction: 'column' } : {}
-                  )
+                    direction: (typeof window !== 'undefined' && window.innerWidth >= 600 ? 'column' : 'row') as any,
+                  },
                 }}
                 colors={["#3D5AFE", "#D1C4E9", "#FF9800", "#E53935", "#4CAF50", "#F44336", "#00BCD4", "#FFC107"]}
               />
@@ -412,9 +423,9 @@ const getFeedbacks = async (pageNumber:number,pageSize:number) => {
               </div>
             ) : (
               <>
-                <div className="d-flex justify-content-between align-items-center mb-2">
+                <div className={`d-flex justify-content-between align-items-center mb-2 ${Style.lastOrdersControls}`} ref={controlsRef}>
                   <h5 className="fw-bold m-2">المستخدمون</h5>
-                  <div className="d-flex gap-5 flex-md-row-reverse w-75">
+                  <div className="d-none d-md-flex gap-5 flex-md-row-reverse w-75">
                     <select
                       className={`${Style.heroSelect} ${Style.usersSelect} form-select m-2`}
                       style={{ maxWidth: "120px" }}
@@ -432,6 +443,48 @@ const getFeedbacks = async (pageNumber:number,pageSize:number) => {
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
+                  </div>
+                  {/* Mobile icon controls */}
+                  <div className="d-flex d-md-none align-items-center gap-2 position-relative">
+                    <button
+                      className={Style.iconButton}
+                      onClick={() => { setShowSearchMobile((p)=>!p); setShowFilterMobile(false); }}
+                      aria-label="فتح البحث"
+                    >
+                      <FontAwesomeIcon icon={faSearch} />
+                    </button>
+                    <button
+                      className={Style.iconButton}
+                      onClick={() => { setShowFilterMobile((p)=>!p); setShowSearchMobile(false); }}
+                      aria-label="تحديد نوع البحث"
+                    >
+                      <FontAwesomeIcon icon={faFilter} />
+                    </button>
+
+                    {showSearchMobile && (
+                      <div className={Style.mobilePopover} style={{ width: '84vw' }}>
+                        <input
+                          type="text"
+                          className={`${Style.heroSearch} form-control`}
+                          placeholder={`ابحث بـ ${searchType}...`}
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          autoFocus
+                        />
+                      </div>
+                    )}
+
+                    {showFilterMobile && (
+                      <div className={Style.mobilePopover} style={{ width: '70vw' }}>
+                        <div className={Style.popoverList}>
+                          {['الاسم','العنوان','عدد العمليات'].map((opt) => (
+                            <button key={opt} className={Style.popoverItem} onClick={() => { setSearchType(opt); setShowFilterMobile(false); }}>
+                              {opt}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="table-responsive">

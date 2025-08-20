@@ -1,19 +1,27 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
+import { useState, useRef, useEffect, useContext } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {  faBell } from "@fortawesome/free-solid-svg-icons";
+import {  faBell, faCircleRight, faCircleLeft } from "@fortawesome/free-solid-svg-icons";
 import Style from "./NavBar.module.css";
 import Imguser from "../../../assets/svg/userimg.svg";
 import {  useNavigate } from "react-router-dom";
 import { AuthContext } from "../../../context/Context";
-import { ImgURLBeasd, contactMessagesPoint } from "../../../constant/Const";
+import { ImgURLBeasd } from "../../../constant/Const";
 import { ContactMessageContext } from "../../../context/ContactMessageContext";
 
-export default function NavBar() {
+type NavBarProps = {
+  isMobile?: boolean;
+  isSidebarOpen?: boolean;
+  onToggleSidebar?: () => void;
+};
+
+export default function NavBar({ isMobile = false, isSidebarOpen = false, onToggleSidebar }: NavBarProps) {
   const [dropdownOpenAvatar, setDropdownOpenAvatar] = useState(false);
   const [dropdownOpenBell, setDropdownOpenBell] = useState(false);
   const avatarDropdownRef = useRef<HTMLDivElement>(null);
   const bellDropdownRef = useRef<HTMLDivElement>(null);
+  const avatarButtonRef = useRef<HTMLImageElement>(null);
+  const bellButtonRef = useRef<HTMLSpanElement>(null);
   const navigate = useNavigate();
   const {userData,logout}:any=useContext(AuthContext)
   console.log(userData)
@@ -21,15 +29,18 @@ export default function NavBar() {
   // إغلاق القائمة عند الضغط خارجها
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
+      const target = event.target as Node;
       if (
         avatarDropdownRef.current &&
-        !avatarDropdownRef.current.contains(event.target as Node)
+        !avatarDropdownRef.current.contains(target) &&
+        !(avatarButtonRef.current && avatarButtonRef.current.contains(target))
       ) {
         setDropdownOpenAvatar(false);
       }
       if (
         bellDropdownRef.current &&
-        !bellDropdownRef.current.contains(event.target as Node)
+        !bellDropdownRef.current.contains(target) &&
+        !(bellButtonRef.current && bellButtonRef.current.contains(target))
       ) {
         setDropdownOpenBell(false);
       }
@@ -83,10 +94,11 @@ export default function NavBar() {
   return (
     <header
       className="d-flex justify-content-between align-items-center p-3 bg-white mb-2 shadow-sm"
-      style={{ direction: "rtl" }}
+      style={{ direction: "rtl", position: "sticky", top: 0, zIndex: 2100 }}
     >
       {/* أيقونة الجرس والمستخدم */}
       <div className="d-flex align-items-center gap-5 ">
+      
         <div className="d-flex align-items-center me-3 gap-3 position-relative">
           <img
             src={userData?.image ? `${ImgURLBeasd}${userData?.image}` : Imguser}
@@ -94,6 +106,7 @@ export default function NavBar() {
             className="rounded-circle ms-2"
             style={{ width: "40px", height: "40px", cursor: "pointer" }}
             onClick={handleAvatarClick}
+            ref={avatarButtonRef}
           />
           {/* القائمة المنسدلة الخاصة بالصورة */}
           {dropdownOpenAvatar && (
@@ -104,7 +117,7 @@ export default function NavBar() {
                 top: "50px",
                 right: 0,
                 minWidth: "180px",
-                zIndex: 1000,
+                zIndex: 2000,
                 border: "1px solid #eee",
               }}
             >
@@ -156,7 +169,7 @@ export default function NavBar() {
                 right: 0,
                 minWidth: "320px",
                 maxWidth: "95vw",
-                zIndex: 1000,
+                zIndex: 2000,
                 border: "1px solid #eee",
                 padding: 0,
                 boxShadow: "0 4px 24px rgba(1,143,44,0.10)",
@@ -165,7 +178,7 @@ export default function NavBar() {
               }}
             >
               {/* قائمة الرسائل */}
-              <div style={{ maxHeight: 400, overflowY: "auto", background: "#fff" }}>
+              <div style={{ maxHeight: 400, overflowY: "auto", background: "#fff"}}>
                 {messages.length === 0 ? (
                   <div className="text-center py-4 text-muted">لا توجد رسائل</div>
                 ) : (
@@ -211,7 +224,8 @@ export default function NavBar() {
                     padding: "6px 24px",
                     border: "none",
                     boxShadow: "0 2px 8px rgba(1,143,44,0.08)",
-                    transition: "background 0.2s"
+                    transition: "background 0.2s",
+                  
                   }}
                   onClick={() => {
                     setDropdownOpenBell(false);
@@ -234,14 +248,27 @@ export default function NavBar() {
               {userData?.role ? getRoleArabic(userData.role) : ""}
             </p>
           </div>
+          
+        <span ref={bellButtonRef}>
+          <FontAwesomeIcon
+            icon={faBell}
+            className="ms-5 "
+            style={{ fontSize: "18px", color: unreadCount > 0 ? "#e74c3c" : "#888", cursor: "pointer", transition: "color 0.2s" }}
+            onClick={handleBellClick}
+          />
+        </span>
         </div>
-        <FontAwesomeIcon
-          icon={faBell}
-          className="ms-5 "
-          style={{ fontSize: "18px", color: unreadCount > 0 ? "#e74c3c" : "#888", cursor: "pointer", transition: "color 0.2s" }}
-          onClick={handleBellClick}
-        />
       </div>
+          {/* زر الهامبرجر يظهر فقط على الموبايل */}
+          <button
+          className="btn d-md-none"
+          style={{ background: "transparent", border: "none", padding: 0 }}
+          onClick={onToggleSidebar}
+          aria-label="Toggle sidebar"
+          aria-hidden={!isMobile}
+        >
+          <FontAwesomeIcon icon={isSidebarOpen ? faCircleLeft : faCircleRight} style={{ fontSize: 20, color: "#016f22" }} />
+        </button>
     </header>
   );
 }

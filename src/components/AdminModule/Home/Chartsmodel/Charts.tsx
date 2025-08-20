@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { LineChart } from '@mui/x-charts';
+import { useMediaQuery } from '@mui/material';
 import axios from "axios";
 import { ordersPoint } from "../../../../constant/Const";
 
@@ -32,6 +33,7 @@ export default function ChartsModel({ orders: propOrders }: { orders?: any[] }) 
   const [cancelledCounts, setCancelledCounts] = useState<number[]>([]);
   const [pendingCounts, setPendingCounts] = useState<number[]>([]);
   const [loading, setLoading] = useState(false);
+  const isMobile = useMediaQuery('(max-width:768px)');
 
   // جلب الداتا إذا لم تُمرر كـ props
   useEffect(() => {
@@ -96,10 +98,39 @@ export default function ChartsModel({ orders: propOrders }: { orders?: any[] }) 
 
   if (loading) return <div style={{textAlign:'center',padding:'2rem'}}>جاري تحميل البيانات...</div>;
 
+  const containerStyle: React.CSSProperties = {
+    width: '100%',
+    background: '#fff',
+    borderRadius: 18,
+    boxShadow: '0 4px 24px rgba(1,143,44,0.13)',
+    padding: isMobile ? '1rem 0.75rem 1rem 0.75rem' : '2rem 1.5rem 1.5rem 1.5rem',
+    margin: '1.5rem 0',
+    position: 'relative',
+    minHeight: isMobile ? 330 : 370,
+  };
+
+  const titleStyle: React.CSSProperties = {
+    fontWeight: 'bold',
+    fontSize: isMobile ? 18 : 20,
+    color: '#018f2c',
+    marginBottom: isMobile ? 12 : 18,
+    letterSpacing: 1,
+    textAlign: 'center',
+  };
+
+  const infoCardTextStyle: React.CSSProperties = { color: '#018f2c', fontWeight: 700, fontSize: isMobile ? 14 : 16 };
+  const infoCardValueStyle: React.CSSProperties = { color: '#222', fontWeight: 900, fontSize: isMobile ? 20 : 22, letterSpacing: 1 };
+
+  const legendStyle: React.CSSProperties = isMobile
+    ? { position: 'static', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginBottom: 8 }
+    : { position: 'absolute', left: 24, top: 32, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 8, zIndex: 2 };
+
+  const chartHeight = isMobile ? 260 : 300;
+
   return (
-    <div style={{ width: '100%', background: '#fff', borderRadius: 18, boxShadow: '0 4px 24px rgba(1,143,44,0.13)', padding: '2rem 1.5rem 1.5rem 1.5rem', margin: '1.5rem 0', position: 'relative', minHeight: 370 }}>
+    <div style={containerStyle}>
       {/* العنوان */}
-      <div style={{ fontWeight: 'bold', fontSize: 20, color: '#018f2c', marginBottom: 18, letterSpacing: 1, textAlign: 'center' }}>
+      <div style={titleStyle}>
         إحصائيات الطلبات خلال آخر 7 أيام
       </div>
       {/* معلومات معدل النمو وإجمالي الطلبات */}
@@ -108,7 +139,7 @@ export default function ChartsModel({ orders: propOrders }: { orders?: any[] }) 
         justifyContent: 'center',
         alignItems: 'center',
         gap: 32,
-        marginBottom: 12,
+        marginBottom: isMobile ? 8 : 12,
         marginTop: 8,
         flexWrap: 'wrap'
       }}>
@@ -121,10 +152,10 @@ export default function ChartsModel({ orders: propOrders }: { orders?: any[] }) 
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          minWidth: 120
+          minWidth: isMobile ? 110 : 120
         }}>
-          <span style={{ color: '#018f2c', fontWeight: 700, fontSize: 16 }}>إجمالي الطلبات</span>
-          <span style={{ color: '#222', fontWeight: 900, fontSize: 22, letterSpacing: 1 }}>{totalOrders}</span>
+          <span style={infoCardTextStyle}>إجمالي الطلبات</span>
+          <span style={infoCardValueStyle}>{totalOrders}</span>
         </div>
         {/* معدل النمو */}
         <div style={{
@@ -135,14 +166,14 @@ export default function ChartsModel({ orders: propOrders }: { orders?: any[] }) 
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          minWidth: 120
+          minWidth: isMobile ? 110 : 120
         }}>
-          <span style={{ color: '#018f2c', fontWeight: 700, fontSize: 16 }}>معدل النمو</span>
+          <span style={infoCardTextStyle}>معدل النمو</span>
           <span style={{
             color:
               growthDir === 'up' ? 'green' : growthDir === 'down' ? 'red' : 'gray',
             fontWeight: 900,
-            fontSize: 22,
+            fontSize: isMobile ? 20 : 22,
             letterSpacing: 1,
             display: 'flex',
             alignItems: 'center'
@@ -155,23 +186,23 @@ export default function ChartsModel({ orders: propOrders }: { orders?: any[] }) 
         </div>
       </div>
       {/* الليجند أعلى الشمال */}
-      <div style={{ position: 'absolute', left: 24, top: 32, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 8, zIndex: 2 }}>
+      <div style={legendStyle}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{ display: 'inline-block', width: 16, height: 8, borderRadius: 4, background: '#009247', marginInlineEnd: 6 }}></span>
-          <span style={{ color: '#009247', fontWeight: 600, fontSize: 15 }}>الطلبات المدفوعة</span>
+          <span style={{ color: '#009247', fontWeight: 600, fontSize: isMobile ? 13 : 15 }}>الطلبات المدفوعة</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{ display: 'inline-block', width: 16, height: 8, borderRadius: 4, background: '#e53935', marginInlineEnd: 6 }}></span>
-          <span style={{ color: '#e53935', fontWeight: 600, fontSize: 15 }}>الطلبات الملغاة</span>
+          <span style={{ color: '#e53935', fontWeight: 600, fontSize: isMobile ? 13 : 15 }}>الطلبات الملغاة</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{ display: 'inline-block', width: 16, height: 8, borderRadius: 4, background: '#ff9800', marginInlineEnd: 6 }}></span>
-          <span style={{ color: '#ff9800', fontWeight: 600, fontSize: 15 }}>قيد المعالجة</span>
+          <span style={{ color: '#ff9800', fontWeight: 600, fontSize: isMobile ? 13 : 15 }}>قيد المعالجة</span>
         </div>
       </div>
       {/* الرسم البياني */}
       <LineChart
-        height={300}
+        height={chartHeight}
         series={[
           { data: paidCounts, label: " ", area: true, color: "#009247", curve: "bumpX" },
           { data: cancelledCounts, label: " ", area: true, color: "#e53935", curve: "bumpX" },
@@ -183,14 +214,14 @@ export default function ChartsModel({ orders: propOrders }: { orders?: any[] }) 
             data: weekDays,
             valueFormatter: (value) => value.slice(5),
             label: 'اليوم',
-            tickLabelStyle: { fontWeight: 600, fontSize: 14, color: '#018f2c' },
+            tickLabelStyle: { fontWeight: 600, fontSize: isMobile ? 10 : 14, color: '#018f2c' },
           },
         ]}
         yAxis={[{
-          width: 50,
-          tickLabelStyle: { fontWeight: 600, fontSize: 14, color: '#018f2c' },
+          width: isMobile ? 36 : 50,
+          tickLabelStyle: { fontWeight: 600, fontSize: isMobile ? 10 : 14, color: '#018f2c' },
         }]}
-        margin={{ right: 24, left: 24, top: 24, bottom: 24 }}
+        margin={{ right: isMobile ? 10 : 24, left: isMobile ? 10 : 24, top: isMobile ? 10 : 24, bottom: isMobile ? 16 : 24 }}
         grid={{ vertical: true, horizontal: true }}
       />
     </div>

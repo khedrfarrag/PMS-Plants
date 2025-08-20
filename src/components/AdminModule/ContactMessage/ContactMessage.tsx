@@ -7,7 +7,7 @@ import styles from './style/ContactMessage.module.css';
 import { toast } from 'react-toastify';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ShimmerSimpleGallery, ShimmerPostItem } from "react-shimmer-effects";
+// Replaced shimmer usage on small screens if needed
 interface ContactMessage{
   Id: number
   Name: string

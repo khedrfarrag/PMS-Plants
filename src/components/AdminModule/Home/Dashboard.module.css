@@ -11,6 +11,80 @@ body {
     box-shadow: 0 3px 3.5px 4.5px #dddddd;
 }
 
+/* وضوح أفضل لحقل السليكت والبحث */
+.heroSelect {
+    border: 1.5px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 15px;
+    padding: 10px 12px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: #fff url('data:image/svg+xml;utf8,<svg fill="%23019247" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 12px center/18px 18px;
+    padding-right: 40px !important;
+    text-align: right;
+}
+
+.heroSearch {
+    border: 1.5px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 15px;
+    padding: 10px 12px;
+}
+
+/* حاوية عناصر التحكم أعلى جدول الطلبات */
+.lastOrdersControls {
+    max-width: 100%;
+}
+
+/* أزرار أيقونات للموبايل */
+.iconButton {
+    background: #f6fff9;
+    border: 1.5px solid #e0e0e0;
+    color: #016f22;
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(1, 143, 44, 0.07);
+}
+
+.iconButton:hover {
+    background: #e9fdf2;
+}
+
+.mobilePopover {
+    position: absolute;
+    top: 48px;
+    right: 0;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow: 0 4px 16px rgba(1, 143, 44, 0.13);
+    z-index: 1500;
+}
+
+.popoverList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.popoverItem {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 8px 12px;
+    text-align: right;
+}
+
+.popoverItem:hover {
+    background: #f6fff9;
+}
+
 .heroProductsTop {
     position: relative;
 
@@ -249,5 +323,33 @@ body {
 
     .usersTableScroll {
         margin-bottom: 12px;
+    }
+
+    /* Top products grid tweaks for mobile */
+    .topProductsGrid {
+        gap: 12px !important;
+    }
+
+    .topProductsName {
+        font-size: 14px !important;
+    }
+
+    .topProductsRevenue {
+        font-size: 14px !important;
+    }
+
+    /* جعل السليكت والبحث أوضح على الشاشات الصغيرة */
+    .lastOrdersControls {
+        width: 100% !important;
+        gap: 12px !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+
+    .heroSelect,
+    .heroSearch {
+        width: 100% !important;
+        font-size: 14px !important;
+        padding: 10px 25px !important;
     }
 }

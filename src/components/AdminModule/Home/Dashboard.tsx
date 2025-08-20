@@ -4,16 +4,18 @@ import Logoacceptcart from "../../../assets/svg/dashsvg/Logoacceptcart.svg";
 import userimg from "../../../assets/svg/dashsvg/userimg.svg";
 import imgproduct from "../../../assets/svg/dashsvg/image-product.svg";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
-import { useState, useEffect } from "react";
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import { faStar, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import Cards from "../../shared/utils/Cards";
 import axios from "axios";
-import { ImgURLBeasd, ordersPoint, ProductsPoint, authEndPoint, pagenation } from "../../../constant/Const";
+import { ImgURLBeasd, ordersPoint, ProductsPoint, authEndPoint } from "../../../constant/Const";
 import ChartsModel from "./Chartsmodel/Charts";
 import { useNavigate } from "react-router-dom";
-import { ShimmerSimpleGallery, ShimmerPostItem, ShimmerTable } from "react-shimmer-effects";
+// Removed react-shimmer-effects due to prop/type mismatch; using Bootstrap placeholders instead
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch, faFilter } from "@fortawesome/free-solid-svg-icons";
 
 
 interface userinfo {
@@ -202,14 +204,13 @@ useEffect(() => {
 
   // إضافة state للمنتجات المدفوعة
   const [paidProducts, setPaidProducts] = useState<PaidProduct[]>([]);
-  const [loadingPaidProducts, setLoadingPaidProducts] = useState(false);
+  const [, setLoadingPaidProducts] = useState(false);
   
   // إضافة state للطلبات الأخيرة
   const [recentOrders, setRecentOrders] = useState<RecentOrderWithUser[]>([]);
   const [loadingRecentOrders, setLoadingRecentOrders] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
-  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage] = useState(1);
+  const [pageSize] = useState(5);
 
   // دالة تحويل حالة الدفع إلى نص عربي
   const getPaymentStatusText = (status: string) => {
@@ -249,7 +250,7 @@ useEffect(() => {
         params: { pageNumber: page, pageSize: size },
         headers: { Authorization: `Bearer ${localStorage.getItem("token") || sessionStorage.getItem("token")}` }
       });
-      setTotalCount(ordersResponse.data.pagination?.TotalCount || 0);
+      // total count not used in UI currently
 
       // جلب المستخدمين
       const usersResponse = await axios.get(authEndPoint.GetAllUsers, {
@@ -359,6 +360,23 @@ useEffect(() => {
   const toalloreder = () => {
     navigate("/admin/orders");
   }
+
+  // Mobile controls (icon-based search/filter)
+  const [showSearchMobile, setShowSearchMobile] = useState(false);
+  const [showFilterMobile, setShowFilterMobile] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState("الاسم");
+  const controlsRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const handleOutside = (e: MouseEvent) => {
+      if (controlsRef.current && !controlsRef.current.contains(e.target as Node)) {
+        setShowSearchMobile(false);
+        setShowFilterMobile(false);
+      }
+    };
+    document.addEventListener("mousedown", handleOutside);
+    return () => document.removeEventListener("mousedown", handleOutside);
+  }, []);
+
   return (
     <>
       {loading ? (
@@ -367,30 +385,47 @@ useEffect(() => {
             {/* شيمر المنتجات المتصدرة */}
             <div className="col-xl-3 col-md-12 mb-xl-0 mb-sm-2">
               <div className="shadow-lg card p-3 mb-4" style={{ minHeight: 320, borderRadius: 18 }}>
-                <div style={{ marginBottom: 16 }}>
-                  <ShimmerPostItem hasImage={false} title cta />
+                <div className="placeholder-glow" style={{ marginBottom: 16 }}>
+                  <span className="placeholder col-8"></span>
                 </div>
-                <ShimmerSimpleGallery row={2} col={3} imageHeight={54} />
+                <div className="row g-2">
+                  {Array.from({ length: 6 }).map((_, idx) => (
+                    <div key={idx} className="col-4">
+                      <div className="placeholder d-block w-100" style={{ height: 54, borderRadius: 10 }}></div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
             {/* شيمر الكروت العلوية */}
             <div className="col-xl-9 col-md-12 d-flex flex-column gap-4">
               <div className="row">
                 <div className="col-lg-4 col-md-6 mb-3">
-                  <ShimmerPostItem hasImage={false} title cta />
+                  <div className="shadow-sm card p-3 placeholder-glow">
+                    <span className="placeholder col-6 mb-2"></span>
+                    <span className="placeholder col-4"></span>
+                  </div>
                 </div>
                 <div className="col-lg-4 col-md-6 mb-3">
-                  <ShimmerPostItem hasImage={false} title cta />
+                  <div className="shadow-sm card p-3 placeholder-glow">
+                    <span className="placeholder col-6 mb-2"></span>
+                    <span className="placeholder col-4"></span>
+                  </div>
                 </div>
                 <div className="col-lg-4 col-md-6 mb-3">
-                  <ShimmerPostItem hasImage={false} title cta />
+                  <div className="shadow-sm card p-3 placeholder-glow">
+                    <span className="placeholder col-6 mb-2"></span>
+                    <span className="placeholder col-4"></span>
+                  </div>
                 </div>
               </div>
               {/* شيمر الرسم البياني */}
               <div className="row">
                 <div className="col-12">
                   <div className="shadow-lg card p-4 mb-4" style={{ borderRadius: 18 }}>
-                    <ShimmerPostItem hasImage={false} title cta />
+                    <div className="placeholder-glow">
+                      <span className="placeholder col-12" style={{ height: 40 }}></span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -403,7 +438,24 @@ useEffect(() => {
                   <div style={{ width: 320, height: 32, borderRadius: 8, background: '#e0e0e0' }} />
                 </div>
                 <div style={{ width: '100%', overflowX: 'auto' }}>
-                  <ShimmerTable row={5} col={5} />
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <th key={i}><div className="placeholder col-6" /></th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Array.from({ length: 5 }).map((_, r) => (
+                        <tr key={r}>
+                          {Array.from({ length: 5 }).map((_, c) => (
+                            <td key={c}><div className="placeholder col-8" /></td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
                 <div className="d-flex justify-content-center align-items-center mt-3 mb-5 ">
                   <div style={{ width: 120, height: 40, borderRadius: 8, background: '#e0e0e0' }} />
@@ -452,6 +504,7 @@ useEffect(() => {
                     }
                   </p>
                   <div
+                    className={Style.topProductsGrid}
                     style={{
                       display: 'flex',
                       flexWrap: 'wrap',
@@ -497,11 +550,11 @@ useEffect(() => {
                           }}
                           onError={e => { (e.target as HTMLImageElement).src = imgproduct; }}
                         />
-                        <div style={{ fontWeight: 800, color: '#018f2c', fontSize: 15, textAlign: 'center', marginBottom: 2 }}>{product.Name}</div>
+                        <div className={Style.topProductsName} style={{ fontWeight: 800, color: '#018f2c', fontSize: 15, textAlign: 'center', marginBottom: 2 }}>{product.Name}</div>
                         <div style={{ fontSize: 13, color: '#888', marginBottom: 2, textAlign: 'center' }}>
                           {product.TotalQuantity} قطعة
                         </div>
-                        <div style={{ fontWeight: 700, color: '#009247', fontSize: 15, textAlign: 'center' }}>
+                        <div className={Style.topProductsRevenue} style={{ fontWeight: 700, color: '#009247', fontSize: 15, textAlign: 'center' }}>
                           {product.DiscountedPrice.toFixed(2)} ج
                         </div>
                       </div>
@@ -576,13 +629,15 @@ useEffect(() => {
                 transition={{ duration: 0.5, delay: 0.5 }}
               >
                 <div
-                  className={`  d-flex justify-content-between align-items-center mb-2 `}
+                  className={`d-flex justify-content-between align-items-center mb-2 ${Style.lastOrdersControls}`}
+                  ref={controlsRef}
                 >
                   <h5 className="fw-bold m-2">الطلبات الأخيرة</h5>
-                  <div className="d-flex gap-5 flex-md-row-reverse w-75">
+                  {/* Desktop controls */}
+                  <div className="d-none d-md-flex gap-5 flex-md-row-reverse w-75">
                     <select
                       className={`${Style.heroSelect} form-select m-2`}
-                      style={{ maxWidth: "120px" }}
+                      style={{ maxWidth: "200px" }}
                     >
                       <option>الاسم</option>
                       <option>التعقب</option>
@@ -593,6 +648,55 @@ useEffect(() => {
                       className={`${Style.heroSearch} form-control border m-2`}
                       placeholder="ابحث..."
                     />
+                  </div>
+                  {/* Mobile icon controls */}
+                  <div className="d-flex d-md-none align-items-center gap-2 position-relative">
+                    <button
+                      className={Style.iconButton}
+                      onClick={() => {
+                        setShowSearchMobile((p) => !p);
+                        setShowFilterMobile(false);
+                      }}
+                      aria-label="فتح البحث"
+                    >
+                      <FontAwesomeIcon icon={faSearch} />
+                    </button>
+                    <button
+                      className={Style.iconButton}
+                      onClick={() => {
+                        setShowFilterMobile((p) => !p);
+                        setShowSearchMobile(false);
+                      }}
+                      aria-label="تحديد الفرز/التعقب"
+                    >
+                      <FontAwesomeIcon icon={faFilter} />
+                    </button>
+
+                    {showSearchMobile && (
+                      <div className={Style.mobilePopover} style={{ width: '84vw' }}>
+                        <input
+                          type="text"
+                          className={`${Style.heroSearch} form-control`}
+                          placeholder="ابحث..."
+                          autoFocus
+                        />
+                      </div>
+                    )}
+                    {showFilterMobile && (
+                      <div className={Style.mobilePopover} style={{ width: '70vw' }}>
+                        <div className={Style.popoverList}>
+                          {['الاسم','التعقب','المعرف'].map(opt => (
+                            <button
+                              key={opt}
+                              className={Style.popoverItem}
+                              onClick={() => { setSelectedFilter(opt); setShowFilterMobile(false); }}
+                            >
+                              {opt}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div style={{ width: '100%', overflowX: 'auto' }}>
@@ -651,9 +755,9 @@ useEffect(() => {
                   </table>
                 </div>
                 <div className="d-flex justify-content-center align-items-center mt-3 mb-5 ">
-                  <button className={`${Style.herobttn} btn btn-outline-success p-3`}
+                  <button className={`${Style.herobttn} btn btn-outline-success p-2`}
                   onClick={toalloreder}
-                  >عرض الكل</button>
+                  > المزيد</button>
                 </div>
               </motion.div>
             </div>

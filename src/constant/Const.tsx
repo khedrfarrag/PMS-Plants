@@ -28,7 +28,6 @@ export const authEndPoint = {
 };
 
 // Products End-Point
-
 const productBeasd = "Product";
 export const ProductsPoint = {
   Post: `${BeasdURL}/${productBeasd}/AddProductAsync`,

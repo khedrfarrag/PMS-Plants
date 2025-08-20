@@ -1,7 +1,7 @@
-import React, { useContext, useState } from "react";
+import { useContext } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faCartPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faCartPlus } from "@fortawesome/free-solid-svg-icons";
 import Style from "./SlideBar.module.css";
 import imgCompony from "../../../assets/svg/dashsvg/imgcompony.svg";
 import {
@@ -15,7 +15,13 @@ import {
 import { useNavigate, NavLink } from "react-router-dom";
 import { AuthContext } from "../../../context/Context";
 
-export default function SideBar() {
+type SideBarProps = {
+  isOpen?: boolean;
+  isMobile?: boolean;
+  onClose?: () => void;
+};
+
+export default function SideBar({ isOpen = false, isMobile = false, onClose }: SideBarProps) {
   const navigate = useNavigate();
   const { logout }: null | any = useContext(AuthContext);
   const HandleLogout = () => {
@@ -25,10 +31,8 @@ export default function SideBar() {
 
   return (
     <>
-     
       <div
-        className={`${Style.sidebar} d-flex flex-column align-items-center border-end vh-100 p-3`}
-        style={{ width: "100px" }}
+        className={`${Style.sidebar} ${isMobile ? (isOpen ? Style.sidebarOpen : Style.sidebarClosed) : ""} d-flex flex-column align-items-center border-end p-3`}
       >
         {/* الشعار */}
         <div className="mb-4">
@@ -42,6 +46,7 @@ export default function SideBar() {
             className={({ isActive }) =>
               isActive ? `${Style.sidebarLink} ${Style.sidebarLinkActive}` : Style.sidebarLink
             }
+            onClick={() => { if (isMobile && onClose) onClose(); }}
           >
             <FontAwesomeIcon icon={faTh} size="lg" />
           </NavLink>
@@ -50,6 +55,7 @@ export default function SideBar() {
             className={({ isActive }) =>
               isActive ? `${Style.sidebarLink} ${Style.sidebarLinkActive}` : Style.sidebarLink
             }
+            onClick={() => { if (isMobile && onClose) onClose(); }}
           >
             <FontAwesomeIcon icon={faUsers} size="lg" />
           </NavLink>
@@ -58,6 +64,7 @@ export default function SideBar() {
             className={({ isActive }) =>
               isActive ? `${Style.sidebarLink} ${Style.sidebarLinkActive}` : Style.sidebarLink
             }
+            onClick={() => { if (isMobile && onClose) onClose(); }}
           >
             <FontAwesomeIcon icon={faEnvelope} size="lg" />
           </NavLink>
@@ -66,6 +73,7 @@ export default function SideBar() {
             className={({ isActive }) =>
               isActive ? `${Style.sidebarLink} ${Style.sidebarLinkActive}` : Style.sidebarLink
             }
+            onClick={() => { if (isMobile && onClose) onClose(); }}
           >
             <FontAwesomeIcon icon={faCartPlus} size="lg" />
           </NavLink>
@@ -74,6 +82,7 @@ export default function SideBar() {
             className={({ isActive }) =>
               isActive ? `${Style.sidebarLink} ${Style.sidebarLinkActive}` : Style.sidebarLink
             }
+            onClick={() => { if (isMobile && onClose) onClose(); }}
           >
             <FontAwesomeIcon icon={faShoppingCart} size="lg" />
           </NavLink>
@@ -82,6 +91,7 @@ export default function SideBar() {
             className={({ isActive }) =>
               isActive ? `${Style.sidebarLink} ${Style.sidebarLinkActive}` : Style.sidebarLink
             }
+            onClick={() => { if (isMobile && onClose) onClose(); }}
           >
             <FontAwesomeIcon icon={faCog} size="lg" />
           </NavLink>

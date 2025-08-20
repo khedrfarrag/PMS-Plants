@@ -3,6 +3,10 @@
     top: 0;
     left: 0;
     overflow-y: auto;
+    width: 100px;
+    height: 100vh;
+    background: #fff;
+    transition: transform 0.3s ease, width 0.3s ease;
 }
 
 .sidebarLink {
@@ -31,4 +35,27 @@
     background: linear-gradient(135deg, #018f2c 0%, #016f22 100%);
     color: #fff !important;
     box-shadow: 0 4px 16px rgba(1, 143, 44, 0.13);
+}
+
+/* Mobile behaviors */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 72px;
+        transform: translateX(-100%);
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        z-index: 1040;
+    }
+
+    .sidebarOpen {
+        transform: translateX(0);
+    }
+
+    .sidebarClosed {
+        transform: translateX(-100%);
+    }
+
+    .sidebarLink {
+        padding: 12px 0;
+        font-size: 0.85rem;
+    }
 }
