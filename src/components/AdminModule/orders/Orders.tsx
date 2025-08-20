@@ -77,7 +77,6 @@ function Orders() {
   const [newProductQty, setNewProductQty] = useState<number>(1);
   const [modalMode, setModalMode] = useState<"add" | "edit">("edit");
   const [addOrder, setAddOrder] = useState<any | null>(null);
-  console.log(userData.role);
   const getAllOrders = async (page = 1) => {
     try {
       const response = await axios.get<any>(
@@ -94,7 +93,7 @@ function Orders() {
       setOrders(response.data.data);
       setPagination(response.data.pagination);
     } catch (errors) {
-      console.log(errors);
+      toast.error("حدث خطأ أثناء جلب الطلبات");
     }
   };
 
@@ -109,7 +108,7 @@ function Orders() {
       });
       setUsers(response.data.data);
     } catch (error) {
-      console.log(error);
+      toast.error("حدث خطأ أثناء جلب المستخدمين");
     }
   };
 
@@ -128,13 +127,13 @@ function Orders() {
       );
       setProducts(response.data.data);
     } catch (error) {
-      console.log(error);
+      toast.error("حدث خطأ أثناء جلب المنتجات");
     }
   };
 
   const deleteOrder = async (orderId: number) => {
     try {
-      if (userData.role !== "SuperAdmin") {
+      if (userData?.role !== "SuperAdmin") {
         toast.error("ليس لديك الصلاحية لتنفيذ هذا الإجراء");
         return;
       }
@@ -150,7 +149,6 @@ function Orders() {
       setShow(false); // إغلاق المودال
       toast.success("تم حذف الطلب بنجاح");
     } catch (error) {
-      console.error("Error deleting order:", error);
       toast.error("حدث خطأ أثناء حذف الطلب");
     }
   };
@@ -164,7 +162,6 @@ function Orders() {
   // دالة للحصول على اسم المنتج من ProductId
   const getProductName = (productId: number) => {
     const product = products.find((p) => p.Id === productId);
-    console.log("ProductId:", productId, "Found Product:", product); // للتأكد
     return product ? product.Name : `منتج ${productId}`;
   };
 

@@ -1,7 +1,9 @@
 import axios from "axios";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useContext } from "react";
 import { cartShopPoint } from "../constant/Const";
 import { CartshopContext, CartData } from "./CartshopContext";
+import { toast } from "react-toastify";
+import { AuthContext } from "./Context";
 
 const defaultCartData: CartData = {
   Id: "",
@@ -14,6 +16,7 @@ const defaultCartData: CartData = {
 export const CartshopProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const { userData }: any | null = useContext(AuthContext);
   const [cartData, setCartData] = useState<CartData>(defaultCartData);
   const [cartCount, setCartCount] = useState(0);
   const [cartChanged, setCartChanged] = useState(false);
@@ -42,9 +45,7 @@ export const CartshopProvider: React.FC<{ children: React.ReactNode }> = ({
         setCartData(data);
         setCartCount(data.TotalQuantity || 0);
       }
-    } catch (error) {
-      console.error("Error fetching cart data:", error);
-    }
+    } catch (error) {}
   }, [cartData.TotalQuantity]);
 
   useEffect(() => {
