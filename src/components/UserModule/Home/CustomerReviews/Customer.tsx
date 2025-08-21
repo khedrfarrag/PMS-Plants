@@ -9,8 +9,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import { siteFeedbackPoint } from "../../../../constant/Const";
-import Stack from "@mui/material/Stack";
-import Pagination from "@mui/material/Pagination";
 export default function Customer() {
   interface siteFeedBack {
     data: {
@@ -60,10 +58,13 @@ export default function Customer() {
           pageSize,
           pageNumber,
         },
-        headers: { Authorization: `Bearer ${localStorage.getItem("token") || sessionStorage.getItem("token")}` },
+        headers: {
+          Authorization: `Bearer ${
+            localStorage.getItem("token") || sessionStorage.getItem("token")
+          }`,
+        },
       });
       setSiteFeedBack(response?.data);
-      console.log(response?.data.data);
     } catch (errors) {
       console.log(errors);
     }

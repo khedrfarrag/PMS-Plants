@@ -13,6 +13,7 @@ import imgcardboard1 from "../../../assets/عبوات/كارتون خمسه لت
 import imgSticker1 from "../../../assets/عبوات/ستيكر 4.jpg";
 import imgSticker2 from "../../../assets/عبوات/ستيكر 2.jpg";
 import imgSticker3 from "../../../assets/عبوات/ستيكر 3.jpg";
+import { Helmet } from "react-helmet-async";
 
 interface ContainerData {
   id: number;
@@ -199,198 +200,210 @@ export default function Tasahilservice() {
       : [];
 
   return (
-    <div className={Style.containerService}>
-      {/* Hero Section */}
-      <div className={Style.heroSection}>
-        <div className={Style.heroContent}>
-          <h1 className={Style.heroTitle}> خدمات </h1>
-          <p className={Style.heroDescription}>
-            نوفر لك أفضل أنواع العبوات البلاستيكية والكارتونية ,مواد الخام
-            ,الملصقات لتلبية جميع احتياجاتك في القطاع الزراعي
-          </p>
-        </div>
-      </div>
-
-      {/* Navigation Tabs */}
-      <div className={Style.tabsContainer}>
-        <div className={Style.tabsWrapper}>
-          <button
-            className={`${Style.tab} ${
-              activeTab === "plastic" ? Style.activeTab : ""
-            }`}
-            onClick={() => setActiveTab("plastic")}
-          >
-            <span className={Style.tabIcon}></span>
-            العبوات البلاستيكية
-          </button>
-          <button
-            className={`${Style.tab} ${
-              activeTab === "cardboard" ? Style.activeTab : ""
-            }`}
-            onClick={() => setActiveTab("cardboard")}
-          >
-            <span className={Style.tabIcon}></span>
-            العبوات الكارتونية
-          </button>
-          <button
-            className={`${Style.tab} ${
-              activeTab === "materials" ? Style.activeTab : ""
-            }`}
-            onClick={() => setActiveTab("materials")}
-          >
-            <span className={Style.tabIcon}></span>
-            المواد الخام
-          </button>
-          <button
-            className={`${Style.tab} ${
-              activeTab === "stickers" ? Style.activeTab : ""
-            }`}
-            onClick={() => setActiveTab("stickers")}
-          >
-            <span className={Style.tabIcon}></span>
-            الملصقات
-          </button>
-        </div>
-      </div>
-
-      {/* Products Grid */}
-      <div className={Style.productsSection}>
-        <div className={Style.sectionHeader}>
-          <h2 className={Style.sectionTitle}>
-            {activeTab === "plastic"
-              ? "عبوات بلاستيكية"
-              : activeTab === "cardboard"
-              ? "عبوات كارتونية"
-              : activeTab === "materials"
-              ? "مواد خام"
-              : activeTab === "stickers"
-              ? "الملصقات"
-              : ""}
-          </h2>
-          <p className={Style.sectionSubtitle}>
-            {activeTab === "plastic"
-              ? "مصنوعة من خامة باير عالية الجودة"
-              : activeTab === "cardboard"
-              ? "مصنوعة من كارتون 5 طبقات دوبليكس"
-              : activeTab === "materials"
-              ? "توفر جميع خامات التصنيع الزراعي"
-              : activeTab === "stickers"
-              ? "صمّم استيكر منتجك زي ما تحب! نوفر لك التنفيذ بالشكل والاسم التجاري اللي تختاره، علشان يعبر عن علامتك ويشد انتباه عميلك"
-              : ""}
-          </p>
+    <>
+      <Helmet>
+        <title>خدمات - الشركة الخليجية للتنمية الزراعية</title>
+        <meta
+          name="description"
+          content="استكشف خدماتنا المتنوعة في مجال الزراعة، بما في ذلك العبوات البلاستيكية والكارتونية، والمواد الخام، والملصقات."
+        />
+      </Helmet>
+      <div className={Style.containerService}>
+        {/* Hero Section */}
+        <div className={Style.heroSection}>
+          <div className={Style.heroContent}>
+            <h1 className={Style.heroTitle}> خدمات </h1>
+            <p className={Style.heroDescription}>
+              نوفر لك أفضل أنواع العبوات البلاستيكية والكارتونية ,مواد الخام
+              ,الملصقات لتلبية جميع احتياجاتك في القطاع الزراعي
+            </p>
+          </div>
         </div>
 
-        <div className={Style.productsGrid}>
-          {currentContainers.map((container: any) => (
-            <div key={container.id} className={Style.productCard}>
-              <div className={Style.cardImageContainer}>
-                <img
-                  src={container.image}
-                  alt={container.name}
-                  className={Style.cardImage}
-                  onError={(e) => {
-                    e.currentTarget.src = "/images/placeholder-container.jpg";
-                  }}
-                />
-                {activeTab === "cardboard" || activeTab === "plastic" ? (
-                  <div className={Style.cardBadge}>{container.capacity}</div>
-                ) : (
-                  ""
-                )}
-              </div>
+        {/* Navigation Tabs */}
+        <div className={Style.tabsContainer}>
+          <div className={Style.tabsWrapper}>
+            <button
+              className={`${Style.tab} ${
+                activeTab === "plastic" ? Style.activeTab : ""
+              }`}
+              onClick={() => setActiveTab("plastic")}
+            >
+              <span className={Style.tabIcon}></span>
+              العبوات البلاستيكية
+            </button>
+            <button
+              className={`${Style.tab} ${
+                activeTab === "cardboard" ? Style.activeTab : ""
+              }`}
+              onClick={() => setActiveTab("cardboard")}
+            >
+              <span className={Style.tabIcon}></span>
+              العبوات الكارتونية
+            </button>
+            <button
+              className={`${Style.tab} ${
+                activeTab === "materials" ? Style.activeTab : ""
+              }`}
+              onClick={() => setActiveTab("materials")}
+            >
+              <span className={Style.tabIcon}></span>
+              المواد الخام
+            </button>
+            <button
+              className={`${Style.tab} ${
+                activeTab === "stickers" ? Style.activeTab : ""
+              }`}
+              onClick={() => setActiveTab("stickers")}
+            >
+              <span className={Style.tabIcon}></span>
+              الملصقات
+            </button>
+          </div>
+        </div>
 
-              <div className={Style.cardContent}>
-                <h3 className={Style.cardTitle}>{container.name}</h3>
+        {/* Products Grid */}
+        <div className={Style.productsSection}>
+          <div className={Style.sectionHeader}>
+            <h2 className={Style.sectionTitle}>
+              {activeTab === "plastic"
+                ? "عبوات بلاستيكية"
+                : activeTab === "cardboard"
+                ? "عبوات كارتونية"
+                : activeTab === "materials"
+                ? "مواد خام"
+                : activeTab === "stickers"
+                ? "الملصقات"
+                : ""}
+            </h2>
+            <p className={Style.sectionSubtitle}>
+              {activeTab === "plastic"
+                ? "مصنوعة من خامة باير عالية الجودة"
+                : activeTab === "cardboard"
+                ? "مصنوعة من كارتون 5 طبقات دوبليكس"
+                : activeTab === "materials"
+                ? "توفر جميع خامات التصنيع الزراعي"
+                : activeTab === "stickers"
+                ? "صمّم استيكر منتجك زي ما تحب! نوفر لك التنفيذ بالشكل والاسم التجاري اللي تختاره، علشان يعبر عن علامتك ويشد انتباه عميلك"
+                : ""}
+            </p>
+          </div>
 
-                <div className={Style.cardDetails}>
+          <div className={Style.productsGrid}>
+            {currentContainers.map((container: any) => (
+              <div key={container.id} className={Style.productCard}>
+                <div className={Style.cardImageContainer}>
+                  <img
+                    src={container.image}
+                    alt={container.name}
+                    className={Style.cardImage}
+                    onError={(e) => {
+                      e.currentTarget.src = "/images/placeholder-container.jpg";
+                    }}
+                  />
                   {activeTab === "cardboard" || activeTab === "plastic" ? (
-                    <div className={Style.detailItem}>
-                      <span className={Style.detailLabel}>المقاسات:</span>
-                      <span className={Style.detailValue}>
-                        {container.dimensions}
-                      </span>
-                    </div>
-                  ) : (
-                    ""
-                  )}
-
-                  {activeTab === "cardboard" || activeTab === "plastic" ? (
-                    <div className={Style.detailItem}>
-                      <span className={Style.detailLabel}>الخامة:</span>
-                      <span className={Style.detailValue}>
-                        {container.material}
-                      </span>
-                    </div>
+                    <div className={Style.cardBadge}>{container.capacity}</div>
                   ) : (
                     ""
                   )}
                 </div>
 
-                <div className={Style.cardFeatures}>
-                  <h4 className={Style.featuresTitle}>
-                    {activeTab === "cardboard" ||
-                    activeTab === "plastic" ||
-                    activeTab === "stickers"
-                      ? "المميزات"
-                      : "متوفر"}
-                    :
-                  </h4>
-                  <ul className={Style.featuresList}>
-                    {container.features.map((feature: any, index: any) => (
-                      <li key={index} className={Style.featureItem}>
-                        <span className={Style.featureIcon}>✓</span>
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
+                <div className={Style.cardContent}>
+                  <h3 className={Style.cardTitle}>{container.name}</h3>
+
+                  <div className={Style.cardDetails}>
+                    {activeTab === "cardboard" || activeTab === "plastic" ? (
+                      <div className={Style.detailItem}>
+                        <span className={Style.detailLabel}>المقاسات:</span>
+                        <span className={Style.detailValue}>
+                          {container.dimensions}
+                        </span>
+                      </div>
+                    ) : (
+                      ""
+                    )}
+
+                    {activeTab === "cardboard" || activeTab === "plastic" ? (
+                      <div className={Style.detailItem}>
+                        <span className={Style.detailLabel}>الخامة:</span>
+                        <span className={Style.detailValue}>
+                          {container.material}
+                        </span>
+                      </div>
+                    ) : (
+                      ""
+                    )}
+                  </div>
+
+                  <div className={Style.cardFeatures}>
+                    <h4 className={Style.featuresTitle}>
+                      {activeTab === "cardboard" ||
+                      activeTab === "plastic" ||
+                      activeTab === "stickers"
+                        ? "المميزات"
+                        : "متوفر"}
+                      :
+                    </h4>
+                    <ul className={Style.featuresList}>
+                      {container.features.map((feature: any, index: any) => (
+                        <li key={index} className={Style.featureItem}>
+                          <span className={Style.featureIcon}>✓</span>
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <button
+                    className={Style.cardButton}
+                    onClick={hahndleTocontact}
+                  >
+                    {" "}
+                    أطلب الأن{" "}
+                  </button>
                 </div>
-
-                <button className={Style.cardButton} onClick={hahndleTocontact}>
-                  {" "}
-                  أطلب الأن{" "}
-                </button>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
 
-      {/* Why Choose Us Section */}
-      <div className={Style.whyChooseSection}>
-        <div className={Style.whyChooseContent}>
-          <h2 className={Style.whyChooseTitle}>لماذا تختار منتجاتنا؟</h2>
-          <div className={Style.advantagesGrid}>
-            <div className={Style.advantageCard}>
-              <div className={Style.advantageIcon}>🏆</div>
-              <h3 className={Style.advantageTitle}>جودة عالية</h3>
-              <p className={Style.advantageDescription}>
-                نستخدم أفضل الخامات المستوردة لضمان جودة المنتج
-              </p>
-            </div>
-            <div className={Style.advantageCard}>
-              <div className={Style.advantageIcon}>🌱</div>
-              <h3 className={Style.advantageTitle}>صديق للبيئة</h3>
-              <p className={Style.advantageDescription}>
-                منتجاتنا قابلة لإعادة التدوير وآمنة على البيئة
-              </p>
-            </div>
-            <div className={Style.advantageCard}>
-              <div className={Style.advantageIcon}>🔒</div>
-              <h3 className={Style.advantageTitle}>آمان تام</h3>
-              <p className={Style.advantageDescription}>
-                مقاومة للأحماض والمواد الكيميائية الزراعية
-              </p>
-            </div>
-            <div className={Style.advantageCard}>
-              <div className={Style.advantageIcon}>💪</div>
-              <h3 className={Style.advantageTitle}>قوة تحمل</h3>
-              <p className={Style.advantageDescription}>
-                تتحمل الظروف الجوية المختلفة والاستخدام المكثف
-              </p>
+        {/* Why Choose Us Section */}
+        <div className={Style.whyChooseSection}>
+          <div className={Style.whyChooseContent}>
+            <h2 className={Style.whyChooseTitle}>لماذا تختار منتجاتنا؟</h2>
+            <div className={Style.advantagesGrid}>
+              <div className={Style.advantageCard}>
+                <div className={Style.advantageIcon}>🏆</div>
+                <h3 className={Style.advantageTitle}>جودة عالية</h3>
+                <p className={Style.advantageDescription}>
+                  نستخدم أفضل الخامات المستوردة لضمان جودة المنتج
+                </p>
+              </div>
+              <div className={Style.advantageCard}>
+                <div className={Style.advantageIcon}>🌱</div>
+                <h3 className={Style.advantageTitle}>صديق للبيئة</h3>
+                <p className={Style.advantageDescription}>
+                  منتجاتنا قابلة لإعادة التدوير وآمنة على البيئة
+                </p>
+              </div>
+              <div className={Style.advantageCard}>
+                <div className={Style.advantageIcon}>🔒</div>
+                <h3 className={Style.advantageTitle}>آمان تام</h3>
+                <p className={Style.advantageDescription}>
+                  مقاومة للأحماض والمواد الكيميائية الزراعية
+                </p>
+              </div>
+              <div className={Style.advantageCard}>
+                <div className={Style.advantageIcon}>💪</div>
+                <h3 className={Style.advantageTitle}>قوة تحمل</h3>
+                <p className={Style.advantageDescription}>
+                  تتحمل الظروف الجوية المختلفة والاستخدام المكثف
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

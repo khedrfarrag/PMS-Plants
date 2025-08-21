@@ -1,5 +1,6 @@
 import Style from "../UserMasterLayout/Style/Style.module.css";
-import Logo from "../../../assets/svg/userimg.svg";
+// import Logo from "../../../assets/صورة_واتساب_بتاريخ_2024-11-10_في_22.53.07_158af9f7-removebg-preview.png";
+import Logo from "../../../assets/svg/dashsvg/imgcompony.svg";
 
 export default function Footer() {
   return (
@@ -26,8 +27,8 @@ export default function Footer() {
               </a>
             </li>
             <li>
-              <a href="/about-us" className={Style.footerLinkCustom}>
-                من نحن
+              <a href="/store/productcart" className={Style.footerLinkCustom}>
+                عربة التسوق
               </a>
             </li>
             <li>
@@ -41,8 +42,8 @@ export default function Footer() {
               </a>
             </li>
             <li>
-              <a href="/shoppingcart" className={Style.footerLinkCustom}>
-                عربة التسوق
+              <a href="/about-us" className={Style.footerLinkCustom}>
+                من نحن
               </a>
             </li>
             <li>
@@ -53,11 +54,11 @@ export default function Footer() {
           </ul>
         </div>
         <div className={Style.footerCategoriesBlock}>
-          <h2 className={Style.footerLinksTitleCustom}>الفئات</h2>
+          <h2 className={Style.footerLinksTitleCustom}>الخدمات</h2>
           <ul className={Style.footerLinksListCustom}>
-            <li>تقاوي</li>
-            <li>مبيدات زراعية</li>
-            <li>أسمدة زراعية</li>
+            <li>خدمة تساهيل</li>
+            <li>دعم فني</li>
+            <li>زيارة مجانيه</li>
             <li>استصلاح أراضي</li>
             <li>تصنيع</li>
           </ul>

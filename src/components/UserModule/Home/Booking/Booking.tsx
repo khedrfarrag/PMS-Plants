@@ -7,7 +7,9 @@ import { useNavigate } from "react-router-dom";
 export default function Booking() {
   const navigate = useNavigate();
   const handleToCotact = () => {
-    navigate("/contact-us");
+    navigate("/contact-us", {
+      state: { serviceType: "زياره" },
+    });
   };
   return (
     <>

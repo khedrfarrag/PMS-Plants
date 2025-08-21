@@ -23,6 +23,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../../../../context/Context";
 import { CartshopContext } from "../../../../../context/CartshopContext";
+import { Helmet } from "react-helmet-async";
 // Define a type for the product details
 interface data {
   Id: number;
@@ -58,12 +59,10 @@ interface Category {
 export default function Product() {
   const { userData, sessionExpired }: null | any = useContext(AuthContext);
   const { fetchCart } = useContext(CartshopContext) || {};
-  console.log(userData);
   const UserId = userData?.userId;
   // const UserID: string = UserData?.userId; // Get UserID from context or set to 0 if not available
   const location = useLocation();
   const product: data = location?.state?.data;
-  console.log(product);
   const navigate = useNavigate();
 
   const [count, setCount] = useState<number>(1);
@@ -77,7 +76,9 @@ export default function Product() {
   const [reviewText, setReviewText] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [reviewsPerPage] = useState<number>(5);
-  const [reviews, setReviews] = useState<any[]>(product?.ProductFeedbacks || []);
+  const [reviews, setReviews] = useState<any[]>(
+    product?.ProductFeedbacks || []
+  );
   const [loadingReviews, setLoadingReviews] = useState<boolean>(false);
 
   // جلب قائمة المفضلة عند تحميل الصفحة
@@ -378,7 +379,7 @@ export default function Product() {
         headers,
       });
       toast.success("تمت إضافة المنتج إلى السلة بنجاح");
-      
+
       // بدلاً من window.location.reload() - تحديث السلة من الـ context
       if (fetchCart) {
         await fetchCart();
@@ -398,6 +399,14 @@ export default function Product() {
 
   return (
     <>
+      <Helmet>
+        <title>{product.Name} - تفاصيل المنتج</title>
+        <meta
+          name="description"
+          content={product.Description || "وصف المنتج غير متوفر"}
+        />
+      </Helmet>
+
       {/* Desktop Layout */}
       <section className={`${Style.Contanerproductsec}`}>
         <div className={`${Style.heroProductsSection} `}>

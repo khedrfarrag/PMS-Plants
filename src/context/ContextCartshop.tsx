@@ -34,7 +34,6 @@ export const CartshopProvider: React.FC<{ children: React.ReactNode }> = ({
         },
       });
       const data = response?.data;
-      console.log("Fetched cart data:", data);
 
       if (data) {
         // Detect cart change for animation

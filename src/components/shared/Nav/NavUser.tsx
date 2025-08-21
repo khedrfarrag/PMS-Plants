@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import Style from "../Nav/NavBar.module.css";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Logonav from "../../../assets/صورة_واتساب_بتاريخ_2024-11-10_في_22.53.07_158af9f7-removebg-preview.png";
 import Imguser from "../../../assets/svg/userimg.svg";
@@ -12,7 +12,7 @@ import {
   faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 import { ImgURLBeasd } from "../../../constant/Const";
-import { AuthContext, AuthContextType } from "../../../context/Context";
+import { AuthContext } from "../../../context/Context";
 import {
   CartshopContext,
   CartshopContextType,
@@ -122,7 +122,7 @@ export default function NavUser() {
     }
   };
 
-  const handleMenuClick = (route: string) => {
+  const handleMenuClick = (route: string, options?: { state?: any }) => {
     setDropdownOpen(false);
     if (mobileMenuOpen) {
       setMobileMenuClosing(true);
@@ -134,7 +134,7 @@ export default function NavUser() {
     if (route === "/auth/login" || route === "/auth") {
       sessionStorage.removeItem("session-Id");
     }
-    navigate(route);
+    navigate(route, options);
   };
 
   const handleLogoutMobile = () => {
@@ -237,7 +237,6 @@ export default function NavUser() {
                 }
               >
                 طلباتك
-                 
               </NavLink>
             </li>
           </ul>
@@ -307,7 +306,11 @@ export default function NavUser() {
                     </button>
                     <button
                       className="dropdown-item w-100 text-end py-2 px-3 border-bottom bg-transparent"
-                      onClick={() => handleMenuClick("contact-us")}
+                      onClick={() =>
+                        handleMenuClick("/contact-us", {
+                          state: { serviceType: "دعم فني" },
+                        })
+                      }
                     >
                       الدعم الفني
                     </button>
@@ -376,11 +379,13 @@ export default function NavUser() {
                 }}
                 onClick={handleCloseMenu}
               />
-              
+
               {/* Mobile Menu */}
               <div
                 ref={mobileMenuRef}
-                className={`position-fixed d-flex flex-column ${mobileMenuClosing ? Style.mobileMenuClosing : Style.mobileMenu}`}
+                className={`position-fixed d-flex flex-column ${
+                  mobileMenuClosing ? Style.mobileMenuClosing : Style.mobileMenu
+                }`}
                 style={{
                   top: 0,
                   left: 0,
@@ -396,7 +401,10 @@ export default function NavUser() {
                   className="d-flex justify-content-between align-items-center p-3 border-bottom"
                   style={{ backgroundColor: "#f8f9fa" }}
                 >
-                  <h6 className="mb-0" style={{ color: "#333", fontWeight: "600" }}>
+                  <h6
+                    className="mb-0"
+                    style={{ color: "#333", fontWeight: "600" }}
+                  >
                     القائمة
                   </h6>
                   <button
@@ -422,8 +430,12 @@ export default function NavUser() {
                         borderBottom: "1px solid #e0e0e0",
                         // transition: "background-color 0.2s ease",
                       }}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "green"}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "green")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "transparent")
+                      }
                       onClick={() => handleMenuClick("/")}
                     >
                       الصفحة الرئيسية
@@ -438,8 +450,12 @@ export default function NavUser() {
                         borderBottom: "1px solid #e0e0e0",
                         // transition: "background-color 0.2s ease",
                       }}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "green"}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "green")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "transparent")
+                      }
                       onClick={() => handleMenuClick("/store")}
                     >
                       المتجر
@@ -454,8 +470,12 @@ export default function NavUser() {
                         borderBottom: "1px solid #e0e0e0",
                         // transition: "background-color 0.2s ease",
                       }}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "green"}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "green")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "transparent")
+                      }
                       onClick={() => handleMenuClick("/offers")}
                     >
                       العروض والخصومات
@@ -470,8 +490,12 @@ export default function NavUser() {
                         borderBottom: "1px solid #e0e0e0",
                         // transition: "background-color 0.2s ease",
                       }}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "green"}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "green")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "transparent")
+                      }
                       onClick={() => handleMenuClick("/about-us")}
                     >
                       من نحن
@@ -486,8 +510,12 @@ export default function NavUser() {
                         borderBottom: "1px solid #e0e0e0",
                         // transition: "background-color 0.2s ease",
                       }}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "green"}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "green")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "transparent")
+                      }
                       onClick={() => handleMenuClick("/populer")}
                     >
                       منتجات الموسم الحالي
@@ -502,8 +530,12 @@ export default function NavUser() {
                         borderBottom: "1px solid #e0e0e0",
                         // transition: "background-color 0.2s ease",
                       }}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "green"}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "green")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "transparent")
+                      }
                       onClick={() => handleMenuClick("/contact-us")}
                     >
                       تواصل معنا
@@ -511,7 +543,7 @@ export default function NavUser() {
                   </div>
 
                   {/* Account Links */}
-                  <div className=" p-0">                    
+                  <div className=" p-0">
                     {isLoggedIn && (
                       <button
                         className="w-100 text-start py-3 px-4 border-bottom "
@@ -523,14 +555,19 @@ export default function NavUser() {
                           borderBottom: "1px solid #e0e0e0",
                           // transition: "background-color 0.2s ease",
                         }}
-                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "green"}
-                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.backgroundColor = "green")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.backgroundColor =
+                            "transparent")
+                        }
                         onClick={() => handleMenuClick("/account-settings")}
                       >
                         إدارة الحساب
                       </button>
                     )}
-                    
+
                     <button
                       className="w-100 text-start py-3 px-4 border-bottom "
                       style={{
@@ -541,13 +578,17 @@ export default function NavUser() {
                         borderBottom: "1px solid #e0e0e0",
                         // transition: "background-color 0.2s ease",
                       }}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "green"}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "green")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "transparent")
+                      }
                       onClick={() => handleMenuClick("store/productcart")}
                     >
                       عربة التسوق
                     </button>
-                    
+
                     <button
                       className="w-100 text-start py-3 px-4 border-bottom "
                       style={{
@@ -558,12 +599,20 @@ export default function NavUser() {
                         borderBottom: "1px solid #e0e0e0",
                         // transition: "background-color 0.2s ease",
                       }}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "green"}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
-                      onClick={() => handleMenuClick("contact-us")}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "green")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "transparent")
+                      }
+                      onClick={() =>
+                        handleMenuClick("/contact-us", {
+                          state: { serviceType: "دعم فني" },
+                        })
+                      }
                     >
                       الدعم الفني
-                    </button>                    
+                    </button>
                     {isLoggedIn ? (
                       <button
                         className="w-100 text-start py-3 px-4 "
@@ -574,8 +623,13 @@ export default function NavUser() {
                           border: "none",
                           // transition: "background-color 0.2s ease",
                         }}
-                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#dc3545"}
-                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.backgroundColor = "#dc3545")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.backgroundColor =
+                            "transparent")
+                        }
                         onClick={handleLogoutMobile}
                       >
                         تسجيل خروج
@@ -590,8 +644,13 @@ export default function NavUser() {
                           border: "none",
                           // transition: "background-color 0.2s ease",
                         }}
-                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "green"}
-                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.backgroundColor = "green")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.backgroundColor =
+                            "transparent")
+                        }
                         onClick={() => handleMenuClick("/auth/login")}
                       >
                         تسجيل الدخول

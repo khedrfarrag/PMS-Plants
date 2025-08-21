@@ -5,6 +5,7 @@ import SideBar from "../Side/SideBar";
 import NavBar from "../Nav/NavBar";
 import Style from "./AdminMaster.module.css";
 import SessionModalWrapper from "../../SessionModalWrapper";
+import ScrollToTop from "../utils/ScrollToTop";
 
 function AdminMaster() {
   const { userData }: any = useContext(AuthContext);
@@ -26,17 +27,27 @@ function AdminMaster() {
   }, [isMobile]);
 
   const contentClassName = useMemo(() => {
-    if (isMobile && isSidebarOpen) return `${Style.content} ${Style.contentShift}`;
+    if (isMobile && isSidebarOpen)
+      return `${Style.content} ${Style.contentShift}`;
     return Style.content;
   }, [isMobile, isSidebarOpen]);
   return (
     <>
+      <ScrollToTop />
       <SessionModalWrapper />
       {userData?.role === "User" ? <Navigate to={"/auth"} /> : ""}
       <div className={`${Style.appcontainer}`}>
-        <SideBar isOpen={isSidebarOpen} isMobile={isMobile} onClose={() => setIsSidebarOpen(false)} />
+        <SideBar
+          isOpen={isSidebarOpen}
+          isMobile={isMobile}
+          onClose={() => setIsSidebarOpen(false)}
+        />
         <div className={`${contentClassName}`}>
-          <NavBar isMobile={isMobile} isSidebarOpen={isSidebarOpen} onToggleSidebar={() => setIsSidebarOpen((p) => !p)} />
+          <NavBar
+            isMobile={isMobile}
+            isSidebarOpen={isSidebarOpen}
+            onToggleSidebar={() => setIsSidebarOpen((p) => !p)}
+          />
           <Outlet />
         </div>
       </div>

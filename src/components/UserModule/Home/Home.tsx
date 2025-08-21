@@ -15,11 +15,11 @@ import Customer from "./CustomerReviews/Customer";
 import { motion, useAnimation, AnimatePresence } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 // Import slider images
 import img1 from "../../../assets/img_1.jpg";
 import img2 from "../../../assets/img_2.jpg";
-
 
 // Slider data interface
 interface SlideData {
@@ -90,7 +90,6 @@ function Home() {
       description:
         "نوفر أفضل أنواع العبوات من خامة باير للبلاستيك وكارتون 5 طبقات دوبليكس، مقاومة للأحماض وصديقة للبيئة",
     },
-  
   ];
 
   // Use slider hook
@@ -177,167 +176,170 @@ function Home() {
 
   return (
     <>
-      <>
-        <motion.section
-          className={`${Style.contanerf}`}
-          initial={{ opacity: 0 }}
-          animate={animation1}
-          ref={ref1}
-          style={{
-            backgroundImage: `linear-gradient(0deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(${currentSlideData.image})`,
-          }}
-          onMouseEnter={() => setIsPlaying(false)}
-          onMouseLeave={() => setIsPlaying(true)}
-        >
-          <div className={`${Style.captionTitle} w-100 h-50 m-auto d-flex`}>
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentSlide}
-                variants={contentVariants}
-                initial="hidden"
-                animate="visible"
-                exit="hidden"
-                transition={{ duration: 0.4 }}
-                style={{ width: "100%" }}
-              >
-                <h1 className="text-center">{currentSlideData.title}</h1>
-                <h2
-                  className="text-center"
-                  style={{
-                    fontSize: "1.4rem",
-                    marginBottom: "15px",
-                    color: "#f0f0f0",
-                    fontWeight: "500",
-                  }}
-                >
-                  {currentSlideData.subtitle}
-                </h2>
-                <p className="text-center">{currentSlideData.description}</p>
-              </motion.div>
-            </AnimatePresence>
-
-            {/* Original buttons - unchanged */}
-            <div className={`${Style.herobutton}`}>
-              <button className="btn btn-primary" onClick={handleTostore}>
-                إلى المتجر <FontAwesomeIcon icon={faChevronLeft} />
-              </button>
-              <button className="btn btn-primary" onClick={handleaboutus}>
-                المزيد عنا
-              </button>
-            </div>
-          </div>
-
-          {/* Slider Controls */}
-          <div className={Style.sliderControls}>
-            {/* Navigation Dots */}
-            <div className={Style.sliderDots}>
-              {sliderData.map((_, index) => (
-                <button
-                  key={index}
-                  className={`${Style.dot} ${
-                    index === currentSlide ? Style.activeDot : ""
-                  }`}
-                  onClick={() => goToSlide(index)}
-                  aria-label={`الانتقال إلى الشريحة ${index + 1}`}
-                />
-              ))}
-            </div>
-
-            {/* Navigation Arrows */}
-            <button
-              className={`${Style.sliderArrow} ${Style.prevArrow}`}
-              onClick={prevSlide}
-              aria-label="الشريحة السابقة"
-            >
-              ‹
-            </button>
-            <button
-              className={`${Style.sliderArrow} ${Style.nextArrow}`}
-              onClick={nextSlide}
-              aria-label="الشريحة التالية"
-            >
-              ›
-            </button>
-          </div>
-
-          {/* Original services section - unchanged */}
-          <div className={`${Style.HeroOurservice}`}>
-            <div className={`${Style.servicecapf}`}>
-              <img src={icon1} alt="حجز زياره مجانيه" />
-              <h6 className={`${Style.service} text-center`}>
-                حجز زيارة مجانا
-              </h6>
-            </div>
-            <div className={`${Style.servicecapsac}`}>
-              <img src={icon2} alt="حجز زياره مجانيه" />
-              <h6 className={`${Style.service} text-center`}>
-                متاح دفع إلكتروني
-              </h6>
-            </div>
-            <div className={`${Style.servicecapth}`}>
-              <img src={icon3} alt="حجز زياره مجانيه" />
-              <h6 className={`${Style.service} text-center`}>عروض وخصومات</h6>
-            </div>
-            <div className={`${Style.servicecapfort}`}>
-              <img src={icon4} alt="حجز زياره مجانيه" />
-              <h6 className={`${Style.service} text-center`}>خدمة 24 ساعة</h6>
-            </div>
-          </div>
-        </motion.section>
-
-        {/* All other sections remain exactly the same */}
-        <motion.img
-          src={icon5}
-          alt=""
-          style={{
-            width: "100%",
-            transform: "translateY(-100%)",
-          }}
-          initial={{ opacity: 0 }}
-          animate={animation2}
-          ref={ref2}
+      <Helmet>
+        <title>الرئيسية - الخليجية للمبيدات والكيماويات</title>
+        <meta
+          name="description"
+          content="مرحبًا بك في الخليجية، شريكك للنجاح في الزراعة. اكتشف مجموعتنا من المبيدات، الأسمدة، والبذرو، خدمات تساهيل ،أستصلاح الاراضي الزراعية،والحلول الزراعية المبتكرة."
         />
-        <motion.section
-          className={`${Style.Herocategoris}`}
-          initial={{ opacity: 0 }}
-          animate={animation3}
-          ref={ref3}
-        >
-          <Categoris />
-        </motion.section>
-        <motion.section
-          className={`${Style.HeroServices}`}
-          initial={{ opacity: 0 }}
-          animate={animation4}
-          ref={ref4}
-        >
-          <ServiceUs />
-        </motion.section>
-        <motion.section
-          className={`${Style.Heroboking} shadow-lg mb-5`}
-          initial={{ opacity: 0 }}
-          animate={animation5}
-          ref={ref5}
-        >
-          <Booking />
-        </motion.section>
-        <motion.section
-          className={`${Style.HeroBestSeller}`}
-          initial={{ opacity: 0 }}
-          animate={animation6}
-          ref={ref6}
-        >
-          <BestSeller />
-        </motion.section>
-        <motion.section
-          className={Style.HeroCustomerReviws}
-          initial={{ opacity: 0 }}
-          animate={animation7}
-          ref={ref7}
-        >
-          <Customer />
-        </motion.section>
-      </>
+      </Helmet>
+      <motion.section
+        className={`${Style.contanerf}`}
+        initial={{ opacity: 0 }}
+        animate={animation1}
+        ref={ref1}
+        style={{
+          backgroundImage: `linear-gradient(0deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(${currentSlideData.image})`,
+        }}
+        onMouseEnter={() => setIsPlaying(false)}
+        onMouseLeave={() => setIsPlaying(true)}
+      >
+        <div className={`${Style.captionTitle} w-100 h-50 m-auto d-flex`}>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentSlide}
+              variants={contentVariants}
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+              transition={{ duration: 0.4 }}
+              style={{ width: "100%" }}
+            >
+              <h1 className="text-center">{currentSlideData.title}</h1>
+              <h2
+                className="text-center"
+                style={{
+                  fontSize: "1.4rem",
+                  marginBottom: "15px",
+                  color: "#f0f0f0",
+                  fontWeight: "500",
+                }}
+              >
+                {currentSlideData.subtitle}
+              </h2>
+              <p className="text-center">{currentSlideData.description}</p>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Original buttons - unchanged */}
+          <div className={`${Style.herobutton}`}>
+            <button className="btn btn-primary" onClick={handleTostore}>
+              إلى المتجر <FontAwesomeIcon icon={faChevronLeft} />
+            </button>
+            <button className="btn btn-primary" onClick={handleaboutus}>
+              المزيد عنا
+            </button>
+          </div>
+        </div>
+
+        {/* Slider Controls */}
+        <div className={Style.sliderControls}>
+          {/* Navigation Dots */}
+          <div className={Style.sliderDots}>
+            {sliderData.map((_, index) => (
+              <button
+                key={index}
+                className={`${Style.dot} ${
+                  index === currentSlide ? Style.activeDot : ""
+                }`}
+                onClick={() => goToSlide(index)}
+                aria-label={`الانتقال إلى الشريحة ${index + 1}`}
+              />
+            ))}
+          </div>
+
+          {/* Navigation Arrows */}
+          <button
+            className={`${Style.sliderArrow} ${Style.prevArrow}`}
+            onClick={prevSlide}
+            aria-label="الشريحة السابقة"
+          >
+            ‹
+          </button>
+          <button
+            className={`${Style.sliderArrow} ${Style.nextArrow}`}
+            onClick={nextSlide}
+            aria-label="الشريحة التالية"
+          >
+            ›
+          </button>
+        </div>
+
+        {/* Original services section - unchanged */}
+        <div className={`${Style.HeroOurservice}`}>
+          <div className={`${Style.servicecapf}`}>
+            <img src={icon1} alt="حجز زياره مجانيه" />
+            <h6 className={`${Style.service} text-center`}>حجز زيارة مجانا</h6>
+          </div>
+          <div className={`${Style.servicecapsac}`}>
+            <img src={icon2} alt="حجز زياره مجانيه" />
+            <h6 className={`${Style.service} text-center`}>
+              متاح دفع إلكتروني
+            </h6>
+          </div>
+          <div className={`${Style.servicecapth}`}>
+            <img src={icon3} alt="حجز زياره مجانيه" />
+            <h6 className={`${Style.service} text-center`}>عروض وخصومات</h6>
+          </div>
+          <div className={`${Style.servicecapfort}`}>
+            <img src={icon4} alt="حجز زياره مجانيه" />
+            <h6 className={`${Style.service} text-center`}>خدمة 24 ساعة</h6>
+          </div>
+        </div>
+      </motion.section>
+
+      {/* All other sections remain exactly the same */}
+      <motion.img
+        src={icon5}
+        alt=""
+        style={{
+          width: "100%",
+          transform: "translateY(-100%)",
+        }}
+        initial={{ opacity: 0 }}
+        animate={animation2}
+        ref={ref2}
+      />
+      <motion.section
+        className={`${Style.Herocategoris}`}
+        initial={{ opacity: 0 }}
+        animate={animation3}
+        ref={ref3}
+      >
+        <Categoris />
+      </motion.section>
+      <motion.section
+        className={`${Style.HeroServices}`}
+        initial={{ opacity: 0 }}
+        animate={animation4}
+        ref={ref4}
+      >
+        <ServiceUs />
+      </motion.section>
+      <motion.section
+        className={`${Style.Heroboking} shadow-lg mb-5`}
+        initial={{ opacity: 0 }}
+        animate={animation5}
+        ref={ref5}
+      >
+        <Booking />
+      </motion.section>
+      <motion.section
+        className={`${Style.HeroBestSeller}`}
+        initial={{ opacity: 0 }}
+        animate={animation6}
+        ref={ref6}
+      >
+        <BestSeller />
+      </motion.section>
+      <motion.section
+        className={Style.HeroCustomerReviws}
+        initial={{ opacity: 0 }}
+        animate={animation7}
+        ref={ref7}
+      >
+        <Customer />
+      </motion.section>
     </>
   );
 }

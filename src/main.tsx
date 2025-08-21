@@ -49,7 +49,7 @@ import Setting from "./components/AdminModule/setting/AdminSetting/Setting.tsx";
 import ChangePassword from "./components/AdminModule/setting/changePassword/ChangePassword.tsx";
 import ResetPassword from "./components/AdminModule/setting/resetPassword/ResetPassword.tsx";
 import { CartshopProvider } from "./context/ContextCartshop.tsx";
-import Ouroffers from "./components/UserModule/Home/Ouroffers/Ouroffers.tsx";
+import { HelmetProvider } from "react-helmet-async";
 
 const routes = [
   // 🌍 Public User Routes
@@ -64,8 +64,14 @@ const routes = [
       { path: "store", element: <Store /> },
       { path: "store/product/:id", element: <Product /> },
       { path: "store/productcart", element: <Shoppingcart /> },
-      // { path: "our-offers", element: <Ouroffers /> },
-      { path: "favorites", element: <Favorites /> },
+      {
+        path: "favorites",
+        element: (
+          <ProtectedRoute>
+            <Favorites />
+          </ProtectedRoute>
+        ),
+      },
       { path: "offers", element: <Offer /> },
       { path: "contact-us", element: <ContactUs /> },
       { path: "populer", element: <Popular /> },
@@ -75,11 +81,7 @@ const routes = [
       { path: "account-settings", element: <ManagementUser /> },
       {
         path: "payment",
-        element: (
-          // <ProtectedRoute>
-          <Payment />
-          // </ProtectedRoute>
-        ),
+        element: <Payment />,
       },
     ],
   },
@@ -134,22 +136,24 @@ const routes = [
 
 const router = createBrowserRouter(routes);
 createRoot(document.getElementById("root")!).render(
-  <AuthContextProvider>
-    <CartshopProvider>
-      <ContactMessageProvider>
-        <RouterProvider router={router} />
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={true} // Right-to-left for Arabic
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-        />
-      </ContactMessageProvider>
-    </CartshopProvider>
-  </AuthContextProvider>
+  <HelmetProvider>
+    <AuthContextProvider>
+      <CartshopProvider>
+        <ContactMessageProvider>
+          <RouterProvider router={router} />
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={true} // Right-to-left for Arabic
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+          />
+        </ContactMessageProvider>
+      </CartshopProvider>
+    </AuthContextProvider>
+  </HelmetProvider>
 );

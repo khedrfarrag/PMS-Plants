@@ -1,0 +1,223 @@
+/* ContactUs.module.css */
+
+.contactPage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 3rem 1rem;
+  background-color: #f8f9fa;
+  font-family: 'Cairo', sans-serif;
+  margin-top: 80px;
+}
+
+.contactContainer {
+  display: flex;
+  width: 100%;
+  max-width: 1200px;
+  background-color: #fff;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* Info Section (Left) */
+.infoSection {
+  flex-basis: 45%;
+  background: linear-gradient(135deg, #009247 0%, #007a3d 100%);
+  color: #fff;
+  padding: 4rem 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.infoSection::before {
+  content: '';
+  position: absolute;
+  top: -50px;
+  left: -80px;
+  width: 200px;
+  height: 200px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+}
+
+.infoSection::after {
+  content: '';
+  position: absolute;
+  bottom: -70px;
+  right: -60px;
+  width: 250px;
+  height: 250px;
+  background-color: rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+}
+
+.infoTitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  z-index: 1;
+}
+
+.infoText {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  margin-bottom: 2rem;
+  z-index: 1;
+}
+
+.contactDetails li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+  z-index: 1;
+}
+
+.contactDetails i {
+  font-size: 1.5rem;
+  margin-right: 1rem;
+  width: 30px;
+  text-align: center;
+}
+
+.socialIcons {
+  margin-top: 2rem;
+  z-index: 1;
+}
+
+.socialIcons a {
+  color: #fff;
+  font-size: 1.5rem;
+  margin-right: 1.5rem;
+  transition: transform 0.3s ease;
+}
+
+.socialIcons a:hover {
+  transform: scale(1.2);
+}
+
+/* Form Section (Right) */
+.formSection {
+  flex-basis: 55%;
+  padding: 4rem 3rem;
+}
+
+.formTitle {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 2rem;
+}
+
+.contactForm .formRow {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.formField {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #555;
+}
+
+.input,
+.select,
+.textarea {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: 'Cairo', sans-serif;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  outline: none;
+  border-color: #009247;
+  box-shadow: 0 0 0 3px rgba(0, 146, 71, 0.2);
+}
+
+.textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.submitButton {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #fff;
+  background-color: #009247;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.submitButton:hover {
+  background-color: #007a3d;
+  transform: translateY(-2px);
+}
+
+.errorMessage {
+  color: #e53e3e;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .contactContainer {
+    flex-direction: column;
+  }
+
+  .infoSection,
+  .formSection {
+    flex-basis: 100%;
+  }
+
+  .infoSection {
+    padding: 3rem 2rem;
+  }
+
+  .formSection {
+    padding: 3rem 2rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .contactPage {
+    padding: 1rem 0.5rem;
+  }
+
+  .infoSection,
+  .formSection {
+    padding: 2.5rem 1.5rem;
+  }
+
+  .formRow {
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 0;
+  }
+
+  .formField {
+    margin-bottom: 1.5rem;
+  }
+}

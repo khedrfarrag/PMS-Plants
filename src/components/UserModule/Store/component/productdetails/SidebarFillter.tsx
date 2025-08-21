@@ -52,13 +52,10 @@ export default function SidebarFillter({
   setFeedbackScoreTo,
 }: SidebarFillterProps) {
   // State for search input
-  console.log('categories', categories);
   const [searchName, setSearchName] = useState("");
-  console.log("searchName", searchName);
   const [showCategories, setShowCategories] = useState(true);
   // احذف useState للفلاتر واستخدم props بدلاً منها
-  console.log("subcategories", selectedSubCategoryId);
-  console.log('selectedCategoryId', selectedCategoryId);
+
   // عند تغيير الفئة
   const handleCategoryChange = (id: number) => {
     setSelectedCategoryId(id);
@@ -263,7 +260,6 @@ export default function SidebarFillter({
               </React.Fragment>
             ))}
           </div>
-          
         </div>
       )}
 
@@ -379,15 +375,14 @@ export default function SidebarFillter({
           />
           <FontAwesomeIcon icon={faStar} className={Style.sidebarRateStar} />
         </div>
-        <button className={Style.sidebarResetBtn} onClick={handleReset}>إعادة الضبط</button>
+        <button className={Style.sidebarResetBtn} onClick={handleReset}>
+          إعادة الضبط
+        </button>
       </div>
-      
+
       {/* زر تطبيق الفلاتر */}
       <div className={Style.sidebarSection}>
-        <button 
-          className={Style.applyFiltersBtn}
-          onClick={handleApplyFilters}
-        >
+        <button className={Style.applyFiltersBtn} onClick={handleApplyFilters}>
           تطبيق الفلاتر
         </button>
       </div>

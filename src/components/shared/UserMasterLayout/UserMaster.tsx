@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, ScrollRestoration } from "react-router-dom";
 import { AuthContext } from "../../../context/Context";
 import NavUser from "../Nav/NavUser";
 import Style from "./Style/Style.module.css";
@@ -8,10 +8,10 @@ import { faComment } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SessionModalWrapper from "../../SessionModalWrapper";
 import ChatModal from "../../UserModule/OpinAiChat/ChatModal";
+import ScrollToTop from "../utils/ScrollToTop";
 // import NavBar from "../Nav/NavBar";
 function UserMaster() {
   const { userData }: any = useContext(AuthContext);
-  console.log(userData);
   const [loading, setLoading] = useState(true);
   const [showChat, setShowChat] = useState(false);
 
@@ -23,6 +23,7 @@ function UserMaster() {
 
   return (
     <>
+      <ScrollToTop />
       <SessionModalWrapper />
       {loading ? (
         <div className="d-flex justify-content-center align-items-center vh-100">
@@ -33,13 +34,20 @@ function UserMaster() {
       ) : (
         <div className={`${Style.contaner}`}>
           <div>
-            <button className={Style.buttoncontactus} onClick={() => setShowChat(true)}>
+            <button
+              className={Style.buttoncontactus}
+              onClick={() => setShowChat(true)}
+            >
               <FontAwesomeIcon icon={faComment} />
             </button>
             {showChat && <ChatModal onClose={() => setShowChat(false)} />}
           </div>
           <NavUser />
-          {userData?.role === "Admin" || userData?.role === "SuperAdmin" ? <Navigate to={"/admin"} /> : ""}
+          {userData?.role === "Admin" || userData?.role === "SuperAdmin" ? (
+            <Navigate to={"/admin"} />
+          ) : (
+            ""
+          )}
           <Outlet />
           <Footer />
         </div>
