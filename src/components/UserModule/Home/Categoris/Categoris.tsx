@@ -103,7 +103,7 @@ export default function Categoris() {
 
   // صور الفئات الرئيسية
   const categoryImages: Record<string, string> = {
-    "أسمده زراعية": icon1,
+    "أسمده زراعيه": icon1,
     بذور: icon5,
     "مبيدات زراعية": icon3,
   };
@@ -138,7 +138,7 @@ export default function Categoris() {
           <div
             className="d-grid"
             style={{
-              gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
               gap: "16px",
             }}
           >
