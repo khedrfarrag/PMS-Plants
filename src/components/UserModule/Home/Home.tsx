@@ -19,11 +19,7 @@ import { useNavigate } from "react-router-dom";
 // Import slider images
 import img1 from "../../../assets/img_1.jpg";
 import img2 from "../../../assets/img_2.jpg";
-// Note: Add these images to src/assets/slider/ folder
-// import img2 from "../../../assets/slider/packaging-slide.jpg";
-// import img3 from "../../../assets/slider/seeds-slide.jpg";
-// import img4 from "../../../assets/slider/tools-slide.jpg";
-// import img5 from "../../../assets/slider/services-slide.jpg";
+
 
 // Slider data interface
 interface SlideData {
