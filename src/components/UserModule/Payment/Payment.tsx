@@ -1376,29 +1376,30 @@ function Payment() {
             <option value="Giza">الجيزة</option>
             <option value="Dakahlia">الدقهلية</option>
             <option value="Sharqia">الشرقية</option>
-            <option value="Qalyubia">القليوبية</option>
-            <option value="Kafr el-Sheikh">كفر الشيخ</option>
+            <option value="Qaliubiya">القليوبية</option>
+            <option value="KafrElSheikh">كفر الشيخ</option>
             <option value="Gharbia">الغربية</option>
-            <option value="Monufia">المنوفية</option>
+            <option value="Menoufia">المنوفية</option>
             <option value="Beheira">البحيرة</option>
             <option value="Ismailia">الإسماعيلية</option>
             <option value="Suez">السويس</option>
-            <option value="Port Said">بورسعيد</option>
+            <option value="PortSaid">بورسعيد</option>
             <option value="Damietta">دمياط</option>
-            <option value="South Sinai">جنوب سيناء</option>
-            <option value="North Sinai">شمال سيناء</option>
-            <option value="Red Sea">البحر الأحمر</option>
+            <option value="SouthSinai">جنوب سيناء</option>
+            <option value="NorthSinai">شمال سيناء</option>
+            <option value="RedSea">البحر الأحمر</option>
             <option value="Luxor">الأقصر</option>
             <option value="Aswan">أسوان</option>
             <option value="Qena">قنا</option>
             <option value="Sohag">سوهاج</option>
-            <option value="Asyut">أسيوط</option>
+            <option value="Assiut">أسيوط</option>
             <option value="Minya">المنيا</option>
-            <option value="Beni Suef">بني سويف</option>
+            <option value="BeniSuef">بني سويف</option>
             <option value="Fayoum">الفيوم</option>
-            <option value="New Valley">الوادي الجديد</option>
+            <option value="NewValley">الوادي الجديد</option>
             <option value="Matrouh">مطروح</option>
           </select>
+
           {errors.Governorate && (
             <span className={Style.errorMessage}>
               {errors.Governorate.message}

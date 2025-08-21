@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash, faCamera, faTimes } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEye,
+  faEyeSlash,
+  faCamera,
+  faTimes,
+} from "@fortawesome/free-solid-svg-icons";
 import Style from "./AdminRegister.module.css";
 import imagelogo from "../../../assets/صورة_واتساب_بتاريخ_2024-11-10_في_22.53.07_158af9f7-removebg-preview.png";
 import HeroImageSvg from "../../../assets/svg/svgHeroimage.svg";
@@ -16,28 +21,30 @@ function AdminRegister() {
     { id: 1, name: "Cairo" },
     { id: 2, name: "Giza" },
     { id: 3, name: "Alexandria" },
-    { id: 4, name: "Mansoura" },
-    { id: 5, name: "Luxor" },
-    { id: 6, name: "Aswan" },
-    { id: 7, name: "Asyut" },
-    { id: 8, name: "Beheira" },
-    { id: 9, name: "Fayoum" },
-    { id: 10, name: "Ismailia" },
-    { id: 11, name: "Port Said" },
-    { id: 12, name: "Suez" },
-    { id: 13, name: "Tanta" },
-    { id: 14, name: "Zagazig" },
-    { id: 15, name: "Shibin El Kom" },
-    { id: 16, name: "Sohag" },
-    { id: 17, name: "Qena" },
-    { id: 18, name: "Kafr El Sheikh" },
-    { id: 19, name: "Matrouh" },
-    { id: 20, name: "Minya" },
-    { id: 21, name: "Monufia" },
-    { id: 23, name: "North Sinai" },
-    { id: 24, name: "Sinai" },
-    { id: 25, name: "South Sinai" },
-    { id: 26, name: "Beni Suef" },
+    { id: 4, name: "Dakahlia" },
+    { id: 5, name: "RedSea" },
+    { id: 6, name: "Beheira" },
+    { id: 7, name: "Fayoum" },
+    { id: 8, name: "Gharbia" },
+    { id: 9, name: "Ismailia" },
+    { id: 10, name: "Menoufia" },
+    { id: 11, name: "Minya" },
+    { id: 12, name: "Qaliubiya" },
+    { id: 13, name: "NewValley" },
+    { id: 14, name: "Suez" },
+    { id: 15, name: "Aswan" },
+    { id: 16, name: "Assiut" },
+    { id: 17, name: "BeniSuef" },
+    { id: 18, name: "PortSaid" },
+    { id: 19, name: "Damietta" },
+    { id: 20, name: "Sharqia" },
+    { id: 21, name: "SouthSinai" },
+    { id: 22, name: "KafrElSheikh" },
+    { id: 23, name: "Matrouh" },
+    { id: 24, name: "Luxor" },
+    { id: 25, name: "Qena" },
+    { id: 26, name: "NorthSinai" },
+    { id: 27, name: "Sohag" },
   ];
 
   type AdminLogin = {
@@ -52,7 +59,7 @@ function AdminRegister() {
   };
 
   const navigate = useNavigate();
-  
+
   // State للصورة والمعاينة
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -100,7 +107,7 @@ function AdminRegister() {
   const handleDrop = (event: React.DragEvent) => {
     event.preventDefault();
     setIsDragOver(false);
-    
+
     const file = event.dataTransfer.files[0];
     if (file) {
       validateAndSetImage(file);
@@ -110,28 +117,28 @@ function AdminRegister() {
   // التحقق من صحة الصورة وتعيينها
   const validateAndSetImage = (file: File) => {
     setImageError("");
-    
+
     // التحقق من نوع الملف
-    if (!file.type.startsWith('image/')) {
+    if (!file.type.startsWith("image/")) {
       setImageError("يرجى اختيار ملف صورة صحيح");
       return;
     }
-    
+
     // التحقق من حجم الملف (5MB)
     if (file.size > 5 * 1024 * 1024) {
       setImageError("حجم الصورة يجب أن يكون أقل من 5 ميجابايت");
       return;
     }
-    
+
     // التحقق من نوع الصورة
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
     if (!allowedTypes.includes(file.type)) {
       setImageError("يرجى اختيار صورة بصيغة JPG, PNG أو WebP");
       return;
     }
-    
+
     setSelectedImage(file);
-    
+
     // إنشاء معاينة
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -151,15 +158,11 @@ function AdminRegister() {
     console.log(Data(data));
     const formData = Data(data);
     try {
-      const respose = await axios.post(
-        authEndPoint.RegisterAdmin,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          }
-        }
-      );
+      const respose = await axios.post(authEndPoint.RegisterAdmin, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       console.log(respose.data);
       toast.success("تم تسجيل المدير بنجاح!");
       navigate("/auth/verify-email");
@@ -182,12 +185,12 @@ function AdminRegister() {
     formData.append("ConfirmedPassword", data.ConfirmedPassword);
     formData.append("City", data.City);
     formData.append("PhoneNumber", data.PhoneNumber);
-    
+
     // إضافة الصورة إذا كانت موجودة
     if (selectedImage) {
       formData.append("Image", selectedImage);
     }
-    
+
     return formData;
   };
 
@@ -202,9 +205,7 @@ function AdminRegister() {
           <img src={HeroImageSvg} alt="" />
           <div className={`${Style.HeroCaption} `}>
             <h1>انضم إلينا كمدير!</h1>
-            <p>
-              أنشئ حسابك كمدير واستمتع بإدارة النظام بكفاءة عالية
-            </p>
+            <p>أنشئ حسابك كمدير واستمتع بإدارة النظام بكفاءة عالية</p>
           </div>
         </div>
         <div className="  w-50 d-flex flex-column flex-grow-1 ">
@@ -227,8 +228,10 @@ function AdminRegister() {
               {/* حقل الصورة العصري */}
               <div className="w-100 d-flex flex-column">
                 <label htmlFor="image">الصورة الشخصية</label>
-                <div 
-                  className={`${Style.imageUploadContainer} ${isDragOver ? Style.dragOver : ''} ${imagePreview ? Style.hasImage : ''}`}
+                <div
+                  className={`${Style.imageUploadContainer} ${
+                    isDragOver ? Style.dragOver : ""
+                  } ${imagePreview ? Style.hasImage : ""}`}
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
                   onDrop={handleDrop}
@@ -236,8 +239,8 @@ function AdminRegister() {
                   {imagePreview ? (
                     <div className={Style.imagePreview}>
                       <img src={imagePreview} alt="معاينة الصورة" />
-                      <button 
-                        type="button" 
+                      <button
+                        type="button"
                         className={Style.removeImageBtn}
                         onClick={removeImage}
                       >
@@ -246,7 +249,10 @@ function AdminRegister() {
                     </div>
                   ) : (
                     <div className={Style.uploadContent}>
-                      <FontAwesomeIcon icon={faCamera} className={Style.cameraIcon} />
+                      <FontAwesomeIcon
+                        icon={faCamera}
+                        className={Style.cameraIcon}
+                      />
                       <p>اسحب الصورة هنا أو اضغط للاختيار</p>
                       <span>JPG, PNG, WebP - أقل من 5MB</span>
                       <input
@@ -425,7 +431,7 @@ function AdminRegister() {
               </div>
               {/* <div className="w-100 d-flex flex-column">
                 <label htmlFor="name">الصورة</label> */}
-                {/* <input
+              {/* <input
                   type="file"
                   id="image"
                   aria-label="image"
@@ -458,4 +464,4 @@ function AdminRegister() {
   );
 }
 
-export default AdminRegister; 
+export default AdminRegister;
