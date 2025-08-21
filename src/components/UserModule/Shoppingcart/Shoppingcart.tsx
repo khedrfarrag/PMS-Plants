@@ -304,7 +304,6 @@ export default function Shoppingcart() {
           <div className={Style.headerInfo}>
             <h1>
               <FontAwesomeIcon icon={faShoppingBag} />
-              سلة المشتريات
             </h1>
             <p>{cart?.TotalQuantity || 0} عناصر</p>
           </div>

@@ -4,6 +4,7 @@
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     min-height: 100vh;
     font-family: "Cairo", sans-serif;
+    overflow: hidden;
 }
 
 /* ===== حالة التحميل ===== */
@@ -526,12 +527,22 @@
     }
 
     .headerContent {
-        flex-direction: column;
         gap: 15px;
+        align-items: center;
     }
 
     .headerInfo h1 {
-        font-size: 24px;
+        font-size: 20px;
+    }
+
+    .headerInfo p {
+        font-size: 14px;
+        margin-top: 4px;
+    }
+
+    .backButton {
+        padding: 8px 12px;
+        font-size: 14px;
     }
 
     .cartItem {
