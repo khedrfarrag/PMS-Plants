@@ -44,10 +44,6 @@
     font-size: 18px;
 }
 
-/* .imageContent {
-    margin-left: 50px;
-} */
-
 .imageContent img {
     max-width: 100%;
     height: auto;
@@ -63,7 +59,6 @@
     flex-direction: column;
     gap: 20px;
     margin-top: 20px;
-    /* background-color: #27ae60; */
     width: 50%;
 }
 
@@ -137,77 +132,117 @@
     font-weight: bold;
 }
 
+/* --- START: New Team Section Styles --- */
 .teamSection {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    flex-wrap: wrap;
-    gap: 20px;
-    margin-top: 50px;
-    padding: 20px;
-
-    h1 {
-        font-size: 41px;
-        font-weight: bold;
-    }
-
+    text-align: center;
+    padding: 4rem 0;
 }
 
-.teamGrid {
+.teamSection h1 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 1rem;
+}
+
+.teamSection .subtitle {
+    font-size: 1.2rem;
+    color: #718096;
+    max-width: 600px;
+    margin: 0 auto 3rem auto;
+}
+
+.teamContainer {
     display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    width: 90%;
+    justify-content: center;
+    gap: 2.5rem;
+    flex-wrap: wrap;
 }
 
 .teamCard {
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    text-align: center;
-    padding: 20px;
-    width: 300px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  width: 350px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
 }
 
-.teamCard img {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    margin-bottom: 15px;
+.teamCard:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(45, 55, 72, 0.1);
 }
 
-.teamCard h3 {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 5px;
+.cardImageContainer {
+  position: relative;
+  height: 220px;
 }
 
-.teamCard p {
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 15px;
+.cardImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
 }
 
-.teamCard .socialIcons {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
+.teamCard:hover .cardImage {
+  transform: scale(1.05);
 }
 
-.teamCard .socialIcons a {
-    color: #27ae60;
-    font-size: 18px;
-    text-decoration: none;
-    transition: color 0.3s;
+.cardContent {
+  padding: 1.8rem;
+  text-align: center;
 }
 
-.teamCard .socialIcons a:hover {
-    color: #1e8449;
+.cardTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 0.5rem;
 }
 
-/* Responsive Design for Mobile */
+.cardPosition {
+  font-size: 1rem;
+  color: #009247; /* Using the brand's green color */
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+.contactInfo {
+  display: flex;
+  justify-content: center;
+}
+
+.contactLinks {
+  display: flex;
+  gap: 1rem;
+}
+
+.contactLinks a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  color: #fff;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  text-decoration: none;
+}
+
+.contactLinks a:hover {
+  transform: scale(1.1);
+}
+
+.phoneButton { background-color: #3498db; }
+.whatsappButton { background-color: #25d366; }
+.facebookButton { background-color: #3b5998; }
+.gmailButton { background-color: #d44638; }
+/* --- END: New Team Section Styles --- */
+
+
 @media (max-width: 768px) {
     .aboutPage {
         padding: 20px 10px;
@@ -307,7 +342,7 @@
         padding: 10px;
     }
 
-    .teamGrid {
+    .teamContainer {
         flex-direction: column;
         align-items: center;
         width: 100%;
@@ -316,25 +351,10 @@
 
     .teamCard {
         width: 100%;
-        max-width: 350px;
-        padding: 20px 15px;
-    }
-
-    .teamCard img {
-        width: 80px;
-        height: 80px;
-    }
-
-    .teamCard h3 {
-        font-size: 18px;
-    }
-
-    .teamCard p {
-        font-size: 13px;
+        max-width: 380px;
     }
 }
 
-/* Tablet Responsive */
 @media (min-width: 769px) and (max-width: 1024px) {
     .aboutPage {
         padding: 30px 20px;
@@ -351,7 +371,7 @@
         gap: 25px;
     }
 
-    .teamGrid {
+    .teamContainer {
         flex-wrap: wrap;
         justify-content: center;
         gap: 25px;
@@ -362,7 +382,6 @@
     }
 }
 
-/* Hover Effects and Improvements */
 .serviceButtons .Service1:hover,
 .serviceButtons .Service2:hover {
     background-color: #27ae60;
@@ -376,35 +395,8 @@
     transition: transform 0.3s ease;
 }
 
-.teamCard:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease;
-}
-
-.teamCard .socialIcons a:hover {
-    transform: scale(1.2);
-    transition: transform 0.2s ease;
-}
-
-/* Performance Optimizations */
-.imageContent img {
-    will-change: transform;
-}
-
-.teamCard img {
-    object-fit: cover;
-}
-
-/* Accessibility Improvements */
 .serviceButtons .Service1:focus,
 .serviceButtons .Service2:focus {
     outline: 2px solid #27ae60;
     outline-offset: 2px;
-}
-
-.teamCard .socialIcons a:focus {
-    outline: 2px solid #27ae60;
-    outline-offset: 2px;
-    border-radius: 50%;
 }

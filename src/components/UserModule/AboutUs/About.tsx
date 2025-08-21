@@ -1,28 +1,110 @@
 import React from "react";
-import Style from "./Style/Style.module.css";
-import img from "./Style/img/aboutus.svg";
-import img2 from "./Style/img/distruction.svg";
-import img3 from "./Style/img/green.svg";
-import im4 from "./Style/img/ourfocus.svg";
-import im5 from "./Style/img/seal.svg";
-import im6 from "./Style/img/sevise.svg";
-import im7 from "./Style/img/payment.svg";
-import im8 from "./Style/img/visetor.svg";
-import teamImg from "../../../assets/svg/userimg.svg"; // Replace with actual image paths
 import { Helmet } from "react-helmet-async";
 
+// Import local styles and assets
+import Style from "./Style/Style.module.css";
+import img from "./Style/img/aboutus.svg";
+import imgVision from "./Style/img/ourfocus.svg";
+import imgService1 from "./Style/img/distruction.svg";
+import imgService2 from "./Style/img/green.svg";
+import imgWhy1 from "./Style/img/seal.svg";
+import imgWhy2 from "./Style/img/sevise.svg";
+import imgWhy3 from "./Style/img/payment.svg";
+import imgWhy4 from "./Style/img/visetor.svg";
+
+// Import team member images
+import imgMember1 from "./img/م حامد.jpg";
+import imgMember2 from "./img/FB_IMG_1754312691134.jpg";
+import imgMember3 from "./img/FB_IMG_1754312749856.jpg";
+
+// --- Data for Team Members ---
+const teamMembers = [
+  {
+    name: "المهندس / حامد محمد عبدالعزيز",
+    position: "المدير التنفيذي للشركة الخليجية",
+    image: imgMember1,
+    phone: "+201080031628",
+    whatsapp: "+201080031628",
+    facebook: "https://facebook.com",
+    email: "hamed.abdelaziz@example.com",
+  },
+  {
+    name: "الدكتور / أحمد الشافعي",
+    position: "رئيس مجلس إدارة الشركة الخليجية",
+    image: imgMember2,
+    phone: "+201154211644",
+    whatsapp: "+201154211644",
+    facebook: "https://facebook.com",
+    email: "ahmed.elshafei@example.com",
+  },
+  {
+    name: "المهندس / عطيه المحص",
+    position: "مدير خدمة تساهيل للتصنيع الزراعي",
+    image: imgMember3,
+    phone: "+201070778896",
+    whatsapp: "+201070778896",
+    facebook: "https://facebook.com",
+    email: "atieh.elmohs@example.com",
+  },
+];
+
+// --- Reusable Team Member Card Component (Styled, No Animation) ---
+const TeamMemberCard = ({ member }) => {
+  return (
+    <div className={Style.teamCard}>
+      <div className={Style.cardImageContainer}>
+        <img src={member.image} alt={member.name} className={Style.cardImage} />
+      </div>
+      <div className={Style.cardContent}>
+        <h3 className={Style.cardTitle}>{member.name}</h3>
+        <p className={Style.cardPosition}>{member.position}</p>
+        <div className={Style.contactInfo}>
+          <div className={Style.contactLinks}>
+            <a href={`tel:${member.phone}`} className={Style.phoneButton} aria-label="Phone">
+              <i className="fas fa-phone-alt"></i>
+            </a>
+            <a
+              href={`https://wa.me/${member.whatsapp}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={Style.whatsappButton}
+              aria-label="WhatsApp"
+            >
+              <i className="fab fa-whatsapp"></i>
+            </a>
+            <a
+              href={member.facebook}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={Style.facebookButton}
+              aria-label="Facebook"
+            >
+              <i className="fab fa-facebook-f"></i>
+            </a>
+            <a href={`mailto:${member.email}`} className={Style.gmailButton} aria-label="Email">
+              <i className="fas fa-envelope"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- Main About Component ---
 function About() {
   return (
     <>
       <Helmet>
-        <title>من نحن - الشركة الخليجية للتنمية الزراعية</title>
+        <title>من نحن - الخليجية للتنمية الزراعية</title>
         <meta
           name="description"
-          content="تعرف على الشركة الخليجية للتنمية الزراعية، خدماتنا، رؤيتنا، وفريقنا المتخصص في الزراعة."
+          content="تعرف على الشركة الخليجية للتنمية الزراعية، رؤيتنا، خدماتنا، وفريق خبرائنا المتخصص في تقديم أفضل الحلول الزراعية."
         />
       </Helmet>
+
       <div className={Style.aboutPage}>
-        {/* Introduction Section */}
+        {/* ... Other sections ... */}
         <section className={Style.introSection}>
           <div className={Style.textContent}>
             <h1>من نحن</h1>
@@ -37,10 +119,9 @@ function About() {
           </div>
         </section>
 
-        {/* Vision Section */}
         <section className={Style.visionSection}>
           <div className={Style.imageContent}>
-            <img src={im4} alt="Vision" />
+            <img src={imgVision} alt="Vision" />
           </div>
           <div className={Style.textContent}>
             <h1>رؤيتنا</h1>
@@ -52,7 +133,6 @@ function About() {
           </div>
         </section>
 
-        {/* Services Section */}
         <section className={Style.servicesSection}>
           <div className={Style.textContentservice}>
             <div className={Style.textsevice}>
@@ -64,72 +144,51 @@ function About() {
             </div>
             <div className={Style.serviceButtons}>
               <div className={Style.Service1}>
-                <img src={img2} alt="Service 1" />
+                <img src={imgService1} alt="Service 1" />
                 استصلاح أراضي
               </div>
               <div className={Style.Service2}>
-                <img src={img3} alt="Service 2" />
+                <img src={imgService2} alt="Service 2" />
                 تصنيع العلف
               </div>
             </div>
           </div>
         </section>
 
-        {/* Why Us Section */}
         <section className={Style.whyUsSection}>
           <h1>لماذا نحن؟!</h1>
           <div className={Style.whyUsGrid}>
             <div className={Style.whyUsItem}>
-              <img src={im5} alt="24-hour service" />
+              <img src={imgWhy1} alt="24-hour service" />
               <p>خدمة 24 ساعة</p>
             </div>
             <div className={Style.whyUsItem}>
-              <img src={im6} alt="Offers and discounts" />
+              <img src={imgWhy2} alt="Offers and discounts" />
               <p>عروض وخصومات</p>
             </div>
             <div className={Style.whyUsItem}>
-              <img src={im7} alt="Electronic payment grants" />
+              <img src={imgWhy3} alt="Electronic payment grants" />
               <p>متاح دفع إلكتروني</p>
             </div>
             <div className={Style.whyUsItem}>
-              <img src={im8} alt="Field visit booking" />
+              <img src={imgWhy4} alt="Field visit booking" />
               <p>حجز زيارة ميدانية</p>
             </div>
           </div>
         </section>
 
-        {/* Team Section */}
+        {/* Team Section with local styles */}
         <section className={Style.teamSection}>
-          <h1>خبراء الزراعة لدينا</h1>
-          <p>
-            فريق من المتخصصين لمساعدتك في اختيار أفضل المنتجات وتقديم النصائح
-            لضمان زراعة ناجحة ومحاصيل مثمرة.
-          </p>
-          <div className={Style.teamGrid}>
-            {[1, 2, 3].map((item) => (
-              <div key={item} className={Style.teamCard}>
-                <img src={teamImg} alt="Team Member" />
-                <h3>حامد محمد حامد</h3>
-                <p>مهندس زراعي</p>
-                <p>
-                  متخصص في زراعة المحاصيل العضوية وإدارة نظم الري الحديثة مع
-                  خبرة طويلة في استراتيجيات زراعية مستدامة.
-                </p>
-                <div className={Style.socialIcons}>
-                  <a href="#facebook" aria-label="Facebook">
-                    <i className="fab fa-facebook"></i>
-                  </a>
-                  <a href="#twitter" aria-label="Twitter">
-                    <i className="fab fa-twitter"></i>
-                  </a>
-                  <a href="#linkedin" aria-label="LinkedIn">
-                    <i className="fab fa-linkedin"></i>
-                  </a>
-                </div>
-              </div>
-              // {/* Duplicate the above card for additional team members */}
-            ))}
-          </div>
+            <h1>خبراء الزراعة لدينا</h1>
+            <p className={Style.subtitle}>
+                فريق من المتخصصين لمساعدتك في اختيار أفضل المنتجات وتقديم النصائح
+                لضمان زراعة ناجحة ومحاصيل مثمرة.
+            </p>
+            <div className={Style.teamContainer}>
+                {teamMembers.map((member, index) => (
+                    <TeamMemberCard key={index} member={member} />
+                ))}
+            </div>
         </section>
       </div>
     </>
