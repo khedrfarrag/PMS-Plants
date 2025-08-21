@@ -126,7 +126,7 @@ export default function Categoris() {
 
       <div
         className="d-flex flex-column flex-lg-row align-items-stretch gap-3"
-        style={{ width: "95%", margin: "30px auto" }}
+        style={{ width: "95%", margin: "30px auto", overflow: "hidden" }}
         onMouseEnter={() => setIsPaused(true)} // إيقاف التنقل عند وضع الماوس
         onMouseLeave={() => setIsPaused(false)} // إعادة التنقل عند إزالة الماوس
       >
