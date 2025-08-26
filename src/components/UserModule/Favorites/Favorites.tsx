@@ -17,15 +17,13 @@ import {
   faPlus,
   faSpinner,
   faCheckCircle,
-  faExclamationTriangle,
-  faClock,
-  faShoppingBag,
   faArrowLeft,
   faHeartBroken,
 } from "@fortawesome/free-solid-svg-icons";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import image from "../../../assets/svg/userimg.svg";
+import { useArabicNumbers } from "../../../context/ArabicNumbersContext";
 
 export default function Favorites() {
   type FavoriteProduct = {
@@ -87,6 +85,7 @@ export default function Favorites() {
     [productId: number]: boolean;
   }>({});
   const { userData }: null | any = useContext(AuthContext);
+  const { formatArabicNumber, formatArabicPrice } = useArabicNumbers();
   const UserId = userData?.userId;
   const navigate = useNavigate();
 
@@ -311,7 +310,7 @@ export default function Favorites() {
               <FontAwesomeIcon icon={faHeart} />
               المنتجات المفضلة
             </h1>
-            <p>{favoritesData?.pagination?.TotalCount || 0} منتج</p>
+            <p>{formatArabicNumber(favoritesData?.pagination?.TotalCount || 0)} منتج</p>
           </div>
         </div>
       </motion.header>
@@ -367,7 +366,7 @@ export default function Favorites() {
                         {renderStars(item.Rate)}
                       </div>
                       <span className={Style.ratingText}>
-                        {item.Rate.toFixed(1)} من 5
+                        {formatArabicNumber(parseFloat(item.Rate.toFixed(1)))} من 5
                       </span>
                     </div>
                   </div>
@@ -385,7 +384,7 @@ export default function Favorites() {
                           <FontAwesomeIcon icon={faMinus} />
                         </button>
                         <span className={Style.quantityValue}>
-                          {addQty[item.Id] || 1}
+                          {formatArabicNumber(addQty[item.Id] || 1)}
                         </span>
                         <button
                           className={`${Style.quantityBtn} ${Style.increase}`}
@@ -434,19 +433,19 @@ export default function Favorites() {
                   <div className={Style.priceInfo}>
                     <div className={Style.price}>
                       <span className={Style.currentPrice}>
-                        ${item.DiscountedPrice || item.Price}
+                        {formatArabicPrice(item.DiscountedPrice || item.Price)}
                       </span>
                       {item.DiscountedPrice &&
                         item.DiscountedPrice !== item.Price && (
                           <span className={Style.originalPrice}>
-                            ${item.Price}
+                            {formatArabicPrice(item.Price)}
                           </span>
                         )}
                     </div>
                     {item.DiscountedPrice &&
                       item.DiscountedPrice !== item.Price && (
                         <span className={Style.savings}>
-                          وفر ${(item.Price - item.DiscountedPrice).toFixed(2)}
+                          وفر {formatArabicPrice(item.Price - item.DiscountedPrice)}
                         </span>
                       )}
                   </div>

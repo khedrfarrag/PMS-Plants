@@ -26,7 +26,21 @@ import {
 import { toast } from "react-toastify";
 import { AuthContext, AuthContextType } from "../../../context/Context";
 import { CartshopContext } from "../../../context/CartshopContext";
+import { useArabicNumbers } from "../../../context/ArabicNumbersContext";
+import image from "../../../assets/svg/userimg.svg";
 export default function Offer() {
+  interface Product {
+    Id: number;
+    Name: string;
+    Description: string;
+    Price: number;
+    DiscountedPrice: number;
+    DiscountPercentage: number;
+    StockQuantity: number;
+    Rate: number;
+    ImageUrl: string;
+  }
+
   interface pagenation {
     CurrentPage: number;
     PageSize: number;
@@ -34,7 +48,7 @@ export default function Offer() {
     TotalPages: number;
   }
 
-  const [getDiscountedProducts, setDiscountedProducts] = useState([]);
+  const [getDiscountedProducts, setDiscountedProducts] = useState<Product[]>([]);
   const [pagination, setPagination] = useState<pagenation>();
   const [currentPage, setCurrentPage] = useState(1);
   const [favorites, setFavorites] = useState<number[]>([]);
@@ -54,6 +68,7 @@ export default function Offer() {
   // Get user ID from useContext
   const authContext = useContext(AuthContext) as AuthContextType | null;
   const { fetchCart } = useContext(CartshopContext) || {};
+  const { formatArabicNumber, formatArabicPrice, formatArabicPercentage } = useArabicNumbers();
   const userId = authContext?.userData?.userId;
   const getallpopuler = async ({
     pageNumber,
@@ -450,7 +465,7 @@ export default function Offer() {
                 <div className={Styles.badges}>
                   {popcard.DiscountPercentage > 0 && (
                     <span className={Styles.discountBadge}>
-                      -{popcard.DiscountPercentage}%
+                      -{formatArabicPercentage(popcard.DiscountPercentage)}
                     </span>
                   )}
                 </div>
@@ -501,7 +516,7 @@ export default function Offer() {
                         {renderStars(popcard.Rate)}
                       </div>
                       <span className={Styles.ratingText}>
-                        {popcard.Rate.toFixed(1)} من 5
+                        {formatArabicNumber(parseFloat(popcard.Rate.toFixed(1)))} من 5
                       </span>
                     </div>
                   </div>
@@ -515,18 +530,17 @@ export default function Offer() {
                   <div className={Styles.priceSection}>
                     <div className={Styles.priceInfo}>
                       <span className={Styles.currentPrice}>
-                        ${popcard.DiscountedPrice}
+                        {formatArabicPrice(popcard.DiscountedPrice)}
                       </span>
                       {popcard.DiscountedPrice !== popcard.Price && (
                         <span className={Styles.originalPrice}>
-                          ${popcard.Price}
+                          {formatArabicPrice(popcard.Price)}
                         </span>
                       )}
                     </div>
                     {popcard.DiscountedPrice !== popcard.Price && (
                       <span className={Styles.savings}>
-                        وفر $
-                        {(popcard.Price - popcard.DiscountedPrice).toFixed(2)}
+                        وفر {formatArabicPrice(popcard.Price - popcard.DiscountedPrice)}
                       </span>
                     )}
                     {getStockStatus(popcard.StockQuantity).status ===
@@ -578,7 +592,7 @@ export default function Offer() {
                             <FontAwesomeIcon icon={faMinus} />
                           </button>
                           <span className={Styles.quantityValue}>
-                            {counter[popcard.Id] || 1}
+                            {formatArabicNumber(counter[popcard.Id] || 1)}
                           </span>
                           <button
                             className={`${Styles.quantityBtn} ${Styles.increase}`}
@@ -637,7 +651,7 @@ export default function Offer() {
             </button>
 
             <span className={Styles.pageInfo}>
-              {pagination.TotalPages} / <span>{currentPage}</span>
+              {formatArabicNumber(pagination.TotalPages)} / <span>{formatArabicNumber(currentPage)}</span>
             </span>
 
             <button

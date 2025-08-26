@@ -486,16 +486,17 @@ export default function Product() {
                 )}
               </span>
               <span className={`${Style.productinfoprice}`}>
-                <span className={Style.pricedoler}>$</span>
+                <span className={Style.pricedoler}>EG</span>
                 {product.DiscountedPrice}
                 <span
                   style={{
-                    fontSize: "20px",
+                    fontSize: "18px",
                     color: "gray",
                     textDecoration: "line-through",
                   }}
                 >
-                  ${product.Price}
+                  {product.Price}
+                  <span style={{ fontSize: "12px" }}>EG</span>
                 </span>
               </span>
             </div>

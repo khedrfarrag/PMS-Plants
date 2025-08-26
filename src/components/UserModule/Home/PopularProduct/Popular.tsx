@@ -30,6 +30,7 @@ import { AuthContext, AuthContextType } from "../../../../context/Context";
 import { CartshopContext } from "../../../../context/CartshopContext";
 import { motion, AnimatePresence } from "framer-motion";
 import image from "../../../../assets/svg/userimg.svg";
+import { useArabicNumbers } from "../../../../context/ArabicNumbersContext";
 
 export default function Popular() {
   interface pagenation {
@@ -61,6 +62,7 @@ export default function Popular() {
   // Get user ID from useContext
   const authContext = useContext(AuthContext) as AuthContextType | null;
   const { fetchCart } = useContext(CartshopContext) || {};
+  const { formatArabicNumber, formatArabicPrice, formatArabicPercentage } = useArabicNumbers();
   const userId = authContext?.userData?.userId;
   const sessionExpired = authContext?.sessionExpired;
   const getallpopuler = async ({
@@ -440,7 +442,7 @@ export default function Popular() {
               <div className={Styles.badges}>
                 {popcard.DiscountPercentage > 0 && (
                   <span className={Styles.discountBadge}>
-                    -{popcard.DiscountPercentage}%
+                    -{formatArabicPercentage(popcard.DiscountPercentage)}
                   </span>
                 )}
               </div>
@@ -491,7 +493,7 @@ export default function Popular() {
                       {renderStars(popcard.Rate)}
                     </div>
                     <span className={Styles.ratingText}>
-                      {popcard.Rate.toFixed(1)} من 5
+                      {formatArabicNumber(parseFloat(popcard.Rate.toFixed(1)))} من 5
                     </span>
                   </div>
                 </div>
@@ -505,18 +507,17 @@ export default function Popular() {
                 <div className={Styles.priceSection}>
                   <div className={Styles.priceInfo}>
                     <span className={Styles.currentPrice}>
-                      ${popcard.DiscountedPrice}
+                      {formatArabicPrice(popcard.DiscountedPrice)}
                     </span>
                     {popcard.DiscountedPrice !== popcard.Price && (
                       <span className={Styles.originalPrice}>
-                        ${popcard.Price}
+                        {formatArabicPrice(popcard.Price)}
                       </span>
                     )}
                   </div>
                   {popcard.DiscountedPrice !== popcard.Price && (
                     <span className={Styles.savings}>
-                      وفر $
-                      {(popcard.Price - popcard.DiscountedPrice).toFixed(2)}
+                      وفر {formatArabicPrice(popcard.Price - popcard.DiscountedPrice)}
                     </span>
                   )}
                 </div>
@@ -540,7 +541,7 @@ export default function Popular() {
                           <FontAwesomeIcon icon={faMinus} />
                         </button>
                         <span className={Styles.quantityValue}>
-                          {counter[popcard.Id] || 1}
+                          {formatArabicNumber(counter[popcard.Id] || 1)}
                         </span>
                         <button
                           className={`${Styles.quantityBtn} ${Styles.increase}`}
@@ -599,7 +600,7 @@ export default function Popular() {
           </button>
 
           <span className={Styles.pageInfo}>
-            {pagination.TotalPages} / <span>{currentPage}</span>
+            {formatArabicNumber(pagination.TotalPages)} / <span>{formatArabicNumber(currentPage)}</span>
           </span>
 
           <button

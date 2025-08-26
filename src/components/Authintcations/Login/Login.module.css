@@ -128,3 +128,87 @@ label {
     font-weight: bold;
     cursor: pointer;
 }
+
+/* تحسين تصميم زر المتابعة بدون تسجيل */
+.guestAccess {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.divider {
+    position: relative;
+    width: 100%;
+    text-align: center;
+    margin: 10px 0;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: #e0e0e0;
+        z-index: 1;
+    }
+
+    span {
+        background: white;
+        padding: 0 15px;
+        color: #666;
+        font-size: 14px;
+        position: relative;
+        z-index: 2;
+    }
+}
+
+.guestButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    color: #495057;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    min-width: 200px;
+    justify-content: center;
+
+    &:hover {
+        background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+        border-color: #adb5bd;
+        color: #343a40;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    &:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    span {
+        font-size: 16px;
+    }
+}
+
+/* تحسين التجاوب مع الشاشات الصغيرة */
+@media (max-width: 768px) {
+    .guestButton {
+        min-width: 180px;
+        padding: 10px 20px;
+        font-size: 13px;
+    }
+
+    .divider span {
+        font-size: 12px;
+        padding: 0 10px;
+    }
+}

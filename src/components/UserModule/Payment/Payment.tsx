@@ -21,6 +21,7 @@ import {
   faPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import image from "../../../assets/svg/userimg.svg";
+import { useArabicNumbers } from "../../../context/ArabicNumbersContext";
 
 // Interface for pending checkout data
 interface PendingCheckout {
@@ -81,8 +82,38 @@ type CartItem = {
 };
 
 function Payment() {
+  const governoratesList = [
+    { id: 1, name: "Cairo" },
+    { id: 2, name: "Giza" },
+    { id: 3, name: "Alexandria" },
+    { id: 4, name: "Dakahlia" },
+    { id: 5, name: "RedSea" },
+    { id: 6, name: "Beheira" },
+    { id: 7, name: "Fayoum" },
+    { id: 8, name: "Gharbia" },
+    { id: 9, name: "Ismailia" },
+    { id: 10, name: "Menoufia" },
+    { id: 11, name: "Minya" },
+    { id: 12, name: "Qaliubiya" },
+    { id: 13, name: "NewValley" },
+    { id: 14, name: "Suez" },
+    { id: 15, name: "Aswan" },
+    { id: 16, name: "Assiut" },
+    { id: 17, name: "BeniSuef" },
+    { id: 18, name: "PortSaid" },
+    { id: 19, name: "Damietta" },
+    { id: 20, name: "Sharqia" },
+    { id: 21, name: "SouthSinai" },
+    { id: 22, name: "KafrElSheikh" },
+    { id: 23, name: "Matrouh" },
+    { id: 24, name: "Luxor" },
+    { id: 25, name: "Qena" },
+    { id: 26, name: "NorthSinai" },
+    { id: 27, name: "Sohag" },
+  ];
   const { userData }: any | null = useContext(AuthContext);
   const { fetchCart } = useContext(CartshopContext) || {};
+  const { formatArabicNumber, formatArabicPrice } = useArabicNumbers();
   const UserId = userData?.userId;
   const [submitLoading, setSubmitLoading] = useState(false);
   const [orderConfirmed, setOrderConfirmed] = useState(false);
@@ -651,7 +682,7 @@ function Payment() {
             <div className={Style.detailRow}>
               <span>المجموع:</span>
               <span className={Style.finalTotal}>
-                ${orderDetails.totalPrice?.toFixed(2)}
+                {formatArabicPrice(orderDetails.totalPrice || 0)}
               </span>
             </div>
           </div>
@@ -768,7 +799,7 @@ function Payment() {
                     ))}
                   </div>
                   <span className={Style.ratingText}>
-                    {rating > 0 ? `${rating} من 5` : "اختر التقييم"}
+                    {rating > 0 ? `${formatArabicNumber(rating)} من 5` : "اختر التقييم"}
                   </span>
                 </div>
 
@@ -785,7 +816,7 @@ function Payment() {
                     maxLength={500}
                   />
                   <span className={Style.commentCounter}>
-                    {comment.length}/500
+                    {formatArabicNumber(comment.length)}/500
                   </span>
                 </div>
 
@@ -915,7 +946,7 @@ function Payment() {
             <div className={Style.detailRow}>
               <span>المجموع:</span>
               <span className={Style.finalTotal}>
-                ${orderDetails.totalPrice?.toFixed(2)}
+                {formatArabicPrice(orderDetails.totalPrice || 0)}
               </span>
             </div>
           </div>
@@ -1012,7 +1043,7 @@ function Payment() {
                     ))}
                   </div>
                   <span className={Style.ratingText}>
-                    {rating > 0 ? `${rating} من 5` : "اختر التقييم"}
+                    {rating > 0 ? `${formatArabicNumber(rating)} من 5` : "اختر التقييم"}
                   </span>
                 </div>
 
@@ -1029,7 +1060,7 @@ function Payment() {
                     maxLength={500}
                   />
                   <span className={Style.commentCounter}>
-                    {comment.length}/500
+                    {formatArabicNumber(comment.length)}/500
                   </span>
                 </div>
 
@@ -1111,10 +1142,10 @@ function Payment() {
             </h2>
             <div className={Style.summaryStats}>
               <span className={Style.itemsCount}>
-                {cart.TotalQuantity} عنصر
+                {formatArabicNumber(cart.TotalQuantity)} عنصر
               </span>
               <span className={Style.totalAmount}>
-                ${cart.TotalPrice.toFixed(2)}
+                {formatArabicPrice(cart.TotalPrice)}
               </span>
             </div>
           </div>
@@ -1141,13 +1172,13 @@ function Payment() {
                       {renderStars(item.AverageRate)}
                     </div>
                     <span className={Style.ratingText}>
-                      {item.AverageRate.toFixed(1)} من 5
+                      {formatArabicNumber(parseFloat(item.AverageRate.toFixed(1)))} من 5
                     </span>
                   </div>
 
                   <div className={Style.productPrice}>
                     <span className={Style.unitPrice}>
-                      ${item.Price.toFixed(2)} للقطعة
+                      {formatArabicPrice(item.Price)} للقطعة
                     </span>
                   </div>
                 </div>
@@ -1167,7 +1198,7 @@ function Payment() {
                       {updatingItems[item.Id] ? (
                         <FontAwesomeIcon icon={faSpinner} spin />
                       ) : (
-                        item.Quantity
+                        formatArabicNumber(item.Quantity)
                       )}
                     </span>
                     <button
@@ -1183,7 +1214,7 @@ function Payment() {
 
                   <div className={Style.productTotal}>
                     <span className={Style.totalPrice}>
-                      ${item.TotalPrice.toFixed(2)}
+                      {formatArabicPrice(item.TotalPrice)}
                     </span>
                   </div>
 
@@ -1206,12 +1237,12 @@ function Payment() {
           <div className={Style.orderTotal}>
             <div className={Style.totalRow}>
               <span>عدد العناصر:</span>
-              <span>{cart.TotalQuantity}</span>
+              <span>{formatArabicNumber(cart.TotalQuantity)}</span>
             </div>
             <div className={Style.totalRow}>
               <span>المجموع الكلي:</span>
               <span className={Style.finalTotal}>
-                ${cart.TotalPrice.toFixed(2)}
+                {formatArabicPrice(cart.TotalPrice)}
               </span>
             </div>
           </div>
@@ -1370,34 +1401,14 @@ function Payment() {
             className={Style.selectField}
             required
           >
-            <option value="">اختر المحافظة</option>
-            <option value="Cairo">القاهرة</option>
-            <option value="Alexandria">الإسكندرية</option>
-            <option value="Giza">الجيزة</option>
-            <option value="Dakahlia">الدقهلية</option>
-            <option value="Sharqia">الشرقية</option>
-            <option value="Qaliubiya">القليوبية</option>
-            <option value="KafrElSheikh">كفر الشيخ</option>
-            <option value="Gharbia">الغربية</option>
-            <option value="Menoufia">المنوفية</option>
-            <option value="Beheira">البحيرة</option>
-            <option value="Ismailia">الإسماعيلية</option>
-            <option value="Suez">السويس</option>
-            <option value="PortSaid">بورسعيد</option>
-            <option value="Damietta">دمياط</option>
-            <option value="SouthSinai">جنوب سيناء</option>
-            <option value="NorthSinai">شمال سيناء</option>
-            <option value="RedSea">البحر الأحمر</option>
-            <option value="Luxor">الأقصر</option>
-            <option value="Aswan">أسوان</option>
-            <option value="Qena">قنا</option>
-            <option value="Sohag">سوهاج</option>
-            <option value="Assiut">أسيوط</option>
-            <option value="Minya">المنيا</option>
-            <option value="BeniSuef">بني سويف</option>
-            <option value="Fayoum">الفيوم</option>
-            <option value="NewValley">الوادي الجديد</option>
-            <option value="Matrouh">مطروح</option>
+            <option value={""} disabled>
+                      المدينة
+                    </option>
+            {governoratesList.map((governorate) => (
+                      <option key={governorate.id} value={governorate.name}>
+                        {governorate.name}
+                      </option>
+                    ))}
           </select>
 
           {errors.Governorate && (
@@ -1438,7 +1449,7 @@ function Payment() {
               ) : (
                 <>
                   <span>🚀</span>
-                  إتمام الطلب - ${cart?.TotalPrice?.toFixed(2) || "0.00"}
+                  إتمام الطلب - {formatArabicPrice(cart?.TotalPrice || 0)}
                 </>
               )}
             </button>

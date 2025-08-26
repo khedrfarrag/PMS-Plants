@@ -24,6 +24,7 @@ import { AuthContext } from "../../../context/Context";
 import { CartshopContext } from "../../../context/CartshopContext";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { useArabicNumbers } from "../../../context/ArabicNumbersContext";
 
 export default function Shoppingcart() {
   type CartItem = {
@@ -56,6 +57,7 @@ export default function Shoppingcart() {
   const navigate = useNavigate();
   const { userData }: null | any = useContext(AuthContext);
   const { fetchCart } = useContext(CartshopContext) || {};
+  const { formatArabicNumber, formatArabicPrice } = useArabicNumbers();
   const UserId = userData?.userId;
 
   // تعديل الكمية بشكل متفائل (Optimistic UI) مع تحسين UX
@@ -305,7 +307,7 @@ export default function Shoppingcart() {
             <h1>
               <FontAwesomeIcon icon={faShoppingBag} />
             </h1>
-            <p>{cart?.TotalQuantity || 0} عناصر</p>
+            <p>{formatArabicNumber(cart?.TotalQuantity || 0)} عناصر</p>
           </div>
         </div>
       </motion.header>
@@ -361,7 +363,7 @@ export default function Shoppingcart() {
                         {renderStars(item.AverageRate)}
                       </div>
                       <span className={Style.ratingText}>
-                        {item.AverageRate.toFixed(1)} من 5
+                        {formatArabicNumber(parseFloat(item.AverageRate.toFixed(1)))} من 5
                       </span>
                     </div>
                   </div>
@@ -383,7 +385,7 @@ export default function Shoppingcart() {
                         {updatingItems[item.Id] ? (
                           <FontAwesomeIcon icon={faSpinner} spin />
                         ) : (
-                          item.Quantity
+                          formatArabicNumber(item.Quantity)
                         )}
                       </span>
                       <button
@@ -440,17 +442,17 @@ export default function Shoppingcart() {
                   <div className={Style.priceInfo}>
                     <div className={Style.price}>
                       <span className={Style.currentPrice}>
-                        ${item.TotalPrice.toFixed(2)}
+                        {formatArabicPrice(item.TotalPrice)}
                       </span>
                       {item.TotalPrice !== item.Price && (
                         <span className={Style.originalPrice}>
-                          ${item.Price.toFixed(2)}
+                          {formatArabicPrice(item.Price)}
                         </span>
                       )}
                     </div>
                     {item.TotalPrice !== item.Price && (
                       <span className={Style.savings}>
-                        وفر ${(item.Price - item.TotalPrice).toFixed(2)}
+                        وفر {formatArabicPrice(item.Price - item.TotalPrice)}
                       </span>
                     )}
                   </div>
@@ -489,12 +491,12 @@ export default function Shoppingcart() {
           <div className={Style.summaryDetails}>
             <div className={Style.summaryRow}>
               <span>العدد الإجمالي:</span>
-              <span className={Style.totalItems}>{cart?.TotalQuantity}</span>
+              <span className={Style.totalItems}>{formatArabicNumber(cart?.TotalQuantity || 0)}</span>
             </div>
             <div className={Style.summaryRow}>
               <span>السعر الكلي:</span>
               <span className={Style.totalPrice}>
-                ${cart?.TotalPrice?.toFixed(2)}
+                {formatArabicPrice(cart?.TotalPrice || 0)}
               </span>
             </div>
             <button

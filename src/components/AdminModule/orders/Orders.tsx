@@ -92,6 +92,7 @@ function Orders() {
       );
       setOrders(response.data.data);
       setPagination(response.data.pagination);
+      console.log(response.data.data);
     } catch (errors) {
       toast.error("حدث خطأ أثناء جلب الطلبات");
     }

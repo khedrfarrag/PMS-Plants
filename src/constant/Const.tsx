@@ -1,4 +1,4 @@
-// export const BeasdURL: string = "api";
+// export const BeasdURL: string = "https://localhost:8083/api";
 // export const ImgURLBeasd: string = "https://localhost:8083";
 export const BeasdURL: string = "https://alkhaligya.runasp.net/api";
 export const ImgURLBeasd: string = "https://alkhaligya.runasp.net";

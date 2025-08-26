@@ -17,6 +17,7 @@ import {
   CartshopContext,
   CartshopContextType,
 } from "../../../context/CartshopContext";
+import { formatArabicNumber } from "../utils/arabicNumbers";
 
 export default function NavUser() {
   const navigate = useNavigate();
@@ -247,7 +248,7 @@ export default function NavUser() {
           {isLoggedIn ? (
             <>
               <span className={`${Style.cartIcon} `} onClick={navgatecart}>
-                <span className={Style.cartCount}>{cartCount}</span>
+                <span className={Style.cartCount}>{formatArabicNumber(cartCount)}</span>
                 <FontAwesomeIcon
                   className={
                     cartChanged
@@ -327,7 +328,7 @@ export default function NavUser() {
           ) : (
             <>
               <span className={`${Style.cartIcon} `} onClick={navgatecart}>
-                <span className={Style.cartCount}>{cartCount}</span>
+                <span className={Style.cartCount}>{formatArabicNumber(cartCount)}</span>
                 <FontAwesomeIcon
                   className={
                     cartChanged

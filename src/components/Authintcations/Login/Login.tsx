@@ -87,10 +87,6 @@ export default function Login() {
       navigate("/auth");
     }
   }, [userData, navigate]);
-  const watchRemember = watch("RememberMe");
-  useEffect(() => {
-    console.log("هل تم تحديد تذكرني؟", watchRemember);
-  }, [watchRemember]);
 
   return (
     <>
@@ -113,15 +109,21 @@ export default function Login() {
             />
             <div className=" w-75 m-auto mt-5 ">
               <h3>سجل دخول</h3>
-              <p>اذا لم يكن لديك حساب تستطيع </p>
+              <p>اذا لم يكن لديك حساب تستطيع</p>
               <Link className="link-to" to="/auth/register">
                 <p className={`${Style.TitleNavigate}`}> انشاء حساب من هنا !</p>
               </Link>
-              <div className={`${Style.Herohome} `}>
+
+              {/* تحسين موقع زر المتابعة بدون تسجيل */}
+              <div className={`${Style.guestAccess} mt-4`}>
+                <div className={`${Style.divider}`}>
+                  <span>أو</span>
+                </div>
                 <Link className="link-to" to="/">
-                  <p className={`${Style.TitleNavigate}`}>
-                    المتابعة بدون تسجيل
-                  </p>
+                  <button className={`${Style.guestButton}`}>
+                    <span>👁️</span>
+                    استكشف الموقع كزائر
+                  </button>
                 </Link>
               </div>
             </div>

@@ -38,6 +38,7 @@ import { ShimmerSimpleGallery, ShimmerPostItem } from "react-shimmer-effects";
 import Stack from "@mui/material/Stack";
 import Pagination from "@mui/material/Pagination";
 import { Helmet } from "react-helmet-async";
+import { useArabicNumbers } from "../../../../context/ArabicNumbersContext";
 
 // Define types for card data
 interface data {
@@ -72,6 +73,7 @@ interface pagenation {
 function Store() {
   const { userData }: null | any = useContext(AuthContext);
   const { fetchCart } = useContext(CartshopContext) || {};
+  const { formatArabicNumber, formatArabicPrice, formatArabicPercentage } = useArabicNumbers();
   const UserId = userData?.userId;
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -581,7 +583,7 @@ function Store() {
                             icon={faExclamationTriangle}
                             style={{ color: "#FFD700" }}
                           />
-                          {card.StockQuantity} قطع
+                          {formatArabicNumber(card.StockQuantity)} قطع
                         </span>
                       )}
                       {getStockStatus(card.StockQuantity).status ===
@@ -608,7 +610,7 @@ function Store() {
                       )}
                       {card?.DiscountPercentage > 0 && (
                         <span className={Style.sealeproducts}>
-                          {card?.DiscountPercentage}%
+                          {formatArabicPercentage(card?.DiscountPercentage)}
                         </span>
                       )}
                     </div>
@@ -645,10 +647,7 @@ function Store() {
                       >
                         <h4 className="fw-bolder  ">{card.Name}</h4>
                         <span>
-                          <FontAwesomeIcon
-                            icon={faStar}
-                            style={{ color: "#FFD700" }}
-                          />
+                          
                           <span style={{ fontSize: "20px", fontWeight: "800" }}>
                             {(() => {
                               const feedbacks = card.ProductFeedbacks || [];
@@ -668,9 +667,13 @@ function Store() {
                                 Math.round(avg * 10) / 10,
                                 5
                               );
-                              return `${roundedAvg} `;
+                              return `${formatArabicNumber(roundedAvg)} `;
                             })()}
                           </span>
+                          <FontAwesomeIcon
+                            icon={faStar}
+                            style={{ color: "#FFD700" }}
+                          />
                         </span>
                       </div>
                       <p>
@@ -710,7 +713,7 @@ function Store() {
                               }}
                               onClick={() => incrementHandler(card.Id)}
                             />
-                            {counts[card.Id] || 1}
+                            {formatArabicNumber(counts[card.Id] || 1)}
                             <FontAwesomeIcon
                               icon={faMinus}
                               style={{
@@ -736,21 +739,23 @@ function Store() {
                           <span
                             style={{ fontSize: "21px", fontWeight: "bold" }}
                           >
-                            <span style={{ color: "#009247" }}>$</span>
-                            {calculateDiscountedPrice(
-                              card.Price,
-                              card.DiscountPercentage ?? 0
+                            {formatArabicPrice(
+                              parseFloat(calculateDiscountedPrice(
+                                card.Price,
+                                card.DiscountPercentage ?? 0
+                              ))
                             )}
                           </span>
-                          {(card.DiscountPercentage ?? 0) > 0 && (
+                                                      {(card.DiscountPercentage ?? 0) > 0 && (
                             <span
                               style={{
-                                fontSize: "16px",
+                                fontSize: "12px",
                                 color: "gray",
                                 textDecoration: "line-through",
+                                fontFamily: "Cairo, sans-serif",
                               }}
                             >
-                              ${card.Price.toFixed(2)}
+                              {formatArabicPrice(card.Price)}
                             </span>
                           )}
                         </span>
