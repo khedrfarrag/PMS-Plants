@@ -414,9 +414,36 @@ function Payment() {
     if (!cart) return;
     if (newQuantity < 1) return;
 
+    // البحث عن المنتج في السلة
+    const cartItem = cart.CartItems.find(item => item.Id === id);
+    if (!cartItem) return;
+
     setUpdatingItems((prev) => ({ ...prev, [id]: true }));
 
-    const prevCart = { ...cart, CartItems: [...cart.CartItems] };
+    try {
+      // جلب معلومات المنتج للتأكد من المخزون
+      const productResponse = await axios.get(
+        `${cartShopPoint.GetAllCartShop.replace('/CartShop', '/Product')}/${cartItem.ProductId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${
+              localStorage.getItem("token") || sessionStorage.getItem("token")
+            }`,
+          },
+        }
+      );
+      
+      const product = productResponse.data;
+      
+      // التحقق من المخزون قبل تغيير الكمية
+      if (!validateStock(product.Id, newQuantity, [product])) {
+        const message = getStockMessage(product.Id, newQuantity, [product]);
+        toast.error(message);
+        setUpdatingItems((prev) => ({ ...prev, [id]: false }));
+        return;
+      }
+
+      const prevCart = { ...cart, CartItems: [...cart.CartItems] };
     const updatedCartItems = cart.CartItems.map((item) =>
       item.Id === id
         ? {
@@ -470,6 +497,10 @@ function Payment() {
       setCart(prevCart);
       toast.error(error.message || "حدث خطأ أثناء تعديل الكمية");
     } finally {
+      setUpdatingItems((prev) => ({ ...prev, [id]: false }));
+    }
+    } catch (error: any) {
+      toast.error("فشل في التحقق من المخزون");
       setUpdatingItems((prev) => ({ ...prev, [id]: false }));
     }
   };
@@ -1170,13 +1201,13 @@ function Payment() {
         <div className={Style.headerCard}>
           <h1 className={Style.headerTitle}>
             <span>🌾</span>
-            إتمام الطلب
+            إكمال الطلب
             <span>🌾</span>
           </h1>
           <p className={Style.headerSubtitle}>
             {userData
               ? `مرحباً ${userData.name || "المستخدم"}`
-              : "إتمام الطلب كضيف"}
+              : "  كضيف"}
           </p>
         </div>
       </div>
@@ -1229,6 +1260,8 @@ function Payment() {
                       {formatArabicPrice(item.Price)} للقطعة
                     </span>
                   </div>
+
+
                 </div>
 
                 <div className={Style.productActions}>
