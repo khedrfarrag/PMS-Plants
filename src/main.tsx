@@ -51,6 +51,7 @@ import ResetPassword from "./components/AdminModule/setting/resetPassword/ResetP
 import { CartshopProvider } from "./context/ContextCartshop.tsx";
 import { HelmetProvider } from "react-helmet-async";
 import { ArabicNumbersProvider } from "./context/ArabicNumbersContext";
+import { StockProvider } from "./context/StockContext";
 
 const routes = [
   // 🌍 Public User Routes
@@ -139,24 +140,26 @@ const router = createBrowserRouter(routes);
 createRoot(document.getElementById("root")!).render(
   <HelmetProvider>
     <ArabicNumbersProvider>
-      <AuthContextProvider>
-        <CartshopProvider>
-          <ContactMessageProvider>
-            <RouterProvider router={router} />
-            <ToastContainer
-              position="top-right"
-              autoClose={3000}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick
-              rtl={true} // Right-to-left for Arabic
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-            />
-          </ContactMessageProvider>
-        </CartshopProvider>
-      </AuthContextProvider>
+      <StockProvider>
+        <AuthContextProvider>
+          <CartshopProvider>
+            <ContactMessageProvider>
+              <RouterProvider router={router} />
+              <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={true} // Right-to-left for Arabic
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+              />
+            </ContactMessageProvider>
+          </CartshopProvider>
+        </AuthContextProvider>
+      </StockProvider>
     </ArabicNumbersProvider>
   </HelmetProvider>
 );

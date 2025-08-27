@@ -27,6 +27,7 @@ import { toast } from "react-toastify";
 import { AuthContext, AuthContextType } from "../../../context/Context";
 import { CartshopContext } from "../../../context/CartshopContext";
 import { useArabicNumbers } from "../../../context/ArabicNumbersContext";
+import { useStockContext } from "../../../context/StockContext";
 import image from "../../../assets/svg/userimg.svg";
 export default function Offer() {
   interface Product {
@@ -69,6 +70,7 @@ export default function Offer() {
   const authContext = useContext(AuthContext) as AuthContextType | null;
   const { fetchCart } = useContext(CartshopContext) || {};
   const { formatArabicNumber, formatArabicPrice, formatArabicPercentage } = useArabicNumbers();
+  const { getStockStatus, canAddToCart, getStockMessage } = useStockContext();
   const userId = authContext?.userData?.userId;
   const getallpopuler = async ({
     pageNumber,
@@ -213,9 +215,22 @@ export default function Offer() {
 
   // Counter handlers (min value is 1)
   const incrementHandler = (productId: number) => {
+    const product = getDiscountedProducts.find(p => p.Id === productId);
+    if (!product) return;
+
+    const currentQuantity = counter[productId] || 1;
+    const newQuantity = currentQuantity + 1;
+
+    // التحقق من المخزون قبل زيادة الكمية
+    if (!canAddToCart(product.Id, newQuantity, [product])) {
+      const message = getStockMessage(product.Id, newQuantity, [product]);
+      toast.error(message);
+      return;
+    }
+
     setCounter((prev) => ({
       ...prev,
-      [productId]: (prev[productId] || 1) + 1,
+      [productId]: newQuantity,
     }));
   };
 
@@ -226,18 +241,7 @@ export default function Offer() {
         prev[productId] && prev[productId] > 1 ? prev[productId] - 1 : 1,
     }));
   };
-  // Helper function to get stock status
-  const getStockStatus = (quantity: number) => {
-    if (quantity === 0) {
-      return { status: "outOfStock", text: "نفذ المخزون" };
-    } else if (quantity <= 10) {
-      return { status: "lowStock", text: "مخزون منخفض" };
-    } else if (quantity === 1) {
-      return { status: "lastPiece", text: "اخر قطعة" };
-    } else {
-      return { status: "inStock", text: "متوفر" };
-    }
-  };
+
 
   // Add to cart function
   const addToCart = async (productId: number) => {
@@ -246,6 +250,20 @@ export default function Offer() {
 
     try {
       const quantity = counter[productId] || 1;
+
+      // البحث عن المنتج في البيانات المحلية للتحقق من المخزون
+      const product = getDiscountedProducts.find(p => p.Id === productId);
+      if (!product) {
+        toast.error("المنتج غير موجود");
+        return;
+      }
+
+      // التحقق من المخزون قبل الإضافة للسلة
+      if (!canAddToCart(product.Id, quantity, [product])) {
+        const message = getStockMessage(product.Id, quantity, [product]);
+        toast.error(message);
+        return;
+      }
 
       // Check if product is already in cart
       const existingCartItem = cartItems.find(
@@ -268,10 +286,6 @@ export default function Offer() {
             },
           }
         );
-        if (getStockStatus(response.data.StockQuantity).status !== "inStock") {
-          toast.error("المنتج غير متوفر");
-          return;
-        }
         if (response.status === 200 || response.status === 201) {
           toast.success("تم تحديث الكمية في السلة بنجاح");
           // Refresh cart items to get updated data
@@ -543,34 +557,41 @@ export default function Offer() {
                         وفر {formatArabicPrice(popcard.Price - popcard.DiscountedPrice)}
                       </span>
                     )}
-                    {getStockStatus(popcard.StockQuantity).status ===
-                      "lastPiece" && (
-                      <span className={Styles.lastPieceBadge}>
-                        <FontAwesomeIcon icon={faExclamationTriangle} />
-                        اخر قطعة
-                      </span>
-                    )}
-                    {getStockStatus(popcard.StockQuantity).status ===
-                      "lowStock" && (
-                      <span className={Styles.lowStockBadge}>
-                        <FontAwesomeIcon icon={faExclamationTriangle} />
-                        مخزون منخفض
-                      </span>
-                    )}
-                    {getStockStatus(popcard.StockQuantity).status ===
-                      "outOfStock" && (
-                      <span className={Styles.outOfStockBadge}>
-                        <FontAwesomeIcon icon={faExclamationTriangle} />
-                        نفذ المخزون
-                      </span>
-                    )}
-                    {getStockStatus(popcard.StockQuantity).status ===
-                      "inStock" && (
-                      <span className={Styles.inStockBadge}>
-                        <FontAwesomeIcon icon={faCheckCircle} />
-                        متوفر
-                      </span>
-                    )}
+                    {/* حالة المخزون */}
+                    <div className={Styles.stockSection}>
+                      {(() => {
+                        const stockStatus = getStockStatus(popcard.StockQuantity, counter[popcard.Id] || 1);
+                        return (
+                          <span
+                            className={`${Styles.stockBadge} ${Styles[stockStatus.status]}`}
+                            style={{
+                              backgroundColor: stockStatus.status === "outOfStock" ? "#f8d7da" :
+                                             stockStatus.status === "lastPiece" ? "#fff3cd" :
+                                             stockStatus.status === "lowStock" ? "#ffe8d1" : "#d4edda",
+                              color: stockStatus.status === "outOfStock" ? "#721c24" :
+                                     stockStatus.status === "lastPiece" ? "#856404" :
+                                     stockStatus.status === "lowStock" ? "#8b4513" : "#155724",
+                              border: stockStatus.status === "outOfStock" ? "1px solid #f5c6cb" :
+                                     stockStatus.status === "lastPiece" ? "1px solid #ffeaa7" :
+                                     stockStatus.status === "lowStock" ? "1px solid #ffd8a8" : "1px solid #c3e6cb",
+                              padding: "4px 8px",
+                              borderRadius: "12px",
+                              fontSize: "12px",
+                              fontWeight: "600",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "4px"
+                            }}
+                          >
+                            <FontAwesomeIcon
+                              icon={stockStatus.icon}
+                              style={{ color: stockStatus.color }}
+                            />
+                            {stockStatus.text}
+                          </span>
+                        );
+                      })()}
+                    </div>
                   </div>
 
                   {/* التحكم في الكمية وإضافة للسلة */}

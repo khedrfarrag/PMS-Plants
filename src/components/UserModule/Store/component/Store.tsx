@@ -39,6 +39,7 @@ import Stack from "@mui/material/Stack";
 import Pagination from "@mui/material/Pagination";
 import { Helmet } from "react-helmet-async";
 import { useArabicNumbers } from "../../../../context/ArabicNumbersContext";
+import { useStockContext } from "../../../../context/StockContext";
 
 // Define types for card data
 interface data {
@@ -74,6 +75,7 @@ function Store() {
   const { userData }: null | any = useContext(AuthContext);
   const { fetchCart } = useContext(CartshopContext) || {};
   const { formatArabicNumber, formatArabicPrice, formatArabicPercentage } = useArabicNumbers();
+  const { getStockStatus, canAddToCart, getStockMessage } = useStockContext();
   const UserId = userData?.userId;
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -87,18 +89,7 @@ function Store() {
     };
   }, []);
 
-  // Helper function to get stock status
-  const getStockStatus = (quantity: number) => {
-    if (quantity === 0) {
-      return { status: "outOfStock", text: "نفذ المخزون" };
-    } else if (quantity <= 10) {
-      return { status: "lowStock", text: "مخزون منخفض" };
-    } else if (quantity === 1) {
-      return { status: "lastPiece", text: "اخر قطعة" };
-    } else {
-      return { status: "inStock", text: "متوفر" };
-    }
-  };
+
 
   const [Cards, setCards] = useState<card>([]);
   const [pagination, setPagination] = useState<pagenation>({
@@ -243,16 +234,35 @@ function Store() {
   // تحسين: استخدام useCallback لتحسين الأداء
   const addcarthandel = useCallback(
     (id: number): void => {
-      const count = counts[id] || 1;
+      const requestedQuantity = counts[id] || 1;
+      const product = Cards.find(card => card.Id === id);
+      
+      if (!product) {
+        toast.error("المنتج غير موجود");
+        return;
+      }
+
+      if (!canAddToCart(id, requestedQuantity, Cards)) {
+        const message = getStockMessage(id, requestedQuantity, Cards);
+        toast.error(message);
+        return;
+      }
+
+      // إذا كان المخزون منخفض، إظهار تحذير
+      const stockStatus = getStockStatus(product.StockQuantity, requestedQuantity);
+      if (stockStatus.status === "lowStock" || stockStatus.status === "lastPiece") {
+        toast.warning(`تحذير: ${stockStatus.message}`);
+      }
+
       Addcartapi(
         cartShopPoint,
-        { ProductId: id, Quantity: count },
+        { ProductId: id, Quantity: requestedQuantity },
         setCounts,
         toast,
         fetchCart
       );
     },
-    [counts, cartShopPoint, fetchCart]
+    [counts, Cards, cartShopPoint, fetchCart, canAddToCart, getStockMessage, getStockStatus]
   );
 
   // تحسين: استخدام useCallback لـ toggle favorite
@@ -306,11 +316,21 @@ function Store() {
 
   // تحسين: استخدام useCallback للـ increment/decrement
   const incrementHandler = useCallback((Id: number): void => {
-    setCounts((prev) => ({
-      ...prev,
-      [Id]: (prev[Id] || 1) + 1,
-    }));
-  }, []);
+    const product = Cards.find(card => card.Id === Id);
+    if (!product) return;
+
+    const currentCount = counts[Id] || 1;
+    const stockStatus = getStockStatus(product.StockQuantity, currentCount + 1);
+    
+    if (stockStatus.canAdd) {
+      setCounts((prev) => ({
+        ...prev,
+        [Id]: currentCount + 1,
+      }));
+    } else {
+      toast.error(stockStatus.message);
+    }
+  }, [counts, Cards, getStockStatus]);
 
   const decrementHandler = useCallback((Id: number): void => {
     setCounts((prev) => ({
@@ -566,48 +586,38 @@ function Store() {
                         />
                       </span>
 
-                      {getStockStatus(card.StockQuantity).status ===
-                        "lastPiece" && (
-                        <span className={Style.lastPieceBadge && Style.stock}>
-                          <FontAwesomeIcon
-                            icon={faExclamationTriangle}
-                            style={{ color: "#FFD700" }}
-                          />
-                          اخر قطعة
-                        </span>
-                      )}
-                      {getStockStatus(card.StockQuantity).status ===
-                        "lowStock" && (
-                        <span className={Style.lowStockBadge || Style.stock}>
-                          <FontAwesomeIcon
-                            icon={faExclamationTriangle}
-                            style={{ color: "#FFD700" }}
-                          />
-                          {formatArabicNumber(card.StockQuantity)} قطع
-                        </span>
-                      )}
-                      {getStockStatus(card.StockQuantity).status ===
-                        "outOfStock" && (
-                        <span className={Style.outOfStockBadge || Style.stock}>
-                          <FontAwesomeIcon
-                            icon={faExclamationTriangle}
-                            style={{ color: "red" }}
-                          />
-                          نفذ المخزون
-                        </span>
-                      )}
-                      {getStockStatus(card.StockQuantity).status ===
-                        "inStock" && (
-                        <span className={Style.inStockBadge || Style.stock}>
-                          <FontAwesomeIcon
-                            icon={faCheckCircle}
+                      {(() => {
+                        const stockStatus = getStockStatus(card.StockQuantity, counts[card.Id] || 1);
+                        return (
+                          <span 
+                            className={`${Style.stockBadge} ${Style[stockStatus.status]}`}
                             style={{
-                              color: "green",
+                              backgroundColor: stockStatus.status === "outOfStock" ? "#f8d7da" :
+                                             stockStatus.status === "lastPiece" ? "#fff3cd" :
+                                             stockStatus.status === "lowStock" ? "#ffe8d1" : "#d4edda",
+                              color: stockStatus.status === "outOfStock" ? "#721c24" :
+                                    stockStatus.status === "lastPiece" ? "#856404" :
+                                    stockStatus.status === "lowStock" ? "#8b4513" : "#155724",
+                              border: stockStatus.status === "outOfStock" ? "1px solid #f5c6cb" :
+                                     stockStatus.status === "lastPiece" ? "1px solid #ffeaa7" :
+                                     stockStatus.status === "lowStock" ? "1px solid #ffd8a8" : "1px solid #c3e6cb",
+                              padding: "4px 8px",
+                              borderRadius: "12px",
+                              fontSize: "12px",
+                              fontWeight: "600",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "4px"
                             }}
-                          />
-                          متوفر
-                        </span>
-                      )}
+                          >
+                            <FontAwesomeIcon
+                              icon={stockStatus.icon}
+                              style={{ color: stockStatus.color }}
+                            />
+                            {stockStatus.text}
+                          </span>
+                        );
+                      })()}
                       {card?.DiscountPercentage > 0 && (
                         <span className={Style.sealeproducts}>
                           {formatArabicPercentage(card?.DiscountPercentage)}

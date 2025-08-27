@@ -21,6 +21,7 @@ import {
 } from "../../../../constant/Const";
 import { AuthContext } from "../../../../context/Context";
 import { CartshopContext } from "../../../../context/CartshopContext";
+import { useStockContext } from "../../../../context/StockContext";
 import Stack from "@mui/material/Stack";
 import Pagination from "@mui/material/Pagination";
 
@@ -31,6 +32,7 @@ export default function BestSeller() {
   const pageSize = 4;
   const { userData }: any = useContext(AuthContext);
   const { fetchCart } = useContext(CartshopContext) || {};
+  const { getStockStatus, canAddToCart, getStockMessage } = useStockContext();
   const userId = userData?.userId;
   interface TopDiscount {
     data: {
@@ -89,11 +91,24 @@ export default function BestSeller() {
   }, [currentPage]);
 
   const incrementHandler = useCallback((Id: number): void => {
+    const product = getTopfourDiscount?.data?.find(p => p.Id === Id);
+    if (!product) return;
+
+    const currentQuantity = counts[Id] || 1;
+    const newQuantity = currentQuantity + 1;
+
+    // التحقق من المخزون قبل زيادة الكمية
+    if (!canAddToCart(product.Id, newQuantity, [product])) {
+      const message = getStockMessage(product.Id, newQuantity, [product]);
+      toast.error(message);
+      return;
+    }
+
     setCounts((prev) => ({
       ...prev,
-      [Id]: (prev[Id] || 1) + 1,
+      [Id]: newQuantity,
     }));
-  }, []);
+  }, [counts, getTopfourDiscount?.data, canAddToCart, getStockMessage]);
 
   const decrementHandler = useCallback((Id: number): void => {
     setCounts((prev) => ({
@@ -126,11 +141,26 @@ export default function BestSeller() {
   }
   const addcarthandel = async (id: number) => {
     try {
+      const quantity = counts[id] || 1;
+      
+      // التحقق من المخزون قبل الإضافة للسلة
+      const product = getTopfourDiscount?.data?.find(p => p.Id === id);
+      if (!product) {
+        toast.error("المنتج غير موجود");
+        return;
+      }
+
+      if (!canAddToCart(product.Id, quantity, [product])) {
+        const message = getStockMessage(product.Id, quantity, [product]);
+        toast.error(message);
+        return;
+      }
+
       const data = {
         CartItems: [
           {
             ProductId: id,
-            Quantity: counts[id] || 1,
+            Quantity: quantity,
           },
         ],
       };
@@ -311,6 +341,42 @@ export default function BestSeller() {
                         {product.Rate}
                       </span>
                     </span>
+                  </div>
+
+                  {/* حالة المخزون */}
+                  <div className="d-flex justify-content-center mb-2">
+                    {(() => {
+                      const stockStatus = getStockStatus(product.StockQuantity, counts[product.Id] || 1);
+                      return (
+                        <span
+                          className="badge"
+                          style={{
+                            backgroundColor: stockStatus.status === "outOfStock" ? "#f8d7da" :
+                                           stockStatus.status === "lastPiece" ? "#fff3cd" :
+                                           stockStatus.status === "lowStock" ? "#ffe8d1" : "#d4edda",
+                            color: stockStatus.status === "outOfStock" ? "#721c24" :
+                                   stockStatus.status === "lastPiece" ? "#856404" :
+                                   stockStatus.status === "lowStock" ? "#8b4513" : "#155724",
+                            border: stockStatus.status === "outOfStock" ? "1px solid #f5c6cb" :
+                                   stockStatus.status === "lastPiece" ? "1px solid #ffeaa7" :
+                                   stockStatus.status === "lowStock" ? "1px solid #ffd8a8" : "1px solid #c3e6cb",
+                            padding: "4px 8px",
+                            borderRadius: "12px",
+                            fontSize: "12px",
+                            fontWeight: "600",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "4px"
+                          }}
+                        >
+                          <FontAwesomeIcon
+                            icon={stockStatus.icon}
+                            style={{ color: stockStatus.color }}
+                          />
+                          {stockStatus.text}
+                        </span>
+                      );
+                    })()}
                   </div>
                   <p>
                     {product.Description.length > 100

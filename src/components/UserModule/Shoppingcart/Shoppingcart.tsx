@@ -25,6 +25,7 @@ import { CartshopContext } from "../../../context/CartshopContext";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useArabicNumbers } from "../../../context/ArabicNumbersContext";
+import { useStockContext } from "../../../context/StockContext";
 
 export default function Shoppingcart() {
   type CartItem = {
@@ -58,6 +59,7 @@ export default function Shoppingcart() {
   const { userData }: null | any = useContext(AuthContext);
   const { fetchCart } = useContext(CartshopContext) || {};
   const { formatArabicNumber, formatArabicPrice } = useArabicNumbers();
+  const { validateStock, getStockMessage } = useStockContext();
   const UserId = userData?.userId;
 
   // تعديل الكمية بشكل متفائل (Optimistic UI) مع تحسين UX
@@ -65,42 +67,71 @@ export default function Shoppingcart() {
     if (!cart) return;
     if (newQuantity < 1) return;
 
-    // تحديث حالة التحميل للعنصر المحدد
-    setUpdatingItems((prev) => ({ ...prev, [id]: true }));
+    // البحث عن المنتج في السلة
+    const cartItem = cart.CartItems.find(item => item.Id === id);
+    if (!cartItem) {
+      toast.error("المنتج غير موجود في السلة");
+      return;
+    }
 
-    const prevCart = { ...cart, CartItems: [...cart.CartItems] };
-    const updatedCartItems = cart.CartItems.map((item) =>
-      item.Id === id
-        ? {
-            ...item,
-            Quantity: newQuantity,
-            TotalPrice: item.Price * newQuantity,
-          }
-        : item
-    );
-
-    // تحديث السعر الإجمالي
-    const newTotalPrice = updatedCartItems.reduce(
-      (sum, item) => sum + item.TotalPrice,
-      0
-    );
-    const newTotalQuantity = updatedCartItems.reduce(
-      (sum, item) => sum + item.Quantity,
-      0
-    );
-
-    setCart({
-      ...cart,
-      CartItems: updatedCartItems,
-      TotalPrice: newTotalPrice,
-      TotalQuantity: newTotalQuantity,
-    });
-
+    // التحقق من المخزون قبل التحديث
+    // نحتاج لجلب معلومات المخزون من API أو استخدام البيانات المتوفرة
     try {
+      // جلب معلومات المنتج للتأكد من المخزون
+      const productResponse = await axios.get(
+        ProductsPoint.GetProductId(cartItem.ProductId),
+        {
+          headers: {
+            Authorization: `Bearer ${
+              localStorage.getItem("token") || sessionStorage.getItem("token")
+            }`,
+          },
+        }
+      );
+
+      const product = productResponse.data;
+      
+      // التحقق من المخزون
+      if (!validateStock(product.Id, newQuantity, [product])) {
+        const message = getStockMessage(product.Id, newQuantity, [product]);
+        toast.error(message);
+        return;
+      }
+
+      // تحديث حالة التحميل للعنصر المحدد
+      setUpdatingItems((prev) => ({ ...prev, [id]: true }));
+
+      const prevCart = { ...cart, CartItems: [...cart.CartItems] };
+      const updatedCartItems = cart.CartItems.map((item) =>
+        item.Id === id
+          ? {
+              ...item,
+              Quantity: newQuantity,
+              TotalPrice: item.Price * newQuantity,
+            }
+          : item
+      );
+
+      // تحديث السعر الإجمالي
+      const newTotalPrice = updatedCartItems.reduce(
+        (sum, item) => sum + item.TotalPrice,
+        0
+      );
+      const newTotalQuantity = updatedCartItems.reduce(
+        (sum, item) => sum + item.Quantity,
+        0
+      );
+
+      setCart({
+        ...cart,
+        CartItems: updatedCartItems,
+        TotalPrice: newTotalPrice,
+        TotalQuantity: newTotalQuantity,
+      });
+
       await axios.put(
         `${cartShopPoint.Put(id)}`,
         { Quantity: newQuantity },
-
         {
           headers: {
             Authorization: `Bearer ${
@@ -116,7 +147,6 @@ export default function Shoppingcart() {
         await fetchCart();
       }
     } catch (error: any) {
-      setCart(prevCart);
       toast.error(error.message || "حدث خطأ أثناء تعديل الكمية");
     } finally {
       setUpdatingItems((prev) => ({ ...prev, [id]: false }));

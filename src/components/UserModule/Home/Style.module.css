@@ -67,6 +67,48 @@
 }
 
 
+/* Stock Badge Styles */
+.stockSection {
+  margin: 10px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.stockBadge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s ease;
+}
+
+.outOfStock {
+  background-color: #dc354520;
+  color: #dc3545;
+  border: 1px solid #dc3545;
+}
+
+.lastPiece {
+  background-color: #ffc10720;
+  color: #ffc107;
+  border: 1px solid #ffc107;
+}
+
+.lowStock {
+  background-color: #fd7e1420;
+  color: #fd7e14;
+  border: 1px solid #fd7e14;
+}
+
+.inStock {
+  background-color: #28a74520;
+  color: #28a745;
+  border: 1px solid #28a745;
+}
+
 /*  */
 .HeroServices {
     background-image: url(svg/bg-5.png);

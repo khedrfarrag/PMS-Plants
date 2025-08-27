@@ -22,6 +22,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import image from "../../../assets/svg/userimg.svg";
 import { useArabicNumbers } from "../../../context/ArabicNumbersContext";
+import { useStockContext } from "../../../context/StockContext";
 
 // Interface for pending checkout data
 interface PendingCheckout {
@@ -114,6 +115,7 @@ function Payment() {
   const { userData }: any | null = useContext(AuthContext);
   const { fetchCart } = useContext(CartshopContext) || {};
   const { formatArabicNumber, formatArabicPrice } = useArabicNumbers();
+  const { validateStock, getStockMessage } = useStockContext();
   const UserId = userData?.userId;
   const [submitLoading, setSubmitLoading] = useState(false);
   const [orderConfirmed, setOrderConfirmed] = useState(false);
@@ -229,6 +231,52 @@ function Payment() {
   const onSubmit = async (data: FormData) => {
     setSubmitLoading(true);
     try {
+      // التحقق من المخزون قبل إتمام الطلب
+      if (cart?.CartItems) {
+        const stockValidationPromises = cart.CartItems.map(async (item) => {
+          try {
+            // جلب معلومات المنتج للتأكد من المخزون
+            const productResponse = await axios.get(
+              `${cartShopPoint.GetAllCartShop.replace('/CartShop', '/Product')}/${item.ProductId}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${
+                    localStorage.getItem("token") || sessionStorage.getItem("token")
+                  }`,
+                },
+              }
+            );
+            
+            const product = productResponse.data;
+            return {
+              productId: item.ProductId,
+              productName: item.ProductName,
+              isValid: validateStock(product.Id, item.Quantity, [product]),
+              message: getStockMessage(product.Id, item.Quantity, [product])
+            };
+          } catch (error) {
+            return {
+              productId: item.ProductId,
+              productName: item.ProductName,
+              isValid: false,
+              message: "لا يمكن التحقق من المخزون"
+            };
+          }
+        });
+
+        const stockValidationResults = await Promise.all(stockValidationPromises);
+        const invalidItems = stockValidationResults.filter(result => !result.isValid);
+
+        if (invalidItems.length > 0) {
+          const errorMessage = invalidItems.map(item => 
+            `${item.productName}: ${item.message}`
+          ).join('\n');
+          toast.error(`بعض المنتجات غير متوفرة في المخزون:\n${errorMessage}`);
+          setSubmitLoading(false);
+          return;
+        }
+      }
+
       const isGuestOrder = !UserId;
       const sessionId = sessionStorage.getItem("session-Id");
 

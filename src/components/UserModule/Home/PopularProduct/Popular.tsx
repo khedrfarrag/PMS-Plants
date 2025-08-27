@@ -31,6 +31,7 @@ import { CartshopContext } from "../../../../context/CartshopContext";
 import { motion, AnimatePresence } from "framer-motion";
 import image from "../../../../assets/svg/userimg.svg";
 import { useArabicNumbers } from "../../../../context/ArabicNumbersContext";
+import { useStockContext } from "../../../../context/StockContext";
 
 export default function Popular() {
   interface pagenation {
@@ -63,6 +64,7 @@ export default function Popular() {
   const authContext = useContext(AuthContext) as AuthContextType | null;
   const { fetchCart } = useContext(CartshopContext) || {};
   const { formatArabicNumber, formatArabicPrice, formatArabicPercentage } = useArabicNumbers();
+  const { getStockStatus, canAddToCart, getStockMessage } = useStockContext();
   const userId = authContext?.userData?.userId;
   const sessionExpired = authContext?.sessionExpired;
   const getallpopuler = async ({
@@ -208,9 +210,22 @@ export default function Popular() {
 
   // Counter handlers (min value is 1)
   const incrementHandler = (productId: number) => {
+    const product = getpopular.find(p => p.Id === productId);
+    if (!product) return;
+
+    const currentQuantity = counter[productId] || 1;
+    const newQuantity = currentQuantity + 1;
+
+    // التحقق من المخزون قبل زيادة الكمية
+    if (!canAddToCart(product.Id, newQuantity, [product])) {
+      const message = getStockMessage(product.Id, newQuantity, [product]);
+      toast.error(message);
+      return;
+    }
+
     setCounter((prev) => ({
       ...prev,
-      [productId]: (prev[productId] || 1) + 1,
+      [productId]: newQuantity,
     }));
   };
 
@@ -229,6 +244,20 @@ export default function Popular() {
 
     try {
       const quantity = counter[productId] || 1;
+
+      // البحث عن المنتج في البيانات المحلية للتحقق من المخزون
+      const product = getpopular.find(p => p.Id === productId);
+      if (!product) {
+        toast.error("المنتج غير موجود");
+        return;
+      }
+
+      // التحقق من المخزون قبل الإضافة للسلة
+      if (!canAddToCart(product.Id, quantity, [product])) {
+        const message = getStockMessage(product.Id, quantity, [product]);
+        toast.error(message);
+        return;
+      }
 
       // Check if product is already in cart
       const existingCartItem = cartItems.find(
@@ -520,6 +549,26 @@ export default function Popular() {
                       وفر {formatArabicPrice(popcard.Price - popcard.DiscountedPrice)}
                     </span>
                   )}
+                </div>
+
+                {/* عرض حالة المخزون */}
+                <div className={Styles.stockSection}>
+                  {(() => {
+                    const stockStatus = getStockStatus(popcard.StockQuantity, counter[popcard.Id] || 1);
+                    return (
+                      <div 
+                        className={Styles.stockBadge}
+                        style={{ 
+                          backgroundColor: stockStatus.color + '20',
+                          color: stockStatus.color,
+                          border: `1px solid ${stockStatus.color}`
+                        }}
+                      >
+                        <FontAwesomeIcon icon={stockStatus.icon} />
+                        <span>{stockStatus.text}</span>
+                      </div>
+                    );
+                  })()}
                 </div>
 
                 {/* التحكم في الكمية وإضافة للسلة */}

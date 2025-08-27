@@ -29,6 +29,42 @@
     gap: 10px;
 }
 
+/* أنماط جديدة لحالات المخزون */
+.stockBadge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s ease;
+}
+
+.outOfStock {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.lastPiece {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.lowStock {
+    background-color: #ffe8d1;
+    color: #8b4513;
+    border: 1px solid #ffd8a8;
+}
+
+.inStock {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
 .sidebarCategoryRadio {
     appearance: none;
     -webkit-appearance: none;

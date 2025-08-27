@@ -23,6 +23,8 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../../../../context/Context";
 import { CartshopContext } from "../../../../../context/CartshopContext";
+import { useArabicNumbers } from "../../../../../context/ArabicNumbersContext";
+import { useStockContext } from "../../../../../context/StockContext";
 import { Helmet } from "react-helmet-async";
 // Define a type for the product details
 interface data {
@@ -59,6 +61,8 @@ interface Category {
 export default function Product() {
   const { userData, sessionExpired }: null | any = useContext(AuthContext);
   const { fetchCart } = useContext(CartshopContext) || {};
+  const { formatArabicNumber, formatArabicPrice } = useArabicNumbers();
+  const { getStockStatus, canAddToCart, getStockMessage } = useStockContext();
   const UserId = userData?.userId;
   // const UserID: string = UserData?.userId; // Get UserID from context or set to 0 if not available
   const location = useLocation();
@@ -159,7 +163,16 @@ export default function Product() {
   };
   // Increment quantity handler
   const incrementHandler = (): void => {
-    setCount(count + 1);
+    const newQuantity = count + 1;
+    
+    // التحقق من المخزون قبل زيادة الكمية
+    if (!canAddToCart(product.Id, newQuantity, [product])) {
+      const message = getStockMessage(product.Id, newQuantity, [product]);
+      toast.error(message);
+      return;
+    }
+    
+    setCount(newQuantity);
   };
 
   // Function to handle navigation back to the store
@@ -354,6 +367,13 @@ export default function Product() {
       return;
     }
 
+    // التحقق من المخزون قبل الإضافة للسلة
+    if (!canAddToCart(product.Id, count, [product])) {
+      const message = getStockMessage(product.Id, count, [product]);
+      toast.error(message);
+      return;
+    }
+
     const body = {
       CartItems: [
         {
@@ -424,7 +444,7 @@ export default function Product() {
             <div className={`${Style.headsection} `}>
               <h1>{product.Name}</h1>
               <div className={`${Style.headDiscount}`}>
-                <span>خصم {product?.DiscountPercentage}% </span>
+                <span>خصم {formatArabicNumber(product?.DiscountPercentage)}% </span>
                 <span
                   className={`${Style.headhart} shadow-lg`}
                   role="button"
@@ -442,17 +462,21 @@ export default function Product() {
             </div>
             <div className={Style.productdetails}>
               <span className={`${Style.productinforate}`}>
-                {reviews.length > 0
-                  ? (
-                      reviews.reduce((acc, f) => acc + (f.Rate || 0), 0) /
-                      reviews.length
-                    ).toFixed(1)
-                  : 0}
+                {formatArabicNumber(
+                  reviews.length > 0
+                    ? parseFloat(
+                        (
+                          reviews.reduce((acc, f) => acc + (f.Rate || 0), 0) /
+                          reviews.length
+                        ).toFixed(1)
+                      )
+                    : 0
+                )}
                 <FontAwesomeIcon icon={faStar} style={{ color: "gold" }} />
               </span>
               <span className={`${Style.productinfo}`}>
                 <span>الكمية</span>
-                {product.StockQuantity}
+                {formatArabicNumber(product.StockQuantity)}
               </span>
               <span className={`${Style.productinfo}`}>
                 <span>الفئة</span>
@@ -469,25 +493,50 @@ export default function Product() {
                       product.SubCategoryId
                     )}
               </span>
+              {/* حالة المخزون */}
               <span
                 className={`${Style.productinfo}`}
                 style={{
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontSize: "20px",
-                  color: product.StockStatues === "In Stock" ? "green" : "red",
+                  fontSize: "16px",
                 }}
               >
-                {product?.StockStatues === "In Stock" ? (
-                  <span style={{ color: "green" }}>متوفر</span>
-                ) : (
-                  <span> غير متوفر</span>
-                )}
+                {(() => {
+                  const stockStatus = getStockStatus(product.StockQuantity, count);
+                  return (
+                    <span
+                      style={{
+                        backgroundColor: stockStatus.status === "outOfStock" ? "#f8d7da" :
+                                       stockStatus.status === "lastPiece" ? "#fff3cd" :
+                                       stockStatus.status === "lowStock" ? "#ffe8d1" : "#d4edda",
+                        color: stockStatus.status === "outOfStock" ? "#721c24" :
+                               stockStatus.status === "lastPiece" ? "#856404" :
+                               stockStatus.status === "lowStock" ? "#8b4513" : "#155724",
+                        border: stockStatus.status === "outOfStock" ? "1px solid #f5c6cb" :
+                               stockStatus.status === "lastPiece" ? "1px solid #ffeaa7" :
+                               stockStatus.status === "lowStock" ? "1px solid #ffd8a8" : "1px solid #c3e6cb",
+                        padding: "6px 12px",
+                        borderRadius: "16px",
+                        fontSize: "14px",
+                        fontWeight: "600",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "6px"
+                      }}
+                    >
+                      <FontAwesomeIcon
+                        icon={stockStatus.icon}
+                        style={{ color: stockStatus.color }}
+                      />
+                      {stockStatus.text}
+                    </span>
+                  );
+                })()}
               </span>
               <span className={`${Style.productinfoprice}`}>
-                <span className={Style.pricedoler}>EG</span>
-                {product.DiscountedPrice}
+                {formatArabicPrice(product.DiscountedPrice)}
                 <span
                   style={{
                     fontSize: "18px",
@@ -495,8 +544,7 @@ export default function Product() {
                     textDecoration: "line-through",
                   }}
                 >
-                  {product.Price}
-                  <span style={{ fontSize: "12px" }}>EG</span>
+                  {formatArabicPrice(product.Price)}
                 </span>
               </span>
             </div>
@@ -531,7 +579,7 @@ export default function Product() {
                 >
                   <FontAwesomeIcon icon={faPlus} />
                 </button>
-                <span>{count}</span>
+                <span>{formatArabicNumber(count)}</span>
                 {count ? (
                   <button
                     className=" "
@@ -569,7 +617,7 @@ export default function Product() {
           </button>
           {product?.DiscountPercentage > 0 && (
             <div className={Style.discountBadge}>
-              خصم {product.DiscountPercentage}%
+              خصم {formatArabicNumber(product.DiscountPercentage)}%
             </div>
           )}
           <div className={Style.favoriteIcon} onClick={handlefavorite}>
@@ -585,7 +633,37 @@ export default function Product() {
           <h2 className={Style.productTitle}>{product.Name}</h2>
 
           <div className={Style.productStatus}>
-            {product?.StockStatues === "In Stock" ? "متوفر" : "غير متوفر"}
+            {(() => {
+              const stockStatus = getStockStatus(product.StockQuantity, count);
+              return (
+                <span
+                  style={{
+                    backgroundColor: stockStatus.status === "outOfStock" ? "#f8d7da" :
+                                   stockStatus.status === "lastPiece" ? "#fff3cd" :
+                                   stockStatus.status === "lowStock" ? "#ffe8d1" : "#d4edda",
+                    color: stockStatus.status === "outOfStock" ? "#721c24" :
+                           stockStatus.status === "lastPiece" ? "#856404" :
+                           stockStatus.status === "lowStock" ? "#8b4513" : "#155724",
+                    border: stockStatus.status === "outOfStock" ? "1px solid #f5c6cb" :
+                           stockStatus.status === "lastPiece" ? "1px solid #ffeaa7" :
+                           stockStatus.status === "lowStock" ? "1px solid #ffd8a8" : "1px solid #c3e6cb",
+                    padding: "4px 8px",
+                    borderRadius: "12px",
+                    fontSize: "12px",
+                    fontWeight: "600",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "4px"
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={stockStatus.icon}
+                    style={{ color: stockStatus.color }}
+                  />
+                  {stockStatus.text}
+                </span>
+              );
+            })()}
           </div>
 
           <div className={Style.productRating}>
@@ -605,7 +683,7 @@ export default function Product() {
                 );
                 const avg = total / count;
                 const roundedAvg = Math.min(Math.round(avg * 10) / 10, 5);
-                return `${roundedAvg} من 5`;
+                return `${formatArabicNumber(roundedAvg)} من 5`;
               })()}
             </span>
           </div>
@@ -622,10 +700,10 @@ export default function Product() {
 
           <div className={Style.productPrice}>
             <span className={Style.currentPrice}>
-              ${product.DiscountedPrice}
+              {formatArabicPrice(product.DiscountedPrice)}
             </span>
             {(product.DiscountPercentage ?? 0) > 0 && (
-              <span className={Style.originalPrice}>${product.Price}</span>
+              <span className={Style.originalPrice}>{formatArabicPrice(product.Price)}</span>
             )}
           </div>
 
@@ -634,7 +712,7 @@ export default function Product() {
               <button onClick={decrementHandler} disabled={count <= 1}>
                 <FontAwesomeIcon icon={faMinus} />
               </button>
-              <span className={Style.quantity}>{count}</span>
+              <span className={Style.quantity}>{formatArabicNumber(count)}</span>
               <button onClick={incrementHandler}>
                 <FontAwesomeIcon icon={faPlus} />
               </button>
@@ -657,22 +735,24 @@ export default function Product() {
             <div className={Style.ratingSummary}>
               <div className={Style.overallRating}>
                 <span className={Style.ratingNumber}>
-                  {(() => {
-                    const count = reviews.length;
-                    if (count === 0) return "0";
-                    const total = reviews.reduce(
-                      (acc: number, f: { Rate?: number }) => {
-                        let rate = f.Rate || 0;
-                        if (rate < 0) rate = 0;
-                        if (rate > 5) rate = 5;
-                        return acc + rate;
-                      },
-                      0
-                    );
-                    const avg = total / count;
-                    const finalAvg = Math.min(Math.round(avg * 10) / 10, 5);
-                    return finalAvg.toFixed(1);
-                  })()}
+                  {formatArabicNumber(
+                    (() => {
+                      const count = reviews.length;
+                      if (count === 0) return 0;
+                      const total = reviews.reduce(
+                        (acc: number, f: { Rate?: number }) => {
+                          let rate = f.Rate || 0;
+                          if (rate < 0) rate = 0;
+                          if (rate > 5) rate = 5;
+                          return acc + rate;
+                        },
+                        0
+                      );
+                      const avg = total / count;
+                      const finalAvg = Math.min(Math.round(avg * 10) / 10, 5);
+                      return finalAvg;
+                    })()
+                  )}
                 </span>
                 <div className={Style.stars}>
                   {[1, 2, 3, 4, 5].map((star) => {
@@ -706,7 +786,7 @@ export default function Product() {
                   })}
                 </div>
                 <span className={Style.totalReviews}>
-                  {reviews.length} تقييم
+                  {formatArabicNumber(reviews.length)} تقييم
                 </span>
               </div>
 
@@ -722,7 +802,7 @@ export default function Product() {
 
                   return (
                     <div key={rating} className={Style.ratingBar}>
-                      <span className={Style.ratingLabel}>{rating} نجوم</span>
+                      <span className={Style.ratingLabel}>{formatArabicNumber(rating)} نجوم</span>
                       <div className={Style.barContainer}>
                         <div
                           className={Style.barFill}
@@ -730,7 +810,7 @@ export default function Product() {
                         ></div>
                       </div>
                       <span className={Style.ratingPercentage}>
-                        {percentage}%
+                        {formatArabicNumber(percentage)}%
                       </span>
                     </div>
                   );
@@ -769,7 +849,7 @@ export default function Product() {
                               icon={faStar}
                               style={{ color: "#FFD700" }}
                             />
-                            <span>{review.Rate || 0}</span>
+                            <span>{formatArabicNumber(review.Rate || 0)}</span>
                           </div>
                           {review.CreatedAt
                             ? new Date(review.CreatedAt).toLocaleDateString(

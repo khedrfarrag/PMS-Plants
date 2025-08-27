@@ -24,6 +24,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import image from "../../../assets/svg/userimg.svg";
 import { useArabicNumbers } from "../../../context/ArabicNumbersContext";
+import { useStockContext } from "../../../context/StockContext";
 
 export default function Favorites() {
   type FavoriteProduct = {
@@ -86,6 +87,7 @@ export default function Favorites() {
   }>({});
   const { userData }: null | any = useContext(AuthContext);
   const { formatArabicNumber, formatArabicPrice } = useArabicNumbers();
+  const { getStockStatus, canAddToCart, getStockMessage } = useStockContext();
   const UserId = userData?.userId;
   const navigate = useNavigate();
 
@@ -141,6 +143,13 @@ export default function Favorites() {
     setAddingToCart((prev) => ({ ...prev, [product.Id]: true }));
 
     try {
+      // التحقق من المخزون قبل الإضافة للسلة
+      if (!canAddToCart(product.Id, qty, [product])) {
+        const message = getStockMessage(product.Id, qty, [product]);
+        toast.error(message);
+        return;
+      }
+
       await axios.post(
         cartShopPoint.Post,
         {
@@ -234,8 +243,20 @@ export default function Favorites() {
 
   // Quantity controls
   const handleQtyChange = (productId: number, delta: number) => {
+    const product = favoritesData?.data?.find((p: FavoriteProduct) => p.Id === productId);
+    if (!product) return;
+
+    const currentQty = addQty[productId] || 1;
+    const newQty = Math.max(1, currentQty + delta);
+
+    // التحقق من المخزون قبل تغيير الكمية
+    if (delta > 0 && !canAddToCart(product.Id, newQty, [product])) {
+      const message = getStockMessage(product.Id, newQty, [product]);
+      toast.error(message);
+      return;
+    }
+
     setAddQty((prev) => {
-      const newQty = Math.max(1, (prev[productId] || 1) + delta);
       return { ...prev, [productId]: newQty };
     });
   };
@@ -368,6 +389,42 @@ export default function Favorites() {
                       <span className={Style.ratingText}>
                         {formatArabicNumber(parseFloat(item.Rate.toFixed(1)))} من 5
                       </span>
+                    </div>
+
+                    {/* حالة المخزون */}
+                    <div className={Style.stockSection}>
+                      {(() => {
+                        const stockStatus = getStockStatus(item.StockQuantity, addQty[item.Id] || 1);
+                        return (
+                          <span
+                            className={`${Style.stockBadge} ${Style[stockStatus.status]}`}
+                            style={{
+                              backgroundColor: stockStatus.status === "outOfStock" ? "#f8d7da" :
+                                             stockStatus.status === "lastPiece" ? "#fff3cd" :
+                                             stockStatus.status === "lowStock" ? "#ffe8d1" : "#d4edda",
+                              color: stockStatus.status === "outOfStock" ? "#721c24" :
+                                     stockStatus.status === "lastPiece" ? "#856404" :
+                                     stockStatus.status === "lowStock" ? "#8b4513" : "#155724",
+                              border: stockStatus.status === "outOfStock" ? "1px solid #f5c6cb" :
+                                     stockStatus.status === "lastPiece" ? "1px solid #ffeaa7" :
+                                     stockStatus.status === "lowStock" ? "1px solid #ffd8a8" : "1px solid #c3e6cb",
+                              padding: "4px 8px",
+                              borderRadius: "12px",
+                              fontSize: "12px",
+                              fontWeight: "600",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "4px"
+                            }}
+                          >
+                            <FontAwesomeIcon
+                              icon={stockStatus.icon}
+                              style={{ color: stockStatus.color }}
+                            />
+                            {stockStatus.text}
+                          </span>
+                        );
+                      })()}
                     </div>
                   </div>
 
