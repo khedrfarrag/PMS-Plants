@@ -68,7 +68,6 @@ export default function Product() {
   const location = useLocation();
   const product: data = location?.state?.data;
   const navigate = useNavigate();
-
   const [count, setCount] = useState<number>(1);
   const [favorites, setFavorites] = useState<number[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -164,14 +163,14 @@ export default function Product() {
   // Increment quantity handler
   const incrementHandler = (): void => {
     const newQuantity = count + 1;
-    
+
     // التحقق من المخزون قبل زيادة الكمية
     if (!canAddToCart(product.Id, newQuantity, [product])) {
       const message = getStockMessage(product.Id, newQuantity, [product]);
       toast.error(message);
       return;
     }
-    
+
     setCount(newQuantity);
   };
 
@@ -444,7 +443,9 @@ export default function Product() {
             <div className={`${Style.headsection} `}>
               <h1>{product.Name}</h1>
               <div className={`${Style.headDiscount}`}>
-                <span>خصم {formatArabicNumber(product?.DiscountPercentage)}% </span>
+                <span>
+                  خصم {formatArabicNumber(product?.DiscountPercentage)}%{" "}
+                </span>
                 <span
                   className={`${Style.headhart} shadow-lg`}
                   role="button"
@@ -504,26 +505,44 @@ export default function Product() {
                 }}
               >
                 {(() => {
-                  const stockStatus = getStockStatus(product.StockQuantity, count);
+                  const stockStatus = getStockStatus(
+                    product.StockQuantity,
+                    count
+                  );
                   return (
                     <span
                       style={{
-                        backgroundColor: stockStatus.status === "outOfStock" ? "#f8d7da" :
-                                       stockStatus.status === "lastPiece" ? "#fff3cd" :
-                                       stockStatus.status === "lowStock" ? "#ffe8d1" : "#d4edda",
-                        color: stockStatus.status === "outOfStock" ? "#721c24" :
-                               stockStatus.status === "lastPiece" ? "#856404" :
-                               stockStatus.status === "lowStock" ? "#8b4513" : "#155724",
-                        border: stockStatus.status === "outOfStock" ? "1px solid #f5c6cb" :
-                               stockStatus.status === "lastPiece" ? "1px solid #ffeaa7" :
-                               stockStatus.status === "lowStock" ? "1px solid #ffd8a8" : "1px solid #c3e6cb",
+                        backgroundColor:
+                          stockStatus.status === "outOfStock"
+                            ? "#f8d7da"
+                            : stockStatus.status === "lastPiece"
+                            ? "#fff3cd"
+                            : stockStatus.status === "lowStock"
+                            ? "#ffe8d1"
+                            : "#d4edda",
+                        color:
+                          stockStatus.status === "outOfStock"
+                            ? "#721c24"
+                            : stockStatus.status === "lastPiece"
+                            ? "#856404"
+                            : stockStatus.status === "lowStock"
+                            ? "#8b4513"
+                            : "#155724",
+                        border:
+                          stockStatus.status === "outOfStock"
+                            ? "1px solid #f5c6cb"
+                            : stockStatus.status === "lastPiece"
+                            ? "1px solid #ffeaa7"
+                            : stockStatus.status === "lowStock"
+                            ? "1px solid #ffd8a8"
+                            : "1px solid #c3e6cb",
                         padding: "6px 12px",
                         borderRadius: "16px",
                         fontSize: "14px",
                         fontWeight: "600",
                         display: "flex",
                         alignItems: "center",
-                        gap: "6px"
+                        gap: "6px",
                       }}
                     >
                       <FontAwesomeIcon
@@ -638,22 +657,37 @@ export default function Product() {
               return (
                 <span
                   style={{
-                    backgroundColor: stockStatus.status === "outOfStock" ? "#f8d7da" :
-                                   stockStatus.status === "lastPiece" ? "#fff3cd" :
-                                   stockStatus.status === "lowStock" ? "#ffe8d1" : "#d4edda",
-                    color: stockStatus.status === "outOfStock" ? "#721c24" :
-                           stockStatus.status === "lastPiece" ? "#856404" :
-                           stockStatus.status === "lowStock" ? "#8b4513" : "#155724",
-                    border: stockStatus.status === "outOfStock" ? "1px solid #f5c6cb" :
-                           stockStatus.status === "lastPiece" ? "1px solid #ffeaa7" :
-                           stockStatus.status === "lowStock" ? "1px solid #ffd8a8" : "1px solid #c3e6cb",
+                    backgroundColor:
+                      stockStatus.status === "outOfStock"
+                        ? "#f8d7da"
+                        : stockStatus.status === "lastPiece"
+                        ? "#fff3cd"
+                        : stockStatus.status === "lowStock"
+                        ? "#ffe8d1"
+                        : "#d4edda",
+                    color:
+                      stockStatus.status === "outOfStock"
+                        ? "#721c24"
+                        : stockStatus.status === "lastPiece"
+                        ? "#856404"
+                        : stockStatus.status === "lowStock"
+                        ? "#8b4513"
+                        : "#155724",
+                    border:
+                      stockStatus.status === "outOfStock"
+                        ? "1px solid #f5c6cb"
+                        : stockStatus.status === "lastPiece"
+                        ? "1px solid #ffeaa7"
+                        : stockStatus.status === "lowStock"
+                        ? "1px solid #ffd8a8"
+                        : "1px solid #c3e6cb",
                     padding: "4px 8px",
                     borderRadius: "12px",
                     fontSize: "12px",
                     fontWeight: "600",
                     display: "flex",
                     alignItems: "center",
-                    gap: "4px"
+                    gap: "4px",
                   }}
                 >
                   <FontAwesomeIcon
@@ -703,7 +737,9 @@ export default function Product() {
               {formatArabicPrice(product.DiscountedPrice)}
             </span>
             {(product.DiscountPercentage ?? 0) > 0 && (
-              <span className={Style.originalPrice}>{formatArabicPrice(product.Price)}</span>
+              <span className={Style.originalPrice}>
+                {formatArabicPrice(product.Price)}
+              </span>
             )}
           </div>
 
@@ -712,7 +748,9 @@ export default function Product() {
               <button onClick={decrementHandler} disabled={count <= 1}>
                 <FontAwesomeIcon icon={faMinus} />
               </button>
-              <span className={Style.quantity}>{formatArabicNumber(count)}</span>
+              <span className={Style.quantity}>
+                {formatArabicNumber(count)}
+              </span>
               <button onClick={incrementHandler}>
                 <FontAwesomeIcon icon={faPlus} />
               </button>
@@ -802,7 +840,9 @@ export default function Product() {
 
                   return (
                     <div key={rating} className={Style.ratingBar}>
-                      <span className={Style.ratingLabel}>{formatArabicNumber(rating)} نجوم</span>
+                      <span className={Style.ratingLabel}>
+                        {formatArabicNumber(rating)} نجوم
+                      </span>
                       <div className={Style.barContainer}>
                         <div
                           className={Style.barFill}
@@ -832,8 +872,8 @@ export default function Product() {
                     <div className={Style.reviewerInfo}>
                       <img
                         src={
-                          userData?.image
-                            ? `${ImgURLBeasd}${userData?.image}`
+                          review.UserImage
+                            ? `${ImgURLBeasd}/${review.UserImage}`
                             : avataruser
                         }
                         alt="user"

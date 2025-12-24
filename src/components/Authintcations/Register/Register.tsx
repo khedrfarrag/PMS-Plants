@@ -185,7 +185,28 @@ function Register() {
       toast(respose.data.Message);
       navigate("/auth/verify-email");
     } catch (errors: any) {
-      console.log(errors);
+      const errorResponse = errors.response.data;
+      if (errorResponse?.errors?.Image) {
+        toast.error(errorResponse.errors.Image[0]);
+      } else if (errorResponse?.errors?.FirstName) {
+        toast.error(errorResponse.errors.FirstName[0]);
+      } else if (errorResponse?.errors?.LastName) {
+        toast.error(errorResponse.errors.LastName[0]);
+      } else if (errorResponse?.errors?.Email) {
+        toast.error(errorResponse.errors.Email[0]);
+      } else if (errorResponse?.errors?.PhoneNumber) {
+        toast.error(errorResponse.errors.PhoneNumber[0]);
+      } else if (errorResponse?.errors?.City) {
+        toast.error(errorResponse.errors.City[0]);
+      } else if (errorResponse?.errors?.Password) {
+        toast.error(errorResponse.errors.Password[0]);
+      } else if (errorResponse?.errors?.ConfirmedPassword) {
+        toast.error(errorResponse.errors.ConfirmedPassword[0]);
+      } else if (errorResponse?.Errors) {
+        toast.error(errorResponse?.Errors[0]);
+      } else {
+        toast.error("حدث خطأ أثناء إنشاء الحساب");
+      }
     }
   };
 
@@ -452,23 +473,18 @@ function Register() {
                       value === watch("Password") || "كلمات المرور غير متطابقة",
                   })}
                 />
+                {errors.ConfirmedPassword && (
+                  <span className="text-danger">
+                    {errors.ConfirmedPassword.message}
+                  </span>
+                )}
                 <FontAwesomeIcon
                   icon={visible ? faEyeSlash : faEye}
                   className={Style.IconHideEye}
                   onClick={() => Setvisible(!visible)}
                 />
               </div>
-              {/* <div className="w-100 d-flex flex-column">
-                <label htmlFor="name">الصورة</label> */}
-              {/* <input
-                  type="file"
-                  id="image"
-                  aria-label="image"
-                  {...register("Image", {
-                    required: "الصورة مطلوبة",
-                  })}
-                /> */}
-              {/* </div> */}
+
               <button
                 type="submit"
                 className={`${Style.BttnSubmit} p-3 bg-success `}

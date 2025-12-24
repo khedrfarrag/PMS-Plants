@@ -1,20 +1,14 @@
 import {
   faArrowAltCircleLeft,
   faArrowAltCircleRight,
-  faCheckCircle,
-  faExclamationTriangle,
   faEye,
   faHeart,
-  faHeartBroken,
   faMinus,
   faPlus,
-  faSpinner,
   faStar,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { AnimatePresence } from "framer-motion";
-import { motion } from "framer-motion";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import Styles from "../Home/Style.module.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -24,11 +18,12 @@ import {
   ProductsPoint,
 } from "../../../constant/Const";
 import { toast } from "react-toastify";
-import { AuthContext, AuthContextType } from "../../../context/Context";
+import { AuthContext } from "../../../context/Context";
 import { CartshopContext } from "../../../context/CartshopContext";
-import { useArabicNumbers } from "../../../context/ArabicNumbersContext";
 import { useStockContext } from "../../../context/StockContext";
-import image from "../../../assets/svg/userimg.svg";
+import { useArabicNumbers } from "../../../context/ArabicNumbersContext";
+import Stack from "@mui/material/Stack";
+import Pagination from "@mui/material/Pagination";
 export default function Offer() {
   interface Product {
     Id: number;
@@ -49,68 +44,55 @@ export default function Offer() {
     TotalPages: number;
   }
 
-  const [getDiscountedProducts, setDiscountedProducts] = useState<Product[]>([]);
+  const [getDiscountedProducts, setDiscountedProducts] = useState<Product[]>(
+    []
+  );
   const [pagination, setPagination] = useState<pagenation>();
   const [currentPage, setCurrentPage] = useState(1);
   const [favorites, setFavorites] = useState<number[]>([]);
-
-  const [loadingStates, setLoadingStates] = useState<{
-    [key: number]: boolean;
-    popular?: boolean;
-  }>({});
+  const [counts, setCounts] = useState<{ [id: number]: number }>({});
   const [addingToCart, setAddingToCart] = useState<{
     [productId: number]: boolean;
   }>({});
-  const itemsPerPage = 10;
-  const [counter, setCounter] = useState<{ [productId: number]: number }>({});
-  const [cartProductIds, setCartProductIds] = useState<number[]>([]);
-  const [cartItems, setCartItems] = useState<any[]>([]);
 
-  // Get user ID from useContext
-  const authContext = useContext(AuthContext) as AuthContextType | null;
+  const pageSize = 4;
+  const { userData }: any = useContext(AuthContext);
   const { fetchCart } = useContext(CartshopContext) || {};
-  const { formatArabicNumber, formatArabicPrice, formatArabicPercentage } = useArabicNumbers();
   const { getStockStatus, canAddToCart, getStockMessage } = useStockContext();
-  const userId = authContext?.userData?.userId;
-  const getallpopuler = async ({
-    pageNumber,
-    pageSize,
-  }: {
-    pageNumber: number;
-    pageSize: number;
-  }) => {
-    setLoadingStates((prev) => ({ ...prev, popular: true }));
+  const { formatArabicPrice, formatArabicNumber } = useArabicNumbers();
+  const userId = userData?.userId;
+  const getDiscount = async (PageSize: number, CurrentPage: number) => {
     try {
-      const response = await axios.get(
-        ProductsPoint.GetAllDiscountedProducts(pageNumber, pageSize),
-        {
-          headers: {
-            Authorization: `Bearer ${
-              localStorage.getItem("token") || sessionStorage.getItem("token")
-            }`,
-          },
-        }
-      );
+      const response = await axios.get<{
+        data: Product[];
+        pagination: pagenation;
+      }>(ProductsPoint.GetAllDiscountedProducts(CurrentPage, PageSize), {
+        headers: {
+          Authorization: `Bearer ${
+            localStorage.getItem("token") || sessionStorage.getItem("token")
+          }`,
+        },
+      });
 
       if (response.data && response.data.data) {
         setDiscountedProducts(response.data.data);
         setPagination(response.data.pagination);
       }
     } catch (errors) {
-      console.log("Error fetching popular products:", errors);
-    } finally {
-      setLoadingStates((prev) => ({ ...prev, popular: false }));
+      console.log("Error fetching products:", errors);
     }
   };
 
-  // Get user favorites
-  const getFavorites = async () => {
-    if (!userId) {
-      return;
-    }
+  // Get all favorites for the user
+  const getAllFavorites = async (
+    userId: string,
+    pageNumber: number = 1,
+    pageSize: number = 20
+  ) => {
     try {
+      if (!userId) return;
       const response = await axios.get(
-        ProductsPoint.GetFavorites(userId, 1, 100), // Get first 100 favorites
+        ProductsPoint.GetFavorites(userId, pageNumber, pageSize),
         {
           headers: {
             Authorization: `Bearer ${
@@ -119,165 +101,23 @@ export default function Offer() {
           },
         }
       );
-
-      if (response.data && response.data.data) {
-        const favoriteIds = response.data.data.map(
-          (item: any) => item.productId || item.Id
-        );
-        setFavorites(favoriteIds);
-        console.log("User Favorites:", favoriteIds);
-      }
+      setFavorites(response.data.data.map((fav: any) => fav.Id));
     } catch (error) {
-      console.log("Error fetching favorites:", error);
+      toast.error(error.response?.data || "حدث خطأ");
     }
   };
 
-  // Add to favorites
-  const addToFavorites = async (productId: number) => {
-    if (!userId) {
-      toast.error("يجب تسجيل الدخول لإضافة المنتج إلى المفضلة");
-      return;
-    }
-    setLoadingStates((prev) => ({ ...prev, [productId]: true }));
+  // Toggle favorite (add/remove)
+  const toggleFavorite = async (userId: string, productId: number) => {
     try {
-      const response = await axios.post(
-        ProductsPoint.AddFavorites(userId, productId),
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${
-              localStorage.getItem("token") || sessionStorage.getItem("token")
-            }`,
-          },
-        }
-      );
-
-      if (response.status === 200 || response.status === 201) {
-        setFavorites((prev) => [...prev, productId]);
-        toast.success("تم إضافة المنتج إلى المفضلة");
-        console.log("Added to favorites:", productId);
-      }
-    } catch (error) {
-      console.log("Error adding to favorites:", error);
-      toast.error("حدث خطأ في إضافة المنتج إلى المفضلة");
-    } finally {
-      setLoadingStates((prev) => ({ ...prev, [productId]: false }));
-    }
-  };
-
-  // Remove from favorites
-  const removeFromFavorites = async (productId: number) => {
-    if (!userId) {
-      toast.error("لا يوجد مستخدم مسجل الدخول");
-      return;
-    }
-    setLoadingStates((prev) => ({ ...prev, [productId]: true }));
-    try {
-      const response = await axios.delete(
-        `${ProductsPoint.DeleteFavorites}?userId=${userId}&productId=${productId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${
-              localStorage.getItem("token") || sessionStorage.getItem("token")
-            }`,
-          },
-        }
-      );
-
-      if (response.status === 200) {
-        setFavorites((prev) => prev.filter((id) => id !== productId));
-        toast.success("تم إزالة المنتج من المفضلة");
-        console.log("Removed from favorites:", productId);
-      }
-    } catch (error) {
-      console.log("Error removing from favorites:", error);
-      toast.error("حدث خطأ في إزالة المنتج من المفضلة");
-    } finally {
-      setLoadingStates((prev) => ({ ...prev, [productId]: false }));
-    }
-  };
-
-  // Toggle favorites
-  const toggleFavorite = async (productId: number) => {
-    if (loadingStates[productId]) return; // Prevent multiple clicks
-
-    if (favorites.includes(productId)) {
-      await removeFromFavorites(productId);
-    } else {
-      await addToFavorites(productId);
-    }
-  };
-
-  // Check if product is in favorites
-  const isInFavorites = (productId: number) => {
-    return favorites.includes(productId);
-  };
-
-  // Counter handlers (min value is 1)
-  const incrementHandler = (productId: number) => {
-    const product = getDiscountedProducts.find(p => p.Id === productId);
-    if (!product) return;
-
-    const currentQuantity = counter[productId] || 1;
-    const newQuantity = currentQuantity + 1;
-
-    // التحقق من المخزون قبل زيادة الكمية
-    if (!canAddToCart(product.Id, newQuantity, [product])) {
-      const message = getStockMessage(product.Id, newQuantity, [product]);
-      toast.error(message);
-      return;
-    }
-
-    setCounter((prev) => ({
-      ...prev,
-      [productId]: newQuantity,
-    }));
-  };
-
-  const decrementHandler = (productId: number) => {
-    setCounter((prev) => ({
-      ...prev,
-      [productId]:
-        prev[productId] && prev[productId] > 1 ? prev[productId] - 1 : 1,
-    }));
-  };
-
-
-  // Add to cart function
-  const addToCart = async (productId: number) => {
-    if (addingToCart[productId]) return;
-    setAddingToCart((prev) => ({ ...prev, [productId]: true }));
-
-    try {
-      const quantity = counter[productId] || 1;
-
-      // البحث عن المنتج في البيانات المحلية للتحقق من المخزون
-      const product = getDiscountedProducts.find(p => p.Id === productId);
-      if (!product) {
-        toast.error("المنتج غير موجود");
+      if (!userId) {
+        toast.error("يرجى تسجيل الدخول لإضافة المنتج الي المفضلة");
         return;
       }
-
-      // التحقق من المخزون قبل الإضافة للسلة
-      if (!canAddToCart(product.Id, quantity, [product])) {
-        const message = getStockMessage(product.Id, quantity, [product]);
-        toast.error(message);
-        return;
-      }
-
-      // Check if product is already in cart
-      const existingCartItem = cartItems.find(
-        (item) => item.ProductId === productId
-      );
-
-      if (existingCartItem) {
-        // Product exists in cart, use PUT to update quantity
-        const response = await axios.put(
-          cartShopPoint.Put(existingCartItem.Id),
-          {
-            ProductId: productId,
-            Quantity: quantity,
-          },
+      if (favorites.includes(productId)) {
+        // Remove from favorites
+        await axios.delete(
+          `${ProductsPoint.DeleteFavorites}?userId=${userId}&productId=${productId}`,
           {
             headers: {
               Authorization: `Bearer ${
@@ -286,77 +126,113 @@ export default function Offer() {
             },
           }
         );
-        if (response.status === 200 || response.status === 201) {
-          toast.success("تم تحديث الكمية في السلة بنجاح");
-          // Refresh cart items to get updated data
-          getCartItems();
-        }
+        toast.success("تمت إزالة المنتج من المفضلة");
       } else {
-        // Product doesn't exist in cart, use POST to add new item
-        const body = {
-          CartItems: [
-            {
-              ProductId: productId,
-              Quantity: quantity,
+        // Add to favorites
+        await axios.post(
+          ProductsPoint.AddFavorites(userId, productId),
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${
+                localStorage.getItem("token") || sessionStorage.getItem("token")
+              }`,
             },
-          ],
-        };
-        const sessionId = sessionStorage.getItem("session-Id");
-        if (!sessionId) {
-          const newSessionId = `session-${Date.now()}`;
-          sessionStorage.setItem("session-Id", newSessionId);
-        }
-        const headers: any = {
-          "session-Id": sessionId, // استخدام نفس التسمية المستخدمة في Shoppingcart
-          Authorization: `Bearer ${
-            localStorage.getItem("token") || sessionStorage.getItem("token")
-          }`,
-        };
-        const response = await axios.post(cartShopPoint.Post, body, {
-          headers,
-        });
-
-        if (response.status === 200 || response.status === 201) {
-          toast.success("تم إضافة المنتج إلى السلة بنجاح");
-
-          // بدلاً من window.location.reload() - تحديث السلة من الـ context
-          if (fetchCart) {
-            await fetchCart();
           }
-
-          getCartItems();
-        }
+        );
+        toast.success("تمت إضافة المنتج إلى المفضلة");
       }
+      // Refresh favorites
+      await getAllFavorites(userId);
     } catch (error) {
-      toast.error("حدث خطأ أثناء إضافة المنتج للسلة");
-    } finally {
-      setAddingToCart((prev) => ({ ...prev, [productId]: false }));
+      toast.error("حدث خطأ أثناء تحديث المفضلة");
     }
   };
 
-  // Fetch cart items on mount
-  const getCartItems = async () => {
-    try {
-      const sessionId = sessionStorage.getItem("session-Id");
-      const response = await axios.get(cartShopPoint.GetAllCartShop, {
-        headers: {
-          "session-Id": sessionId, // إضافة session-Id للهيدر
-          Authorization: `Bearer ${
-            localStorage.getItem("token") || sessionStorage.getItem("token")
-          }`,
-        },
-      });
+  const incrementHandler = useCallback(
+    (Id: number): void => {
+      const product = getDiscountedProducts.find((p) => p.Id === Id);
+      if (!product) return;
 
-      if (response.data && response.data.CartItems) {
-        setCartItems(response.data.CartItems);
-        // Extract ProductId from each cart item
-        const productIds = response.data.CartItems.map(
-          (item: any) => item.ProductId
-        );
-        setCartProductIds(productIds);
+      const currentQuantity = counts[Id] || 1;
+      const newQuantity = currentQuantity + 1;
+
+      // التحقق من المخزون قبل زيادة الكمية
+      if (!canAddToCart(product.Id, newQuantity, [product])) {
+        const message = getStockMessage(product.Id, newQuantity, [product]);
+        toast.error(message);
+        return;
+      }
+
+      setCounts((prev) => ({
+        ...prev,
+        [Id]: newQuantity,
+      }));
+    },
+    [counts, getDiscountedProducts, canAddToCart, getStockMessage]
+  );
+
+  const decrementHandler = useCallback((Id: number): void => {
+    setCounts((prev) => ({
+      ...prev,
+      [Id]: (prev[Id] || 1) > 1 ? (prev[Id] || 1) - 1 : 1,
+    }));
+  }, []);
+
+  const addcarthandel = async (id: number) => {
+    try {
+      const quantity = counts[id] || 1;
+
+      // التحقق من المخزون قبل الإضافة للسلة
+      const product = getDiscountedProducts.find((p) => p.Id === id);
+      if (!product) {
+        toast.error("المنتج غير موجود");
+        return;
+      }
+
+      if (!canAddToCart(product.Id, quantity, [product])) {
+        const message = getStockMessage(product.Id, quantity, [product]);
+        toast.error(message);
+        return;
+      }
+
+      setAddingToCart((prev) => ({ ...prev, [id]: true }));
+
+      const data = {
+        CartItems: [
+          {
+            ProductId: id,
+            Quantity: quantity,
+          },
+        ],
+      };
+      let sessionId = sessionStorage.getItem("session-Id");
+      if (!sessionId) {
+        sessionId = `session-${Date.now()}`;
+        sessionStorage.setItem("session-Id", sessionId);
+      }
+      const headers: any = {
+        "session-Id": sessionId,
+        Authorization: `Bearer ${
+          localStorage.getItem("token") || sessionStorage.getItem("token")
+        }`,
+      };
+      const response = await axios.post(cartShopPoint.Post, data, { headers });
+      if (response.data) {
+        toast.success("تم إضافة المنتج إلى السلة بنجاح");
+        setCounts((prev) => ({ ...prev, [id]: 1 }));
+
+        if (fetchCart) {
+          await fetchCart();
+        }
+      } else {
+        toast.error("فشل في إضافة المنتج إلى السلة");
       }
     } catch (error) {
-      console.log("Error fetching cart items:", error);
+      console.error("Error adding product to cart:", error);
+      toast.error("حدث خطأ أثناء إضافة المنتج للسلة");
+    } finally {
+      setAddingToCart((prev) => ({ ...prev, [id]: false }));
     }
   };
 
@@ -369,19 +245,19 @@ export default function Offer() {
     for (let i = 0; i < 5; i++) {
       if (i < fullStars) {
         stars.push(
-          <FontAwesomeIcon
-            key={i}
-            icon={faStar}
-            className={Styles.starFilled}
-          />
+          <FontAwesomeIcon key={i} icon={faStar} style={{ color: "gold" }} />
         );
       } else if (i === fullStars && hasHalfStar) {
         stars.push(
-          <FontAwesomeIcon key={i} icon={faStar} className={Styles.starHalf} />
+          <FontAwesomeIcon
+            key={i}
+            icon={faStar}
+            style={{ color: "gold", opacity: 0.5 }}
+          />
         );
       } else {
         stars.push(
-          <FontAwesomeIcon key={i} icon={faStar} className={Styles.starEmpty} />
+          <FontAwesomeIcon key={i} icon={faStar} style={{ color: "#e0e0e0" }} />
         );
       }
     }
@@ -389,13 +265,19 @@ export default function Offer() {
   };
 
   useEffect(() => {
-    getallpopuler({ pageNumber: currentPage, pageSize: itemsPerPage });
-    getFavorites();
-    getCartItems(); // Fetch cart items on mount
+    getDiscount(pageSize, currentPage);
   }, [currentPage]);
 
+  useEffect(() => {
+    if (userId) {
+      getAllFavorites(userId);
+    }
+  }, [userId]);
+
+  const totalPages = pagination?.TotalPages || 1;
+
   const handleNextPage = () => {
-    if (pagination && currentPage < pagination.TotalPages) {
+    if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
     }
   };
@@ -406,288 +288,221 @@ export default function Offer() {
     }
   };
 
-  if (loadingStates.popular) {
-    return (
-      <div className={Styles.loadingContainer}>
-        <FontAwesomeIcon
-          icon={faSpinner}
-          spin
-          size="3x"
-          style={{ color: "#009247" }}
-        />
-        <p>جاري تحميل المنتجات الشائعة...</p>
-      </div>
-    );
-  }
-
   return (
     <>
-      <div className={Styles.popularContainer}>
-        <motion.div
-          className={Styles.popularCaption}
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <h1 className="text-center">
-            <FontAwesomeIcon
-              icon={faStar}
-              style={{ color: "#ffc107", marginLeft: "10px" }}
-            />
-            عروض الشهر
-          </h1>
-          <p className="text-center"> أكثر المنتجات عليها خصم هذا الشهر </p>
-        </motion.div>
-
-        <AnimatePresence>
-          <motion.div
-            className={Styles.popularCards}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            {getDiscountedProducts.map((popcard, index) => (
-              <motion.div
-                key={popcard.Id}
-                className={`${Styles.popularCard} shadow`}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
-                whileHover={{
-                  y: -5,
-                  boxShadow: "0 8px 25px rgba(0, 146, 71, 0.15)",
-                }}
-              >
-                {/* صورة المنتج */}
-                <div className={Styles.popularCardImage}>
-                  <img
-                    src={`${ImgURLBeasd}${popcard.ImageUrl}`}
-                    alt={popcard.Name}
-                    onError={(e) => {
-                      e.currentTarget.src = image;
-                    }}
-                  />
-                  {addingToCart[popcard.Id] && (
-                    <div className={Styles.imageOverlay}>
-                      <FontAwesomeIcon icon={faSpinner} spin />
-                    </div>
-                  )}
-                </div>
-
-                {/* الشارات */}
-                <div className={Styles.badges}>
-                  {popcard.DiscountPercentage > 0 && (
-                    <span className={Styles.discountBadge}>
-                      -{formatArabicPercentage(popcard.DiscountPercentage)}
-                    </span>
-                  )}
-                </div>
-
-                {/* الإجراءات السريعة */}
-                <div className={Styles.quickActions}>
-                  <button
-                    className={`${Styles.actionBtn} ${Styles.favoriteBtn} ${
-                      isInFavorites(popcard.Id) ? Styles.active : ""
-                    }`}
-                    onClick={() => toggleFavorite(popcard.Id)}
-                    disabled={loadingStates[popcard.Id]}
-                    title={
-                      isInFavorites(popcard.Id)
-                        ? "إزالة من المفضلة"
-                        : "إضافة للمفضلة"
-                    }
+      <div className={`${Styles.contanerseller}`}>
+        <div className={`${Styles.captionseller}`}>
+          <h1 className="text-center text-warning">عروض الشهر</h1>
+          <p className="text-center">أكثر المنتجات عليها خصم هذا الشهر</p>
+        </div>
+        <div className={`${Styles.herocardsseller}`}>
+          {getDiscountedProducts && getDiscountedProducts.length > 0 ? (
+            getDiscountedProducts.map((product) => (
+              <div key={product.Id} className={`${Styles.cardsseller} shadow`}>
+                <div className={`${Styles.hedcard}`}>
+                  <span
+                    className={Styles.favoritProducts}
+                    onClick={() => toggleFavorite(userId, product.Id)}
                   >
                     <FontAwesomeIcon
-                      icon={
-                        loadingStates[popcard.Id]
-                          ? faSpinner
-                          : isInFavorites(popcard.Id)
-                          ? faHeartBroken
-                          : faHeart
-                      }
-                      spin={loadingStates[popcard.Id]}
+                      icon={faHeart}
+                      style={{
+                        color: favorites.includes(product.Id) ? "red" : "#bbb",
+                        border: "1px solid white",
+                        borderRadius: "50px",
+                        padding: "8px",
+                        backgroundColor: "gainsboro",
+                      }}
+                      className={Styles.harticon}
                     />
-                  </button>
-
-                  <Link
-                    to={`/store/product/${popcard.Id}`}
-                    state={{ data: popcard }}
-                    className={`${Styles.actionBtn} ${Styles.viewBtn}`}
-                    title="عرض التفاصيل"
-                  >
-                    <FontAwesomeIcon icon={faEye} />
-                  </Link>
-                </div>
-
-                {/* محتوى الكارد */}
-                <div className={Styles.popularCardContent}>
-                  {/* العنوان والتقييم */}
-                  <div className={Styles.productHeader}>
-                    <h4 className={Styles.productTitle}>{popcard.Name}</h4>
-                    <div className={Styles.rating}>
-                      <div className={Styles.stars}>
-                        {renderStars(popcard.Rate)}
-                      </div>
-                      <span className={Styles.ratingText}>
-                        {formatArabicNumber(parseFloat(popcard.Rate.toFixed(1)))} من 5
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* الوصف */}
-                  <p className={Styles.productDescription}>
-                    {popcard.Description}
-                  </p>
-
-                  {/* السعر */}
-                  <div className={Styles.priceSection}>
-                    <div className={Styles.priceInfo}>
-                      <span className={Styles.currentPrice}>
-                        {formatArabicPrice(popcard.DiscountedPrice)}
-                      </span>
-                      {popcard.DiscountedPrice !== popcard.Price && (
-                        <span className={Styles.originalPrice}>
-                          {formatArabicPrice(popcard.Price)}
-                        </span>
-                      )}
-                    </div>
-                    {popcard.DiscountedPrice !== popcard.Price && (
-                      <span className={Styles.savings}>
-                        وفر {formatArabicPrice(popcard.Price - popcard.DiscountedPrice)}
-                      </span>
-                    )}
-                    {/* حالة المخزون */}
-                    <div className={Styles.stockSection}>
-                      {(() => {
-                        const stockStatus = getStockStatus(popcard.StockQuantity, counter[popcard.Id] || 1);
-                        return (
-                          <span
-                            className={`${Styles.stockBadge} ${Styles[stockStatus.status]}`}
-                            style={{
-                              backgroundColor: stockStatus.status === "outOfStock" ? "#f8d7da" :
-                                             stockStatus.status === "lastPiece" ? "#fff3cd" :
-                                             stockStatus.status === "lowStock" ? "#ffe8d1" : "#d4edda",
-                              color: stockStatus.status === "outOfStock" ? "#721c24" :
-                                     stockStatus.status === "lastPiece" ? "#856404" :
-                                     stockStatus.status === "lowStock" ? "#8b4513" : "#155724",
-                              border: stockStatus.status === "outOfStock" ? "1px solid #f5c6cb" :
-                                     stockStatus.status === "lastPiece" ? "1px solid #ffeaa7" :
-                                     stockStatus.status === "lowStock" ? "1px solid #ffd8a8" : "1px solid #c3e6cb",
-                              padding: "4px 8px",
-                              borderRadius: "12px",
-                              fontSize: "12px",
-                              fontWeight: "600",
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "4px"
-                            }}
-                          >
-                            <FontAwesomeIcon
-                              icon={stockStatus.icon}
-                              style={{ color: stockStatus.color }}
-                            />
-                            {stockStatus.text}
-                          </span>
-                        );
-                      })()}
-                    </div>
-                  </div>
-
-                  {/* التحكم في الكمية وإضافة للسلة */}
-                  <div className={Styles.cartSection}>
-                    {cartProductIds.includes(popcard.Id) ? (
-                      <div className={Styles.inCartText}>
-                        <FontAwesomeIcon icon={faCheckCircle} />
-                        موجود في السلة
-                      </div>
-                    ) : (
-                      <div className={Styles.addToCartControls}>
-                        {/* التحكم في الكمية */}
-                        <div className={Styles.quantityControl}>
-                          <button
-                            className={`${Styles.quantityBtn} ${Styles.decrease}`}
-                            onClick={() => decrementHandler(popcard.Id)}
-                            disabled={addingToCart[popcard.Id]}
-                          >
-                            <FontAwesomeIcon icon={faMinus} />
-                          </button>
-                          <span className={Styles.quantityValue}>
-                            {formatArabicNumber(counter[popcard.Id] || 1)}
-                          </span>
-                          <button
-                            className={`${Styles.quantityBtn} ${Styles.increase}`}
-                            onClick={() => incrementHandler(popcard.Id)}
-                            disabled={addingToCart[popcard.Id]}
-                          >
-                            <FontAwesomeIcon icon={faPlus} />
-                          </button>
-                        </div>
-
-                        {/* زر إضافة للسلة */}
-                        <button
-                          className={`${Styles.addToCartBtn} ${
-                            addingToCart[popcard.Id] ? Styles.loading : ""
-                          }`}
-                          onClick={() => addToCart(popcard.Id)}
-                          disabled={addingToCart[popcard.Id]}
+                  </span>
+                  {/* حالة المخزون */}
+                  <div className="d-flex justify-content-center mb-2">
+                    {(() => {
+                      const stockStatus = getStockStatus(
+                        product.StockQuantity,
+                        counts[product.Id] || 1
+                      );
+                      return (
+                        <span
+                          className="badge"
+                          style={{
+                            backgroundColor:
+                              stockStatus.status === "outOfStock"
+                                ? "#f8d7da"
+                                : stockStatus.status === "lastPiece"
+                                ? "#fff3cd"
+                                : stockStatus.status === "lowStock"
+                                ? "#ffe8d1"
+                                : "#d4edda",
+                            color:
+                              stockStatus.status === "outOfStock"
+                                ? "#721c24"
+                                : stockStatus.status === "lastPiece"
+                                ? "#856404"
+                                : stockStatus.status === "lowStock"
+                                ? "#8b4513"
+                                : "#155724",
+                            border:
+                              stockStatus.status === "outOfStock"
+                                ? "1px solid #f5c6cb"
+                                : stockStatus.status === "lastPiece"
+                                ? "1px solid #ffeaa7"
+                                : stockStatus.status === "lowStock"
+                                ? "1px solid #ffd8a8"
+                                : "1px solid #c3e6cb",
+                            padding: "4px 8px",
+                            borderRadius: "12px",
+                            fontSize: "12px",
+                            fontWeight: "600",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "4px",
+                          }}
                         >
-                          {addingToCart[popcard.Id] ? (
-                            <>
-                              <FontAwesomeIcon icon={faSpinner} spin />
-                              جاري الإضافة...
-                            </>
-                          ) : (
-                            <>
-                              <FontAwesomeIcon icon={faPlus} />
-                              أضف للسلة
-                            </>
-                          )}
-                        </button>
-                      </div>
-                    )}
+                          <FontAwesomeIcon
+                            icon={stockStatus.icon}
+                            style={{ color: stockStatus.color }}
+                          />
+                          {stockStatus.text}
+                        </span>
+                      );
+                    })()}
+                  </div>
+                  <span className={`${Styles.sealeproducts}`}>
+                    خصم {product.DiscountPercentage}%
+                  </span>
+                </div>
+                <div className={`${Styles.cardbody}`}>
+                  <img
+                    src={`${ImgURLBeasd}${product.ImageUrl}`}
+                    alt={product.Name}
+                  />
+                  <div className={`${Styles.cardtext}`}>
+                    <Link
+                      to={`/store/product/${product.Id}`}
+                      state={{ data: product }}
+                      className={`${Styles.viewProducts} text-center`}
+                    >
+                      <FontAwesomeIcon icon={faEye} />
+                    </Link>
+                  </div>
+                  <div
+                    className={`${Styles.captitlecard} d-flex justify-content-between p-2 align-items-center`}
+                  >
+                    <h4 className="fw-bolder">{product.Name}</h4>
+                    <span>
+                      <FontAwesomeIcon
+                        className={Styles.reateicon}
+                        icon={faStar}
+                        style={{ color: "gold" }}
+                      />
+                      <span style={{ fontSize: "20px", fontWeight: "800" }}>
+                        {product.Rate}
+                      </span>
+                    </span>
+                  </div>
+                  <p>
+                    {product.Description.length > 100
+                      ? product.Description.slice(0, 100) + "..."
+                      : product.Description}
+                  </p>
+                  <div
+                    className={`${Styles.pricecardshoping} d-flex justify-content-between mt-3 p-2`}
+                  >
+                    <div className={`${Styles.cardshoping}`}>
+                      <span
+                        className={`${Styles.addcart} d-flex justify-content-center align-items-center rounded shadow-lg text-center`}
+                        style={{
+                          backgroundColor: "#018f2c",
+                          fontSize: "20px",
+                          color: "white",
+                        }}
+                        onClick={() => addcarthandel(product.Id)}
+                      >
+                        <FontAwesomeIcon icon={faPlus} />
+                      </span>
+                      <span
+                        className="d-flex justify-content-around align-items-center gap-2"
+                        style={{ fontSize: "25px" }}
+                      >
+                        <FontAwesomeIcon
+                          icon={faPlus}
+                          style={{
+                            cursor: "pointer",
+                            backgroundColor: "white",
+                            borderRadius: "5px",
+                            padding: "2px",
+                          }}
+                          onClick={() => incrementHandler(product.Id)}
+                        />
+                        {counts[product.Id] || 1}
+                        {(counts[product.Id] || 1) > 1 ? (
+                          <FontAwesomeIcon
+                            icon={faMinus}
+                            style={{
+                              cursor: "pointer",
+                              backgroundColor: "white",
+                              borderRadius: "5px",
+                              padding: "2px",
+                              marginLeft: "10px",
+                            }}
+                            onClick={() => decrementHandler(product.Id)}
+                          />
+                        ) : (
+                          <FontAwesomeIcon
+                            icon={faMinus}
+                            style={{
+                              cursor: "not-allowed",
+                              backgroundColor: "red",
+                              color: "white",
+                              borderRadius: "5px",
+                              padding: "2px",
+                              marginLeft: "10px",
+                            }}
+                            onClick={() => decrementHandler(product.Id)}
+                          />
+                        )}
+                      </span>
+                    </div>
+                    <span className={`${Styles.price}`}>
+                      <span
+                        style={{
+                          fontSize: "21px",
+                          fontWeight: "bold",
+                          color: "#018f2c",
+                        }}
+                      >
+                        {formatArabicPrice(product.DiscountedPrice)}
+                      </span>
+                      <span
+                        style={{
+                          fontSize: "12px",
+                          color: "gray",
+                          textDecoration: "line-through",
+                        }}
+                      >
+                        {formatArabicPrice(product.Price)}
+                      </span>
+                    </span>
                   </div>
                 </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </AnimatePresence>
-
-        {/* Pagination */}
-        {pagination && pagination.TotalPages >= 1 && (
-          <motion.div
-            className={Styles.popularPagination}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          >
-            <button
-              className={`${Styles.paginationBtn} ${
-                currentPage > 1 ? Styles.active : Styles.disabled
-              }`}
-              onClick={handlePrevPage}
-              disabled={currentPage <= 1}
-            >
-              <FontAwesomeIcon icon={faArrowAltCircleRight} />
-            </button>
-
-            <span className={Styles.pageInfo}>
-              {formatArabicNumber(pagination.TotalPages)} / <span>{formatArabicNumber(currentPage)}</span>
-            </span>
-
-            <button
-              className={`${Styles.paginationBtn} ${
-                currentPage < pagination.TotalPages
-                  ? Styles.active
-                  : Styles.disabled
-              }`}
-              onClick={handleNextPage}
-              disabled={currentPage >= pagination.TotalPages}
-            >
-              <FontAwesomeIcon icon={faArrowAltCircleLeft} />
-            </button>
-          </motion.div>
-        )}
+              </div>
+            ))
+          ) : (
+            <div className="text-center">لا توجد منتجات مخفضة</div>
+          )}
+        </div>
+        <div className={`${Styles.heroPagenation}`}>
+          <Stack spacing={2}>
+            <Pagination
+              count={totalPages}
+              variant="outlined"
+              shape="rounded"
+              onChange={(e, value) => setCurrentPage(value)}
+            />
+          </Stack>
+        </div>
       </div>
     </>
   );

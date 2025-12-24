@@ -69,44 +69,44 @@
 
 /* Stock Badge Styles */
 .stockSection {
-  margin: 10px 0;
-  display: flex;
-  justify-content: center;
+    margin: 10px 0;
+    display: flex;
+    justify-content: center;
 }
 
 .stockBadge {
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  transition: all 0.2s ease;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s ease;
 }
 
 .outOfStock {
-  background-color: #dc354520;
-  color: #dc3545;
-  border: 1px solid #dc3545;
+    background-color: #dc354520;
+    color: #dc3545;
+    border: 1px solid #dc3545;
 }
 
 .lastPiece {
-  background-color: #ffc10720;
-  color: #ffc107;
-  border: 1px solid #ffc107;
+    background-color: #ffc10720;
+    color: #ffc107;
+    border: 1px solid #ffc107;
 }
 
 .lowStock {
-  background-color: #fd7e1420;
-  color: #fd7e14;
-  border: 1px solid #fd7e14;
+    background-color: #fd7e1420;
+    color: #fd7e14;
+    border: 1px solid #fd7e14;
 }
 
 .inStock {
-  background-color: #28a74520;
-  color: #28a745;
-  border: 1px solid #28a745;
+    background-color: #28a74520;
+    color: #28a745;
+    border: 1px solid #28a745;
 }
 
 /*  */
@@ -304,9 +304,9 @@
     width: 100%;
     height: 100%;
 
-    /* background-color: brown; */
-    /* position: relative; */
     .captionseller {
+        margin-top: 100px !important;
+
         h1 {
             font-size: 48px;
             font-weight: bold;
@@ -321,7 +321,6 @@
 }
 
 .herocardsseller {
-    /* background-color: aqua; */
     width: 95%;
     margin: auto;
     display: flex;
@@ -332,7 +331,9 @@
 
 
 
+
     .cardsseller {
+
         width: 22%;
         border-radius: 10px;
         height: 455px;
@@ -343,17 +344,18 @@
 
 
         .hedcard {
+
             display: flex;
             justify-content: space-between;
             padding: 10px;
 
             .sealeproducts {
-                background-color: #018f2c;
-                color: white;
+                color: #ffc107;
                 width: 100px;
                 height: 30px;
                 border-radius: 5px;
                 text-align: center;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             }
 
             .favoritProducts:hover :first-child {
@@ -368,8 +370,9 @@
 
 
         .cardbody {
+
             width: 100%;
-            height: 80%;
+            height: 70%;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -380,11 +383,12 @@
             img {
 
                 width: 100%;
-                height: 200px;
+                height: 160px;
                 object-fit: contain;
             }
 
             .captitlecard {
+                margin-bottom: 20px;
                 transform: translateY(20px);
 
                 h4 {
@@ -394,7 +398,9 @@
             }
 
             p {
-                font-size: 14px;
+
+                height: 100px;
+                font-size: 13px;
                 font-weight: bold;
                 color: gray;
                 transform: translateY(20px);
@@ -515,6 +521,9 @@
 
 
     .price {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
         transform: translateY(15px);
     }
 
