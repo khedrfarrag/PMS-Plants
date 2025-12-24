@@ -290,7 +290,6 @@ function ProductsList() {
     }
   };
 
-
   // Get filtered products from backend
   const getFilteredProducts = async () => {
     setLoading(true);
@@ -569,11 +568,22 @@ function ProductsList() {
         });
         if (!clickedInside) setDropdown(null);
       }
+
+      // Close header menu dropdown on outside click
+      if (dropdownMenu) {
+        const menuDropdown = document.querySelector(`.${Style.menuDropdown}`);
+        if (menuDropdown && !menuDropdown.contains(event.target as Node)) {
+          const menuIcon = document.querySelector(`.${Style.menuIcon}`);
+          if (menuIcon && !menuIcon.contains(event.target as Node)) {
+            setDropdownMenu(false);
+          }
+        }
+      }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [dropdown]);
+  }, [dropdown, dropdownMenu, Style.menuDropdown, Style.menuIcon]);
 
   // Debounce effect for price filter
   useEffect(() => {
@@ -608,7 +618,12 @@ function ProductsList() {
       getAllProducts();
     }
     // eslint-disable-next-line
-  }, [filters.categoryId, filters.subCategoryId, filters.hasDiscount, filters.feedbackScore]);
+  }, [
+    filters.categoryId,
+    filters.subCategoryId,
+    filters.hasDiscount,
+    filters.feedbackScore,
+  ]);
 
   // Effect to get products when page changes
   useEffect(() => {
@@ -635,7 +650,6 @@ function ProductsList() {
     }
   }, [categoryName]);
 
- 
   return (
     <>
       {loading ? (
@@ -655,14 +669,14 @@ function ProductsList() {
             className={Style.productsActionsRow}
             style={{ marginBottom: 16 }}
           >
-            <ShimmerSimpleGallery row={1} col={2}  />
+            <ShimmerSimpleGallery row={1} col={2} />
           </div>
           {/* شيمر صف الفلاتر */}
           <div
             className={Style.productsFiltersRow}
             style={{ marginBottom: 16 }}
           >
-            <ShimmerSimpleGallery row={1} col={5}  />
+            <ShimmerSimpleGallery row={1} col={5} />
           </div>
           {/* شيمر جدول المنتجات */}
           <div className={Style.productsTableWrapper}>
@@ -718,18 +732,18 @@ function ProductsList() {
               <h3>المنتجات</h3>
               <h6>تستطيع أن تفحص كل منتجاتك</h6>
             </div>
+
             <div className={Style.productsActionsRow}>
-             
-             <div className={Style.mainActionNav}>
-             <button onClick={() => navigate("/admin/add-product")}>
-                <FontAwesomeIcon icon={faPlus} />
-                إضافة منتج
-              </button>{" "}
-              <button onClick={() => navigate("/admin/add-categore")}>
-                <FontAwesomeIcon icon={faPlus} />
-                إضافة فئة
-              </button>
-             </div>
+              <div className={Style.mainActionNav}>
+                <button onClick={() => navigate("/admin/add-product")}>
+                  <FontAwesomeIcon icon={faPlus} />
+                  إضافة منتج
+                </button>{" "}
+                <button onClick={() => navigate("/admin/add-categore")}>
+                  <FontAwesomeIcon icon={faPlus} />
+                  إضافة فئة
+                </button>
+              </div>
               <div className={Style.menuWrapper}>
                 <button
                   className={Style.menuIcon}
@@ -774,12 +788,6 @@ function ProductsList() {
             >
               <FontAwesomeIcon icon={faFilter} /> التصفية
             </button>
-            {/* <button
-              className={Style.filterButton}
-              onClick={() => setShowFilterModal(true)}
-            >
-              <FontAwesomeIcon icon={faSearch} /> البحث
-            </button> */}
           </div>
 
           {/* صف الفلاتر يظهر فقط في الشاشات الكبيرة */}
@@ -952,14 +960,18 @@ function ProductsList() {
                           <FontAwesomeIcon
                             icon={faEllipsis}
                             style={{ cursor: "pointer", fontSize: "1.3rem" }}
-                            onClick={() => setDropdown(product.Id)}
+                            onClick={() =>
+                              setDropdown(
+                                dropdown === product.Id ? null : product.Id
+                              )
+                            }
                           />
                           {dropdown === product.Id && (
                             <ul
                               className="dropdown-menu show"
                               style={{
                                 position: "absolute",
-                                right: "-100px",
+                                right: "0",
                                 top: "100%",
                                 display: "block",
                                 minWidth: "120px",
@@ -969,6 +981,7 @@ function ProductsList() {
                                 padding: "0.5rem 0",
                                 maxHeight: "none",
                                 overflowY: "hidden",
+                                zIndex: 1000,
                               }}
                             >
                               <li className="text-center ">
@@ -1048,9 +1061,19 @@ function ProductsList() {
 
       {/* Pagination */}
       {displayedProducts.length > 0 && (
-        <div className="d-flex justify-content-center align-items-center" style={{ marginTop: ".5rem", marginBottom: "1rem" }}>
+        <div
+          className="d-flex justify-content-center align-items-center"
+          style={{ marginTop: ".5rem", marginBottom: "1rem" }}
+        >
           <Stack spacing={2}>
-            <Pagination count={pagination.totalPages} variant="outlined" shape="rounded" onChange={(e,value)=>setPagination((prev)=>({...prev,currentPage:value}))} />
+            <Pagination
+              count={pagination.totalPages}
+              variant="outlined"
+              shape="rounded"
+              onChange={(e, value) =>
+                setPagination((prev) => ({ ...prev, currentPage: value }))
+              }
+            />
           </Stack>
         </div>
       )}

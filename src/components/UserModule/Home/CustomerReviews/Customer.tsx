@@ -27,7 +27,7 @@ export default function Customer() {
     };
   }
   const [currentPage, setCurrentPage] = useState(1);
-  const [direction, setDirection] = useState(1); // 1: next (left), -1: prev (right)
+  const [isHovered, setIsHovered] = useState(false);
   const pageSize = 1;
 
   const [siteFeedBack, setSiteFeedBack] = useState<siteFeedBack>();
@@ -73,7 +73,6 @@ export default function Customer() {
   const totalPages = siteFeedBack?.pagination?.TotalPages || 1;
 
   const handleNextPage = () => {
-    setDirection(1);
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
     } else {
@@ -82,7 +81,6 @@ export default function Customer() {
   };
 
   const handlePrevPage = () => {
-    setDirection(-1);
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     } else {
@@ -92,9 +90,22 @@ export default function Customer() {
   useEffect(() => {
     getAllSiteFeedBack({ pageNumber: currentPage, pageSize });
   }, [currentPage]);
+
+  // Auto-slide every 3 seconds, pause on hover
+  useEffect(() => {
+    if (isHovered) return;
+    const interval = setInterval(() => {
+      handleNextPage();
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [currentPage, isHovered, totalPages]);
   return (
     <>
-      <div className={Style.SecCustomer}>
+      <div
+        className={Style.SecCustomer}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
         <div className={Style.headerCustomer}>
           <h1>آراء العملاء</h1>
           <p>تجارب حقيقية من عملائنا حول جودة منتجاتنا وخدماتنا المميزة!</p>
@@ -104,9 +115,9 @@ export default function Customer() {
             <motion.div
               key={currentPage}
               className={Style.bodyCard}
-              initial={{ x: direction === 1 ? 300 : -300, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: direction === 1 ? -300 : 300, opacity: 0 }}
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
               transition={{ duration: 0.5, type: "tween" }}
             >
               <div className={Style.customerDetals}>

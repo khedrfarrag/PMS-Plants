@@ -524,7 +524,7 @@
 .menuDropdown {
     position: absolute;
     top: 120%;
-    left: 0;
+    right: 0;
     min-width: 180px;
     background: #fff;
     border-radius: 12px;
@@ -826,7 +826,7 @@
 
     .menuDropdown {
         min-width: 160px;
-        right: 0;
+        right: -350%;
         left: auto;
     }
 
