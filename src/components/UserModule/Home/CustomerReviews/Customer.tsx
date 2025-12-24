@@ -8,7 +8,7 @@ import {
   faArrowAltCircleRight,
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
-import { siteFeedbackPoint } from "../../../../constant/Const";
+import { siteFeedbackPoint, ImgURLBeasd } from "../../../../constant/Const";
 export default function Customer() {
   interface siteFeedBack {
     data: {
@@ -17,6 +17,7 @@ export default function Customer() {
       Rating: number;
       UserId: string;
       UserName: string;
+      UserImage?: string;
     }[];
     pagination: {
       CurrentPage: number;
@@ -110,10 +111,21 @@ export default function Customer() {
             >
               <div className={Style.customerDetals}>
                 <div className={Style.customerinfo}>
-                  <img src={userimg} />
+                  <img
+                    style={{
+                      borderRadius: "50%",
+                      width: "60px",
+                      height: "60px",
+                    }}
+                    src={
+                      item.UserImage
+                        ? `${ImgURLBeasd}/${item.UserImage}`
+                        : userimg
+                    }
+                    alt="user"
+                  />
                   <div className={Style.customerName}>
                     <h2>{item.UserName}</h2>
-                    <p>{item.UserId}</p>
                   </div>
                 </div>
                 <div className={Style.customerRate}>
